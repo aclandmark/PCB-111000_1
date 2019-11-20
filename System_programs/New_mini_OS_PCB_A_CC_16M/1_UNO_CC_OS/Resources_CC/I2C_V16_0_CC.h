@@ -115,7 +115,10 @@ PORTD &= (~(seg_b | seg_c | seg_d | seg_e | seg_f | seg_g));
 #define T0_delay_500us 3,194
 #define T0_delay_250us 2,6
 
+#define T1_delay_3S 5, 0xA492
 #define T1_delay_500ms 5, 0xF0C3
+#define T1_delay_250ms 5, 0xF862
+#define T1_delay_125ms 5, 0xFC31
 #define T1_delay_10ms 3, 0xF63C
 
 #define refresh_clock_display;   for (int n = 0; n < 8; n++){display_buf[n] = clock_buf[n];}
