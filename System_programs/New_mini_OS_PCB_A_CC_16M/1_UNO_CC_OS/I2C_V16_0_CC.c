@@ -61,6 +61,19 @@ MCUSR &= (~(1 << BORF));}				//Reset brown-out flag
 ADMUX |= (1 << REFS0);					//select internal ADC ref and remove external supply on AREF pin
 setup_watchdog;	
 initialise_IO;							//NEW LINE:	Ensures that all IO is initially set to WPU
+
+if(!(eeprom_read_byte((uint8_t*)0x3F9))){eeprom_write_byte((uint8_t*)0x3F9, 0xFF);
+//PORTB |= (1 << PB2);									//Set UNO signalling line high (WPU)
+//DDRB &= (~(1 << DDB2));								//Note: Theses are default states for the CC display driver
+PORTC &=(~(1 << DDC3));		//Reset_L;
+DDRC |= (1 << DDC3);									//Put UNO in reset for 10mS
+Timer_T1_sub(T1_delay_10ms);							//After its release from reset
+PORTC |=(1 << DDC3);			//Reset_H;				//the UNO selects its boot loader
+DDRC &= (~(1 << DDC3));
+Timer_T1_sub(T1_delay_125ms);}
+
+
+
 set_digit_drivers;
 clear_digits;
 clear_display;
