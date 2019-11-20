@@ -63,7 +63,7 @@ DDRC |= (1 << DDC3);									//Generate a 2mS UNO reset pulse on PC3
 two_msec_delay;						
 Reset_H;												//Release UNO from reset (using WPU)
 DDRC &= (~(1 << DDC3));								//Reset line remains high untill SW_reset takes
-wdt_enable(WDTO_250MS); while(1);}		//60MS				//effect and control jumps to location zero
+wdt_enable(WDTO_120MS); while(1);}		//250MS			//effect and control jumps to location zero, use 250ms if cal routine is included
 
 
 
