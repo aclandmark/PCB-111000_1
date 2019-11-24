@@ -83,7 +83,7 @@ char skip_lines[4];
 
 FlashSZ=0x4000;														//Enter number to limit the print out
 
-phys_address = 0x3000;  read_ops=0; 
+phys_address = 0x2FC0;  read_ops=0; 
 line_no = 0; prog_counter_mem = prog_counter; 
 
 sendString("\r\nInteger(0-FF)?  ");									//0 prints no lines -1-, every line, -8- prints every eighth line etc... 
