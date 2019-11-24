@@ -128,7 +128,7 @@ LDFLAGS = -Wl,-Map=$(TARGET).map,--cref $(PRINTF_LIB) $(MATH_LIB)
 
 #****************bootloader cmds***************/
 
-BOOTSTART = 0x60B0
+BOOTSTART = 0x6230
 LDFLAGS += -Wl,--section-start=.text=$(BOOTSTART)
 
 #*********************************************/
