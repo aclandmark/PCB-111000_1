@@ -157,9 +157,10 @@ sendHex(10,prog_counter); sendString(" in:  ");
 sendHex(10,read_ops); sendString(" out\r\n");
 
 
-sendString("Programming PCB_A EEPROM 0x3F9 to zero\r\n\
-Press UNO reset switch\r\n");		//Controls operation of the mini-OS reset switch
+//sendString("Programming PCB_A EEPROM 0x3F9 to zero\r\n\
+//Press UNO reset switch\r\n");		//Controls operation of the mini-OS reset switch
 Read_write_mem('I', 0x3F9, 0);
+Read_write_mem('I', 0x3F8, 0);
 //Exit_Programmer;
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));
 Reset_H;
