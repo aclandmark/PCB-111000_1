@@ -53,7 +53,7 @@
 
 
 # MCU name
-MCU = atmega168
+MCU = atmega328
 
 
 # Processor frequency.
@@ -282,7 +282,7 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 
 #****************bootloader cmds***************/
 
-BOOTSTART = 0x5F80
+BOOTSTART = 0x5E80
 LDFLAGS += -Wl,--section-start=.text=$(BOOTSTART)
 
 #*********************************************/
