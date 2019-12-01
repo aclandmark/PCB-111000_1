@@ -1,8 +1,15 @@
 /*
-"Read fash" routine designed for use with the "PCB_bootloader" program.
-"Read flash" starts at address 0x5D00 and is reached via a jump command
+"Flash_verification" routine designed for use with the "PCB_bootloader" program.
+"Flash_verification" starts at address 0x5D00 and is reached via a jump command
 located at the end of the PCB_bootloader.  Normal HW setup is not therefore required.
 Data passed between the bootloader and read routines is placed in EEPROM 
+
+"Flash_verification" also programs the UNO fuses where possible leaving them as supplied,
+however Fuse High is changed from 0xDE to 0xD0 to increase the size of the boot partition to
+0x1000 bytes an ensure that the EEPROM survives chip erasure.
+
+
+
 */
 
 
@@ -15,13 +22,13 @@ int main (void){
 /*****************Power-up and make contact with target****************************/
 Define_programmining_pins; 
 /***********************New Config bytes for UNO device*************************************************/
-Atmel_config(write_extended_fuse_bits_h,0x5);						//was 0xFD
-Atmel_config(write_fuse_bits_H_h,0xD0);								//BOD 2.9V
-Atmel_config(write_fuse_bits_h,0xFF);								//was 0xC2	0mS SUT 8MHz RC clock
-Atmel_config(write_lock_bits_h,0x3F);								//was 0xFF
+Atmel_config(write_extended_fuse_bits_h,0x5);						//Sets BOD to 2.9V
+Atmel_config(write_fuse_bits_H_h,0xD0);								//1kB boot partition and EEPROM survives chip erasure
+Atmel_config(write_fuse_bits_h,0xFF);								//Low power crystal and 65mS SUT
+Atmel_config(write_lock_bits_h,0xEF);								//Protects boot loader section
 
 prog_counter = ((eeprom_read_byte((uint8_t*)0x3F8)) << 8) +\
-eeprom_read_byte((uint8_t*)0x3F7);									//EEROM used to pass values from bootloader
+eeprom_read_byte((uint8_t*)0x3F7);									//EEPROM used to pass values from bootloader
 cmd_counter = ((eeprom_read_byte((uint8_t*)0x3F6)) << 8) +\
 eeprom_read_byte((uint8_t*)0x3F5);
 
@@ -53,19 +60,14 @@ sendHex(10,read_ops); sendString(" out\r\n");
 
 Reset_H;															//Exit programming mode
 DDRC &= (~(1 << DDC3));
-sendString("h/t/r_1  ");											//First user prompt of UNO programmer
+sendString("h/t/r/D\t");											//First user prompt of UNO bootloader
 timer_T1_sub(T1_delay_500mS);
 
-//insert extra reset pulse here
 Reset_L;												
-DDRC |= (1 << DDC3);									//Generate a 2mS UNO reset pulse on PC3
-timer_T0_sub(T0_delay_2ms);
-//two_msec_delay;						
-Reset_H;												//Release UNO from reset (using WPU)
-DDRC &= (~(1 << DDC3));								//Reset line remains high untill SW_reset takes
-
-
-
+DDRC |= (1 << DDC3);												//Generate a 2mS UNO reset pulse on PC3
+timer_T0_sub(T0_delay_2ms);											//Release UNO from reset (using WPU)
+Reset_H;															//Reset line remains high untill SW_reset takes
+DDRC &= (~(1 << DDC3));											//UNO enters bootloader program after being programmed
 wdt_enable(WDTO_250MS); while(1);
 return 1;  }
 
@@ -83,7 +85,7 @@ char skip_lines[4];
 
 FlashSZ=0x4000;														//Enter number to limit the print out
 
-phys_address = 0x2FC0;  read_ops=0; 
+phys_address = 0x2F40;  read_ops=0; 
 line_no = 0; prog_counter_mem = prog_counter; 
 
 sendString("\r\nInteger(0-FF)?  ");									//0 prints no lines -1-, every line, -8- prints every eighth line etc... 
