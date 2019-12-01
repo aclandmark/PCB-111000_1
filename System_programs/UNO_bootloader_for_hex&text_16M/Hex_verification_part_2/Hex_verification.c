@@ -33,7 +33,7 @@ Hex_to_PC(cmd_counter); sendString("  d'loaded:  0x");
 Hex_to_PC(prog_counter); sendString(" in:  0x"); 
 Hex_to_PC(read_ops); sendString(" out\r\n");}
 
-sendString("UNO Fuses E, H, L and lock.\r\n");						//Print out device configuration bytes	
+sendString("UNO Fuses E, H, L and lock:\t");						//Print out device configuration bytes	
 address_in_flash = 0;
 for(int m = 0; m<4; m++){
 switch(m){
@@ -45,16 +45,10 @@ case 3: address_in_flash = 1; break;}								//Print lock byte
 Prog_mem_address_H = address_in_flash >> 8;
 Prog_mem_address_L = address_in_flash;
 read_config_bytes();
-short_num_to_PC(Flash_readout);sendChar('\t');		
-}newline(); 
-
-sendString("On-chip cal bit:  ");
-if(eeprom_read_byte((uint8_t*)0x3FD) == OSCCAL)					//Print out OSCCAL
-{short_num_to_PC(OSCCAL); sendString("  DF value");}
-else {short_num_to_PC(OSCCAL); sendString("\t User value");}
+short_num_to_PC(Flash_readout);	sendChar('\t');
+}newline(); newline();
 
 
-newline();
 wdt_enable(WDTO_15MS);
 while(1);
 return 1;}
@@ -137,7 +131,7 @@ else Hex_to_PC (Hex_cmd);}
 read_ops++;
 
 if(phys_address==FlashSZ)break;}
-if ((!(line_no%print_line)) && (!(line_counter%8)))sendString("\r\n");
+if ((print_line != 0) && (!(line_no%print_line)) && (!(line_counter%8)))sendString("\r\n");
 
 line_no++;
 if (phys_address == FlashSZ)break;}
