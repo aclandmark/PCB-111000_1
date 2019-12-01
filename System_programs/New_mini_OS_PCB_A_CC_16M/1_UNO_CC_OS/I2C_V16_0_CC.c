@@ -62,7 +62,7 @@ ADMUX |= (1 << REFS0);					//select internal ADC ref and remove external supply 
 setup_watchdog;	
 initialise_IO;							//NEW LINE:	Ensures that all IO is initially set to WPU
 
-if(!(eeprom_read_byte((uint8_t*)0x3F8))){eeprom_write_byte((uint8_t*)0x3F8, 0xFF);
+if(!(eeprom_read_byte((uint8_t*)0x3F4))){eeprom_write_byte((uint8_t*)0x3F4, 0xFF);
 //PORTB |= (1 << PB2);									//Set UNO signalling line high (WPU)
 //DDRB &= (~(1 << DDB2));								//Note: Theses are default states for the CC display driver
 PORTC &=(~(1 << DDC3));		//Reset_L;
