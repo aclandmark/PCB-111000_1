@@ -3,7 +3,11 @@
 
 /********ATMEGA programmer for flash, config bits and EEPROM. Runs on an ATMEGA328.
 
-Setup to program Atmega 168 and 328 devices, but could easily be adapted for others.
+
+Used to program the EEPROM of either device but the flash of the PCB_A device only.
+The UNO flash is programmed using the PCB_A bootloader.
+The reason foor this is that the devices run under different configuration settings.
+
 
 To make the program as easy as possible to use, the strings are stored in program memory space 
 rather than EEPROM. The result of this is that they also consume large amounts of SRAM
@@ -41,7 +45,6 @@ As soon as it stops flashing the next file can be sent.
 
 int main (void){ 
 
-unsigned char cal_factor=0; 											//Either default or user supplied	
 unsigned int target_type = 0,  target_type_M;				//Device signature bytes			
 
 
@@ -81,8 +84,8 @@ case 3282: sendString ("328P");break;
 default: wdt_enable(WDTO_1S); while(1);break;}
 
 PageSZ = 0x40; PAmask = 0x3FC0; FlashSZ=0x4000; 
-EE_top = 0x400-9;
-text_start = 0x5;											//First 5 bytes reserved for system use
+EE_top = 0x400-0x10;										//Last 16 bytes reseerved for system use
+text_start = 0x5;											//First 5 bytes reserved for programmer use
 
 sendString(" detected\r\nPress P or E to program flash \
 or EEPROM (or X to escape).");
@@ -94,7 +97,8 @@ switch (op_code){
 case 'E': Prog_EEPROM(); break;
 
 case 'D':													//Delete contents of the EEPROM
-sendString("\r\nReset EEPROM! D or AOK to escape");newline();			//but leave cal data.
+sendString("\r\nReset EEPROM! D or AOK to escape");			//but leave cal data.
+newline();
 if(waitforkeypress() == 'D'){
 sendString("10 sec wait");
 
@@ -115,8 +119,6 @@ if (Atmel_config(read_fuse_bits_h, 0) == 0xFF)
 {sendString("\r\nCannot be used to program UNO flash\r\n");
 Exit_Programmer;}
 
-//sendString ("8MHz internal clock");
-
 sendString("\r\nSend Program file (or X to escape).\r\n");
 
 while ((keypress = waitforkeypress()) != ':')				//Ignore characters before the first ':'
@@ -130,7 +132,7 @@ UCSR0B |= (1<<RXCIE0); sei();								//Set UART Rx interrupt
 Program_Flash();
 
 /***Program target config space***/
-Atmel_config(write_extended_fuse_bits_h,0xFD );			//2.7V BOD
+Atmel_config(write_extended_fuse_bits_h,0xFD );				//2.7V BOD
 Atmel_config(write_fuse_bits_H_h,0xD0 );					//WDT under prog control and Eeprom preserved, Reset vector 0x7000
 Atmel_config(write_fuse_bits_h,0xE2 );						//8MHz internal RC clock with 65mS SUT
 Atmel_config(write_lock_bits_h,0xFF );						//No  memory lock
@@ -146,24 +148,16 @@ sendHex(16, Atmel_config(read_fuse_bits_H_h,0));
 sendHex(16, Atmel_config(read_fuse_bits_h, 0));
 sendHex(16, Atmel_config(read_lock_bits_h, 0));
 
-sendString("    on-chip cal bit:  ");
-
-if (cal_factor==1) sendHex(16, OSCCAL);
-sendHex(16, OSCCAL);
 newline();
 sendString("Hex_file_size:	");
 sendHex(10,cmd_counter); sendString("  d'loaded:  "); 
 sendHex(10,prog_counter); sendString(" in:  "); 
 sendHex(10,read_ops); sendString(" out\r\n");
 
-
-//sendString("Programming PCB_A EEPROM 0x3F9 to zero\r\n\
-//Press UNO reset switch\r\n");		//Controls operation of the mini-OS reset switch
-Read_write_mem('I', 0x3F9, 0);
-Read_write_mem('I', 0x3F8, 0);
-//Exit_Programmer;
-UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));
-Reset_H;
+Read_write_mem('I', 0x3F9, 0);								//Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
+Read_write_mem('I', 0x3F4, 0);								//Read by Led driver (1_UNO_CC_OS). Resets UNO immediately after PCB_A has
+UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));				//been programmed triggering the h/t/r/D prompt so that the project_programmer
+Reset_H;													//(i.e. this program when running on the UNO device) can be removed.
 while(1);
 return 1;}
 
