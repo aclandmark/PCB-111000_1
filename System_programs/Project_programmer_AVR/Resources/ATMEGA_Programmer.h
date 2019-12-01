@@ -58,7 +58,7 @@ signed char page_break;										//Page only partialy filled before programming 
 volatile signed char line_offset;							//LSB of address of first command in record (usually zero)
 unsigned int prog_led_control;								//Used to control Leds as hex file is downloaded
 
-
+unsigned char cal_factor=0; 								//Either default or user supplied
 
 
 
@@ -104,6 +104,7 @@ WDTCSR = 0;
 
 /************************************************************************************************************************************/
 #define cal_Atmega328 \
+eeprom_write_byte((uint8_t*)0x3FD, OSCCAL);\
 if ((eeprom_read_byte((uint8_t*)0x3FE) > 0x0F)\
 &&  (eeprom_read_byte((uint8_t*)0x3FE) < 0xF0) && (eeprom_read_byte((uint8_t*)0x3FE)\
 == eeprom_read_byte((uint8_t*)0x3FF))) {OSCCAL = eeprom_read_byte((uint8_t*)0x3FE); cal_factor=1;}\
@@ -203,7 +204,7 @@ timer_T0_sub(T0_delay_20ms);
 #define Atmel_powerup_and_target_detect \
 Atmel_powerup;\
 while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
-else {sendString("Target_not_detected"); wdt_enable(WDTO_60MS);while(1);}}\
+else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
 target_type_M = Atmel_config(signature_bit_2_h, signature_bit_2_l);\
 target_type = Atmel_config(signature_bit_3_h, signature_bit_3_l);\
 target = 0;\
