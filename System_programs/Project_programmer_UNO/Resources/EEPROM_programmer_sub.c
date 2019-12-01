@@ -65,9 +65,9 @@ int App_reservation;
 EEP_pointer = text_start;												//Start saving user strings/data at address 0x05
 
 sendString\
-("\r\nPress W, R or D to write to, read from or delete the ");
-if (pcb_type == 1)sendString (" (UNO)");
-else sendString (" (PCB_A)");
+("\r\nPress W, R or D to write to, read from or delete");
+if (pcb_type == 1)sendString (" the UNO");
+else sendString (" PCB_A");
 
 
 while(1){sendString("?  ");	
@@ -202,14 +202,19 @@ newline();
 sendChar('\t');sendHex(16, Read_write_mem('O', 0x3FF, 0));}
 break;
 
-
-
 default: break;}
-if (pcb_type == 1)sendString (" (UNO)");
-else sendString (" (PCB_A)");
+
+if (pcb_type == 1)
+{sendString ("\r\nUNO programmed\r\nHost calibration bit:  ");
+sendHex(16, OSCCAL);
+if (cal_factor == 1){sendString("  User calibration\t Default calibration  ");
+sendHex(16, eeprom_read_byte((uint8_t*)0x3FD));newline();}
+else sendString("  Default calibration\r\n");}
+
+else sendString ("\r\nPCB_A programmed\r\n");
 
 Exit_Programmer;
-//wdt_enable(WDTO_60MS); while(1);
+
 }
 
 
