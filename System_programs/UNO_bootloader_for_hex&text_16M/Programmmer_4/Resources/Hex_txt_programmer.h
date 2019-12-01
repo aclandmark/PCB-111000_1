@@ -124,14 +124,6 @@ WDTCSR = 0;
 
 
 /**********************************************************************************/
-#define cal_device;\
-eeprom_write_byte((uint8_t*)0x3FD, OSCCAL);\
-if ((eeprom_read_byte((uint8_t*)0x3FE) > 0x0F)\
-&&  (eeprom_read_byte((uint8_t*)0x3FE) < 0xF0) && (eeprom_read_byte((uint8_t*)0x3FE)\
-== eeprom_read_byte((uint8_t*)0x3FF))) OSCCAL = eeprom_read_byte((uint8_t*)0x3FE);
-
-
-/**********************************************************************************/
 #define  activity_leds;\
 DDRB |= (1 << DDB0);\
 LED_2_off;
