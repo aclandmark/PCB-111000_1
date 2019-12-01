@@ -1,4 +1,16 @@
 
+/*
+Random display based on Pseudo Random Number PRN generator.
+Default user project loaded onto UNO at address zero to ensure that there is always something to run.
+To rienstate the default project press D at the h/r/t prompt.
+
+Note: EEPROM locations 0x3F0 to 0x3FF are reserved.
+Therefore the PRN generator uses locations 0x3EF and 0x3EE to store the next number
+
+
+*/
+
+
 
 void I2C_Tx_2_integers(unsigned int, unsigned int);
 void I2C_Tx(char, char, char*);
@@ -70,43 +82,23 @@ TWDR;
 TWCR = (1 << TWINT);
 
 
-/*
-int main (void){								//The "main" routine lies between a pair of {} brackets.
-
-unsigned long PORT_1, PORT_2;
- 
-setup_HW;					
-
-while(1)
-{PORT_1=1; PORT_2 = 0x80000000;
-
-	for(int m = 1; m < 33; m++){				//Code between the {} brackets is repeated 16 times 						
-												//as m increments from 1 to 16	(m++ is shorthand for increment m)
-		I2C_Tx_2_integers(PORT_1, PORT_2);				
-
-		Timer_T1_sub(T1_delay_50ms);			//This subroutine generates a 10mS delay that is repeated 6 times		
-		PORT_1 = PORT_1 << 1;					//The contents of address "PORT_1" are shifted one place left
-		PORT_2 = PORT_2 >> 1;
-		}										//every time that the "for-loop" is executed
-}}*/
-
 
 int main (void){	
-unsigned int PRN;											//Memory location used to store "pseudo random numbers"
+unsigned int PRN;
 
+		
 setup_HW;
-wdt_enable(WDTO_250MS);										//Set up the watchdog timer to generate a reset after 250mS.
-//config_sw2_for_PCI;
-sei();
-while(1){													//Infinite while loop	
+
+
+while(1){	
 PRN = PRN_16bit_GEN (0);									//Generate a new PRN (0) tells subroutine to use the EEPROM
 I2C_Tx_2_integers(PRN, (PRN<<1));							//Display two "pseudo random numbers"
-Timer_T1_sub(T1_delay_100ms);								//Pause before repeating
-wdr();}}													//Reset the watchdog timer which avoids the possibility
-															//of a reset for another 250mS
+Timer_T1_sub(T1_delay_100ms);	
+}}													
 
 
 
+/************************************************************************************/
 void Timer_T1_sub(char Counter_speed, unsigned int Start_point){ 
 TCNT1H = (Start_point >> 8);
 TCNT1L = Start_point;
@@ -116,6 +108,8 @@ TIFR1 |= (1<<TOV1);
 TCCR1B = 0;}
 
 
+
+/************************************************************************************/
 void I2C_Tx_2_integers(unsigned int s1, unsigned int s2){			
 char num_bytes=4; char mode=4; char s[4];
 for (int m = 0;  m < 4; m++){
@@ -127,6 +121,8 @@ case 3: s[m] = s2 >> 8; break;}}									//Send S1 higher byte
 I2C_Tx(num_bytes,mode, s);}
 
 
+
+/************************************************************************************/
 void I2C_Tx(char num_bytes, char mode, char s[]){
 waiting_for_I2C_master;
 send_byte_with_Ack(num_bytes);
@@ -136,30 +132,35 @@ if (m==num_bytes-1){send_byte_with_Nack(s[m]);}
 else {send_byte_with_Ack(s[m]);}}
 TWCR = (1 << TWINT);}
 
-/***********************************************************/
+
+
+/************************************************************************************/
 void send_byte_with_Ack(char byte){
-TWDR = byte;											//Send payload size: Zero in this case
-TWCR = (1 << TWINT) | (1 << TWEA) | (1 << TWEN);		//clear interrupt and set Enable Acknowledge
+TWDR = byte;													//Send payload size: Zero in this case
+TWCR = (1 << TWINT) | (1 << TWEA) | (1 << TWEN);				//clear interrupt and set Enable Acknowledge
 while (!(TWCR & (1 << TWINT)));}
 
-/***********************************************************/
+
+
+/************************************************************************************/
 void send_byte_with_Nack(char byte){
-TWDR = byte;										//Send payload size: Zero in this case
-TWCR = (1 << TWINT) | (1 << TWEN);		//clear interrupt and set Enable Acknowledge
+TWDR = byte;													//Send payload size: Zero in this case
+TWCR = (1 << TWINT) | (1 << TWEN);								//clear interrupt and set Enable Acknowledge
 while (!(TWCR & (1 << TWINT)));}
 
 
 
+/************************************************************************************/
 unsigned int PRN_16bit_GEN(unsigned int start){
 unsigned int bit, lfsr;
 
-if(!(start)) lfsr = (eeprom_read_byte((uint8_t*)(0x1FF)) << 8) + eeprom_read_byte((uint8_t*)(0x1FE));
+if(!(start)) lfsr = (eeprom_read_byte((uint8_t*)(0x3EF)) << 8) + eeprom_read_byte((uint8_t*)(0x3EE));
 else lfsr = start;
 bit = (( lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
 lfsr = (lfsr >> 1) | (bit << 15);
 if(!(start)){
-eeprom_write_byte((uint8_t*)(0x1FF),(lfsr>>8));
-eeprom_write_byte((uint8_t*)(0x1FE),lfsr);}
+eeprom_write_byte((uint8_t*)(0x3EF),(lfsr>>8));
+eeprom_write_byte((uint8_t*)(0x3EE),lfsr);}
 
 return lfsr;}
 	
