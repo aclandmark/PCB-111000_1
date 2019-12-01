@@ -6,20 +6,41 @@
 /********  ATMEGA pcb bootloader runs in the boot space of the ATMEGA328**********/
 
 /*Developed for use with CC displays
-Compile it using optimisation level s ONLY
+Compile it using optimisation level s ONLY and load into flash at address 0x7000
 It shares the ATMEGA 328 with the display control program which runs in the application code space.
 Rx/Tx work at 57.6k
+
+PCB_A_bootloader is used to program the UNO device with its bootloader and the default user project 
+combined into a single hex file.
 */
 
 /*EEPROM reservations
-0x3FF	user cal if set
-0x3FE	user cal if set
-0x3FD	Default cal supplied by Atmel
-0x3FC	If 1: press 'x' diagnostic mode else press 'r' normal mode
-0x3FB	If 0 use multiplexter (T0) period of 4ms else use period of 2mS (std)
-0x3FA	No longer used.
-0x3F9	Reset status byte: set to zero when the mini-OS is programmed to flash.
-0x3F8	Unused
+0x3FF		user cal if set
+0x3FE		user cal if set
+0x3FD		Default cal supplied by Atmel
+0x3FC		If 1: press 'x' diagnostic mode else press 'r' normal mode
+0x3FB		If 0 use multiplexter (T0) period of 4ms else use period of 2mS (std)
+0x3FA		No longer used.
+0x3F9		Reset status byte: set to zero by Project_programmer_AVR
+			when the mini-OS is programmed to flash.
+			It is read here to ensure that control always jumps to location zero except for a manual reset
+0x3F8/7		Used to pass "prog_counter" to "Flash_verification"
+0xF6/5		Used to pass "cmd_counter" to "Flash_verification"
+0x3F4		Reset status byte: set to zero by Project_programmer_AVR
+			when the mini-OS is programmed to flash.
+			It is read by I2C_V16_0_CC to ensure that the UNO bootloader is automatically triggered 
+			after pcb_A has been programmed
+
+
+Reset Operation:
+The Project Programmer is loaded onto the UNO device and used to program pcb_A device with PCB_A_bootloader and I2C_V16_0_CC.
+It sets PCB_A device EEPROM locations 0x3F9 and 0x3F4 to zero.
+Following programming pcb_A device jumps to loation 0x7000 reads EEPROM 0x3F9 (which is zero) and jumps to location zero.
+Execution of I2C_V16_0_CC follows.  This program reads EEprom location 0x3F4.  Because it is zero it resets the UNO device 
+forcing it to abandon "Project_programmer" and run the new UNO bootloader. 
+
+Note: If "Project_programmer" runs on pcb_A it can only program the UNO EEPROM (text area, locations above 0x3F0 are protected).
+It cannot be used to program the UNO flash and will not write to locations 0x3F9 or 4.
 */
 
 #include <avr/io.h>
@@ -107,7 +128,7 @@ if((keypress == 'r') || (keypress == 'x')){
 if (keypress == 'x') 
 {eeprom_write_byte((uint8_t*)0x3FC, 0x1);}
 Reset_H;
-sendString("h/t/r_1  ");								//Send the first UNO user prompt
+sendString("h/t/r/D\t");								//Send the first UNO user prompt
 wdt_enable(WDTO_60MS); while(1);}}  					//Exit bootloader early
 
 PageSZ = 0x40; PAmask = 0x3FC0;							//Define flash parameters
