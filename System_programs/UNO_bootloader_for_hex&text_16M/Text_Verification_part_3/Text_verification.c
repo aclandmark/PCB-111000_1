@@ -41,7 +41,7 @@ eeprom_write_byte((uint8_t*)0x3FC,	(eeprom_read_byte((uint8_t*)0x3FC) | 0x80));
 char_counter = 0;																	//counts the number of characters in the text file (excludes \r & \n)
 
 newline(); 
-start_address = 0x5F7F;																//start adddress of text
+start_address = 0x5E7F;																//start adddress of text
 Num_strings = string_counter(start_address);										//Count the number of strings
 
 for(int text_num = 1; text_num <= Num_strings; text_num++)
