@@ -28,8 +28,13 @@ volatile int EA_counter, EA_buff_ptr;
 int buffer[41];	//Used to store "long" results, however for this application results are always less than 32000
 volatile char T1_OVF;
 volatile long error_SUM;
-char OSCCAL_test;
+//char OSCCAL_test;
 volatile char MUX_cntl, T0_interupt_cnt;
+
+char OSCCAL_WV;
+
+
+
 
 #define setup_watchdog;\
 wdr();\
@@ -38,6 +43,13 @@ WDTCSR |= (1 <<WDCE) | (1<< WDE);\
 WDTCSR = 0;
 
 #define wdr()  __asm__ __volatile__("wdr")
+
+#define cal_PCB_A_328 \
+eeprom_write_byte((uint8_t*)0x3FD, OSCCAL);\
+if ((eeprom_read_byte((uint8_t*)0x3FE) > 0x0F)\
+&&  (eeprom_read_byte((uint8_t*)0x3FE) < 0xF0) && (eeprom_read_byte((uint8_t*)0x3FE)\
+== eeprom_read_byte((uint8_t*)0x3FF))) {OSCCAL = eeprom_read_byte((uint8_t*)0x3FE);}
+
 
 
 #define two_fifty_mS_delay; timer_T1_sub_with_interrupt(T1_delay_250ms);while (T1_ovf_flag == 0);T1_ovf_flag = 0;
