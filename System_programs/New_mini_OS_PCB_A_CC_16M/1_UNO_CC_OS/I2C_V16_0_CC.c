@@ -40,9 +40,11 @@ char keypres_counter_old=0, keypres_counter, SW3_keypress, sw2_keypress, Return;
 int RN=0;
 int text_max, eeprom_ptr;
 char string_counter, string_no, sign_bit;
-long cal_error, error_mag;
-char OSCCAL_DV, OSCCAL_UC, OSCCAL_WV;
+
+char OSCCAL_DV, OSCCAL_UC; 
 char test_num, test_digit;
+long cal_error;
+char OSCCAL_test;
 
 char *SW_Version = "OS: I2C_V16_0_CC\r\n";
 char *SW_info = "SW information: Operating system I2C_V16_0_CC\
@@ -50,92 +52,63 @@ char *SW_info = "SW information: Operating system I2C_V16_0_CC\
   External programmer V2_30A\r\n";
 	
 
+
 /****Watchdog initiated for mode G only (user clock/stop watch with
 external 10mS crystal interrupt).*********/
 
 /***********Brown-out:  This is set (using config bits only) for 2.9V*************/
 
-if(MCUSR & (1 << BORF)){				//Detect brown-out
-MCUSR &= (~(1 << BORF));}				//Reset brown-out flag 
+if(MCUSR & (1 << BORF)){								//Detect brown-out
+MCUSR &= (~(1 << BORF));}								//Reset brown-out flag 
 
-ADMUX |= (1 << REFS0);					//select internal ADC ref and remove external supply on AREF pin
+ADMUX |= (1 << REFS0);									//select internal ADC ref and remove external supply on AREF pin
 setup_watchdog;	
-initialise_IO;							//NEW LINE:	Ensures that all IO is initially set to WPU
+initialise_IO;											//Ensures that all IO is initially set to WPU
 
-if(!(eeprom_read_byte((uint8_t*)0x3F4))){eeprom_write_byte((uint8_t*)0x3F4, 0xFF);
+if(!(eeprom_read_byte((uint8_t*)0x3F4)))				//If PCB_A has just been programmed with I2C_V16_CC using the project programmer 
+{eeprom_write_byte((uint8_t*)0x3F4, 0xFF);				//the UNO device is automatically reset so the the project programer can be removed
 //PORTB |= (1 << PB2);									//Set UNO signalling line high (WPU)
 //DDRB &= (~(1 << DDB2));								//Note: Theses are default states for the CC display driver
-PORTC &=(~(1 << DDC3));		//Reset_L;
+PORTC &=(~(1 << DDC3));								//PDC3 is the output used to reset the UNO device
 DDRC |= (1 << DDC3);									//Put UNO in reset for 10mS
-Timer_T1_sub(T1_delay_10ms);							//After its release from reset
-PORTC |=(1 << DDC3);			//Reset_H;				//the UNO selects its boot loader
+Timer_T1_sub(T1_delay_10ms);							//After its release from reset the UNO selects its boot loader
+PORTC |=(1 << DDC3);									
 DDRC &= (~(1 << DDC3));
-Timer_T1_sub(T1_delay_125ms);}
+Timer_T1_sub(T1_delay_125ms);}							//Delay required due to UNO Start Up Time of 65mS
 
+TWBR = 32;												//gives 100KHz I2C clock for TWSR 
+ASSR = (1 << AS2); 									//initialise T2 for crystal
+timer_2_counter=0;										//Initialsise timer_2_counter to zero
 
+OSCCAL_DV = OSCCAL;										//Save default value of OSCCAL
+if(MCUSR & (1 << PORF))
+{Cal_at_Power_on_Reset();}								//Only run clock calibration test following a POR
+else {cal_PCB_A_328;}									//Use User value of OSCCAL if one exists
+OSCCAL_WV = OSCCAL;										//Save working value of OSCCAL
 
 set_digit_drivers;
 clear_digits;
 clear_display;
 exponent_BKP[0]=0; exponent_BKP[1]=0;
 expnt=0;
-sei();					
-OSCCAL_WV = OSCCAL;		
-OSCCAL_DV = eeprom_read_byte((uint8_t*)0x3FD);		
-TWBR = 32;										//gives 100KHz I2C clock for TWSR 
-
-/****Start Real time clock with 1 second tick****/
-ASSR = (1 << AS2); 								//initialise T2 for crystal
-timer_2_counter=0;								//Initialsise timer_2_counter to zero
-
-/*************If POR check OSC Calibration and recal if necessary*****************************/
-
-if((MCUSR & (1 << PORF))){									//Only run clock check following a POR
-		Timer_T1_sub(T1_delay_500ms);
-		MCUSR &= (~(1 << PORF));
-		mode = 'T';											//Required by ISR(TIMER1_OVF_vect) & (TIMER2_OVF_vect)
-		TIMSK2 |= (1 << TOIE2);								//Set Timer 2: interrupt on overflow
-		TIMSK1 |= (1 << TOIE1);
-		initialise_timers_for_cal_error();
-		start_timers_for_cal_error();
-		cal_error = compute_error(0);
-		cal_error = compute_error(0);						//Xtal warm up time
-		cal_error = compute_error(0);
-	if(cal_error > 750){
-	mode = 'U';
-		initialise_timers_for_cal_error();
-		start_timers_for_cal_error();
-		for(int m = 0x10; m <= 0xF0; m++){OSCCAL = m ;cal_error = emergency_restore_operation();	//low accurracy but quick to scan up to 160 cal factors
-		if (cal_error >= 0) error_mag = cal_error; else error_mag = cal_error * (-1);
-		if ((error_mag < 750) && (m > 0x14))break;}			//Warmup time needed for T1/T2 synchronisation???
-		mode = 'O';
-		OSCCAL_test = OSCCAL;
-	initialise_timers_for_cal_error();  				
-	start_timers_for_cal_error();
-	cal_error = calibrate_quick_cal(OSCCAL_test);				//Full accuracy but only tests several cal factors
-	if(cal_error > 500)cal_error = calibrate_quick_cal(OSCCAL + 4);
-	if(cal_error > 500)cal_error = calibrate_quick_cal(OSCCAL - 2);	
-	if(cal_error > 500) OSCCAL = OSCCAL_test;		
-	OSCCAL_WV = OSCCAL;
-	eeprom_write_byte((uint8_t*)0x3FE, OSCCAL_WV); 
-	eeprom_write_byte((uint8_t*)0x3FF, OSCCAL_WV);}
-	initialise_timers_for_cal_error();  						//dissable timers
-	TIMSK2 &= (~(1 << TOIE2));									//Dissable Timer 2: interrupt on overflow
-	TIMSK1 &= (~(1 << TOIE1));}
-			
-/********Start multiplexer**************************/		
-	if((eeprom_read_byte((uint8_t*)0x3FB) == 0xFF) || (eeprom_read_byte((uint8_t*)0x3FB) == 0x01));
-	else eeprom_write_byte((uint8_t*)0x3FB,0x01);
 
 	
+if((eeprom_read_byte((uint8_t*)0x3FB) == 0xFF) ||\
+ (eeprom_read_byte((uint8_t*)0x3FB) == 0x01));			//Check multiplexer control has a valid value 
+else eeprom_write_byte((uint8_t*)0x3FB,0x01);			//(i.e. for normal or bright display)
+
+	sei();
 	T0_interupt_cnt = 0;	
-	TIMSK0 |= (1 << TOIE0);										//T0 interrupt enabled
+	TIMSK0 |= (1 << TOIE0);							//Start the display multiplexer
 	MUX_cntl = 0;
 	if(eeprom_read_byte((uint8_t*)0x3FB) == 0xFF)
-	{timer_T0_sub_with_interrupt(T0_delay_2ms);}				//Normal Display brightness
-	else {timer_T0_sub_with_interrupt(T0_delay_500us);}
-
-/***************Repetitively poll the PIC until it responds*******************/
+	{timer_T0_sub_with_interrupt(T0_delay_2ms);}		//Full display brightness
+	else 
+	{timer_T0_sub_with_interrupt(T0_delay_500us);}		//Normal display brightness
+	
+	
+	
+	
 while(1){
 
 while((mode == 'G')||(mode == 'g')\
