@@ -8,6 +8,15 @@
 
 void start_T2_for_ATMEGA_168_cal(char);
 
+void I2C_master_transmit(char);
+char I2C_master_receive(char);
+void manual_cal_PCB_A_device(void);
+void I2C_Tx_2URNs_from_IO (void);
+void I2C_Tx_Uarithmetic_OP (void);
+void I2C_Tx_Compile_tables(void);
+void I2C_Tx_accumulator_1(void);
+void I2C_Tx_accumulator_2(void);
+
 volatile char payload_size;							//zero to hide clock, 1 to update 10mS 2 to update 100ms and 8 to update seconds
 volatile int disp_ptr;
 volatile char Char_received, exit_loop = 0, display_mask;		//ISR UART
@@ -32,6 +41,25 @@ volatile long error_SUM;
 volatile char MUX_cntl, T0_interupt_cnt;
 
 char OSCCAL_WV;
+char I2C_data[10];
+long cal_error;
+char OSCCAL_DV, OSCCAL_UC;
+
+
+char  display_backup[9];
+signed char exponent_BKP[2];
+int RN;
+char keypres_counter_old, overflow;
+
+char Op;
+unsigned long RHSofDP;
+signed char expnt_result;
+char result[4];
+int accumlator, interim_result;
+
+
+
+
 
 
 
@@ -49,6 +77,28 @@ eeprom_write_byte((uint8_t*)0x3FD, OSCCAL);\
 if ((eeprom_read_byte((uint8_t*)0x3FE) > 0x0F)\
 &&  (eeprom_read_byte((uint8_t*)0x3FE) < 0xF0) && (eeprom_read_byte((uint8_t*)0x3FE)\
 == eeprom_read_byte((uint8_t*)0x3FF))) {OSCCAL = eeprom_read_byte((uint8_t*)0x3FE);}
+
+
+#define initialise_IO;\
+MCUCR &= (~(1 << PUD));\
+DDRB = 0;\
+DDRC = 0;\
+DDRD = 0;\
+PORTB = 0xFF;\
+PORTC = 0xFF;\
+PORTD = 0xFF;\
+PORTC &= (~(1 << PC3));	
+
+
+
+#define initialise_Arithmetic_variables; \
+exponent_BKP[0]=0; exponent_BKP[1]=0;\
+expnt=0;\
+Op = 0;\
+accumlator=0;\
+RN=0;keypres_counter_old=0; overflow=0;\
+RHSofDP = 0;expnt_result = 0;
+
 
 
 
@@ -195,16 +245,6 @@ case '0': if (clock_buf[6] > '0') clock_buf[6]--; else {clock_buf[6] = '3';clock
 	while (!(TWCR & (1 << TWINT)));}\
 	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);	
 
-
-#define initialise_IO;\
-MCUCR &= (~(1 << PUD));\
-DDRB = 0;\
-DDRC = 0;\
-DDRD = 0;\
-PORTB = 0xFF;\
-PORTC = 0xFF;\
-PORTD = 0xFF;\
-PORTC &= (~(1 << PC3));								//WPU causes contention issues with UNO??
 
 
 		
