@@ -61,6 +61,9 @@ char keypress;
 int main (void){ 
 char target_detected = 0;
 
+if (MCUSR & (1 << PORF))MCUSR = (1 << PORF);			//EXTRA line:  POR is sometimes accompanied by EXTRF and BOR
+
+
 if ((!(MCUSR & (1 << EXTRF)))||\
 (!(eeprom_read_byte((uint8_t*)0x3F9))))				//External programmer sets EEPROM location 0x3F9 to zero 			 
 {eeprom_write_byte((uint8_t*)0x3F9,1);					//FOR POR, BOR or WDTime out or immediately after 
