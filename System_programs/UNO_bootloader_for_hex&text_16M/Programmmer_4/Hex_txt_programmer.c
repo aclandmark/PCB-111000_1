@@ -14,16 +14,30 @@ Control is always passed back to the "Hex_text programmer" using a WDTout and EE
 Other WDTouts required to lauch the user app at address 0x0000 can therefore be identified.
 
 
-PCB_A reset control:	The pcb_a reset switch signals lines PD5 or PD6 (for CA/CC displays) 
-						and also puts the UNO device into reset for several mS.
+Reset control is managed using two EEPROM locaions, 0x3FC and 0x3F7.
+0x3FC contains the value of MCUSR relevent to the user application
+POR and BOR resets cause an immediate jump to the user application.
+MCUSR is copied directly to 0x3FC
+WDTouts are used by both programmer and user applications.
+They are used to exit the text and hex verification routines.  
+These WDTouts are identified by writing 1 to bit 7 of 0x3FC.
+WDTouts are also used when mode r (run) is selectd at the h/t/r/D use prompt
+or when the PCB_A reset switch is pressed.
+There they are identified by setting 0x3F7 to zero as a result of which 0x3FC is set to 1 << EXTRST.
+For user app generated WDTouts MCUSR is copied directly to 0x3FC and program control jumps straight to location zero.
 
-						Depending on the line state program control either jumps to the user app or 
-						the programmer user prompt. 
-						(Both lines are connected to simply pcb development.)
+
+
+PCB_A reset signalling line:	The pcb_a reset switch signals lines PD5 or PD6 (for CA/CC displays) 
+								and also puts the UNO device into reset for several mS.
+
+								Depending on the line state program control either jumps to the user app or 
+								the programmer user prompt. 
+								(Both lines are connected to simply pcb development.)
 						
-						A single click of pcb_a reset switch returns control to the user app
-						A double click returns controll to the hex/text programmer and also enables 
-						the pcb bootloader to run so that the UNO can be reprogrammed.
+								A single click of pcb_a reset switch returns control to the user app
+								A double click returns controll to the hex/text programmer and also enables 
+								the pcb bootloader to run so that the UNO can be reprogrammed.
 						
 Note: 	Assumes PCB_A is loaded with Common Cathode displays for which the signalling line (PB2) defaults to high.
 
@@ -73,14 +87,22 @@ CLKPR = (1 << CLKPS0);
 MCUSR_copy = MCUSR;											//Save MCUSR in MCUSR_copy
 if (eeprom_read_byte((uint8_t*)0x3FC) & 0x80)				//Verification routines set bit 7 of EEPROM 0x3FC
 MCUSR_copy |= 0x80;											//Make bit 7 of MCUSR_copy the same as bit 7 of EEPROM 0x3FC
-eeprom_write_byte((uint8_t*)0x3FC, MCUSR);					//Save MCUSR in EEPROM 0x3FC for use by App (clears bit 7).
+
+
+
+if(!(eeprom_read_byte((uint8_t*)0x3F7)))
+{eeprom_write_byte((uint8_t*)0x3FC, (1 << EXTRF));			//Save MCUSR in EEPROM 0x3FC for use by App (clears bit 7).
+eeprom_write_byte((uint8_t*)0x3F7, 0xFF);}
+else eeprom_write_byte((uint8_t*)0x3FC, MCUSR);
+
+
 MCUSR = 0;													//Clear all reset flags
 
 
 switch(MCUSR_copy){
 case 2:														//Ext reset: Set by PCB_A programmer or single/double click of PC_A reset switch
 case 0x88: break;											//WDTout + return from Hex/Text verification
-default: 
+default: 													//POR, WDTout, BOR
 		Prog_mem_address_H = 0;
 		Prog_mem_address_L = 0;
 		read_flash ();
@@ -95,30 +117,28 @@ MCUCR = (1<<IVSEL);
 
 //if ((PIND & (1 << PIND5)))								//Reset control CA display: PD5 is connected to PCB_A PB1 which defaults low
 if (!(PIND & (1 << PIND6)))								//Connected to PCB_A PB2 which can be set with the PCB_A reset switch (defaults high).
-{wdt_enable(WDTO_30MS); while(1);}							  
+{eeprom_write_byte((uint8_t*)0x3F7,0);
+wdt_enable(WDTO_30MS); while(1);}							  
 							
 
 while(1){													//Returns here following programming with/without verification or 
 do{sendString("h/t/r/D\t");}								//double click of PCB_A reset switch
-while((isCharavailable(300) == 0));                        //User prompt
+while((isCharavailable(255) == 0));                        //User prompt
 
 switch (receiveChar()){ 
-case 'h': 	mode = 'h'; hex_programmer(); 					//Request standard hex file download
-			sendString("UNO OK\t"); break;
 
 case 't': 	mode = 't'; text_programmer(); 					//Request standard text file ownload
-			sendString("OK\t"); 
 			break;                      
 	
 case 'r':	Prog_mem_address_H = 0;
 			Prog_mem_address_L = 0;
 			read_flash ();
 			if (Flash_readout == 0xFF)asm("jmp 0x5E80");	//Detect the absense of an User App and run default app.
-			eeprom_write_byte((uint8_t*)0x3FC,0);			//Indicates user program is being launched using a WDTout
+			eeprom_write_byte((uint8_t*)0x3F7,0);			//Indicates user program is being launched using a WDTout
 			wdt_enable(WDTO_15MS); 							//Run the user application (WDTout triggers jump to 0x0000)
 			while(1);break; 
 
-case 'H': 	mode = 'h';hex_programmer();					//Hex file download with verification
+case 'h': 	mode = 'h';hex_programmer();					//Hex file download with optional verification
 			asm("jmp 0x6180");	
 			while(1);break;
 
@@ -171,7 +191,7 @@ w_pointer = 0; r_pointer = 0;										//Initialise variables
 text_started =0; endoftext =3;txt_counter = 0;
 Rx_askii_char_old = '0';
 
-newline(); sendString("TF?");
+sendString("\r\nText_F?");
 
 Timer_T0_sub_with_interrupt(5,0);									//Start Timer0 with interrupt
 UCSR0B |= (1<<RXCIE0); 											//Activate UART interrupt
@@ -230,7 +250,7 @@ prog_led_control = 0;  record_length_old=0; prog_counter = 0;		//Initialise vari
 Flash_flag = 0;  HW_address = 0;  section_break = 0; orphan = 0; 
 w_pointer = 0; r_pointer = 0; short_record=0;  cmd_counter = 0;
 
-newline(); sendString("HF?");
+sendString("\r\nHex_F?");
 
 UCSR0B |= (1<<RXCIE0); sei();										//Receive interrupts now active
 
