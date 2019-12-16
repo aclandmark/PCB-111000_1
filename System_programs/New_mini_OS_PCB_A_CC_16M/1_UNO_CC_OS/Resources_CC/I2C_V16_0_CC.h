@@ -58,9 +58,9 @@ char result[4];
 int accumlator, interim_result;
 
 
-
-
-
+char clock_flag;
+char PIC_cmd;
+char Ten_mS_tick_counter;
 
 
 
