@@ -6,6 +6,8 @@ long calibrate_quick_cal(char);
 void start_T2_for_ATMEGA_168_cal(char);
 long emergency_restore_operation(void);	
 void Cal_at_Power_on_Reset (void);
+long compute_abs_error(void);
+void Plot_cal(void);
 void I2C_master_transmit(char);
 
 
@@ -55,34 +57,15 @@ cal_error = compute_error(0);
 		return error/10;}
 		
 	
-
-	/************************************************************************************/
-		long calibrate_quick_cal(char OSCCAL_test)
-		{long cal_error, error_mem;	
-		T1_OVF=0;
-		OSCCAL = OSCCAL_test;		
-		cal_error = compute_error(0);						//compute error for OSCCAL_test
-		error_mem = cal_error;
-		OSCCAL++;											//increment OSCALL
-		while(1){
-		cal_error = compute_error(0);						//Calculate new error
-		if (cal_error > error_mem) { 										//If it gets worse
-		OSCCAL--; break;}									//decrement OSCCAL and exit							
-		error_mem = cal_error;							
-		OSCCAL++;}
-		if (OSCCAL != OSCCAL_test)	return error_mem;		//REPLACE with OSCCAL_DV when OSCCAL_test is discarded
-		else{												//OSCCAL is still the default value
-		OSCCAL--;
-		while(1){
-		cal_error = compute_error(0);
-		if (cal_error > error_mem){ 						//If it gets worse
-		OSCCAL++;
-		break;}												//increment OSCCAL and exit
-		error_mem = cal_error;							
-		OSCCAL--;}}
-		return error_mem;}
-		
 	
+	/************************************************************************************/
+		long compute_abs_error(void)		
+		{long error;
+		EA_counter = 0;										//Compute error for each value of OSCCAL 10 times
+		error_SUM = 0;
+		while(EA_counter < 15);EA_counter = 0;
+		error = error_SUM;
+		return error/10;}										
 
 	/************************************************************************************/
 		void start_T2_for_ATMEGA_168_cal(char cal_mode){
@@ -149,8 +132,36 @@ cal_error = compute_error(0);
 		
 		close_calibration;
 		cli();	}
+	
+
+/************************************************************************************/
+		long calibrate_quick_cal(char OSCCAL_test)
+		{long cal_error, error_mem;	
+		T1_OVF=0;
+		OSCCAL = OSCCAL_test;		
+		cal_error = compute_error(0);						//compute error for OSCCAL_test
+		error_mem = cal_error;
+		OSCCAL++;											//increment OSCALL
+		while(1){
+		cal_error = compute_error(0);						//Calculate new error
+		if (cal_error > error_mem) { 										//If it gets worse
+		OSCCAL--; break;}									//decrement OSCCAL and exit							
+		error_mem = cal_error;							
+		OSCCAL++;}
+		if (OSCCAL != OSCCAL_test)	return error_mem;		//REPLACE with OSCCAL_DV when OSCCAL_test is discarded
+		else{												//OSCCAL is still the default value
+		OSCCAL--;
+		while(1){
+		cal_error = compute_error(0);
+		if (cal_error > error_mem){ 						//If it gets worse
+		OSCCAL++;
+		break;}												//increment OSCCAL and exit
+		error_mem = cal_error;							
+		OSCCAL--;}}
+		return error_mem;}
 		
-		
+	
+	
 	/************************************************************************************/	
 	void manual_cal_PCB_A_device(void){
 		if (I2C_data[0] == 1){								//Manual calibration if cal_mode is 1
@@ -223,10 +234,27 @@ Initialise_I2C_master_write;
 	I2C_master_transmit(OSCCAL);
 	I2C_master_transmit(cal_error >> 8);
 	I2C_master_transmit(cal_error);
-	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
-	}}
+	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);	}}
+
+
 
 		
+/************************************************************************************/		
+void Plot_cal(void){		
 		
-		
+OSCCAL_DV = eeprom_read_byte((uint8_t*)0x3FD);
+for(int m = 0x10; m <= 0xF0; m++){
+
+Get_ready_to_calibrate;
+OSCCAL = m;
+cal_error = compute_abs_error();
+OSCCAL = OSCCAL_DV;
+close_calibration;
+
+Initialise_I2C_master_write;
+I2C_master_transmit(cal_error >> 24);
+I2C_master_transmit(cal_error >> 16);
+I2C_master_transmit(cal_error >> 8);
+I2C_master_transmit(cal_error);
+TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);}}	
 		
