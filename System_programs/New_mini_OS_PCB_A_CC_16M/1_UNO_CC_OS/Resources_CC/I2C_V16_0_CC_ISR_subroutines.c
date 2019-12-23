@@ -82,7 +82,7 @@ TCCR1B = 0;							//Halt T1
 TCNT1_BKP = TCNT1;					//Copy the value of TCNT1
 TCNT1 = 0;							//Clear TCNT1
 TCCR1B = 1;							//Get T1 running again ASAP (Note T2 has not stopped running)
-if(EA_counter < 5)T1_OVF = 0;					//Ignore first 5 results
+if(EA_counter < 5)T1_OVF = 0;		//Ignore first 5 results
 else
 {switch(T1_OVF){
 case 0: error_SUM = error_SUM + (TCNT1_BKP - 62500); break;
