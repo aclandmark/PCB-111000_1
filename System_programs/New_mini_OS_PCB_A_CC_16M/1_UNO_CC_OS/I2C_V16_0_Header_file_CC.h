@@ -7,3 +7,5 @@
 # include "Resources_CC/I2C_V16_0_CC_modes_B_to_F.c"
 
 # include "Resources_CC/I2C_V16_0_CC_clock_stop_watch_subroutines.c"
+# include "Resources_CC/I2C_V16_CC_Eeprom_subroutines.c"
+# include "Resources_CC/mode_definitions.h"
