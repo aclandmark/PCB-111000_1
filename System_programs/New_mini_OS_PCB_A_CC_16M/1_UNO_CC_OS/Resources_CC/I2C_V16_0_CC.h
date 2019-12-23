@@ -16,6 +16,7 @@ void I2C_Tx_Uarithmetic_OP (void);
 void I2C_Tx_Compile_tables(void);
 void I2C_Tx_accumulator_1(void);
 void I2C_Tx_accumulator_2(void);
+void Message_from_the_OS(void);
 
 volatile char payload_size;							//zero to hide clock, 1 to update 10mS 2 to update 100ms and 8 to update seconds
 volatile int disp_ptr;
