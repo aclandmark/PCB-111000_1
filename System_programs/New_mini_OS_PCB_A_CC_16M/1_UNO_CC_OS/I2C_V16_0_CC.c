@@ -177,43 +177,17 @@ case 'k': case 'K':	I2C_Tx_real_num;break;						//Displays a real number
 
 case 'I': case 'i':	I2C_Tx_float_num;break;						//Scrolls scientific number accross the display												
 
+case 'Q': case 'q':	Multiplexer_demo; break;
 
-
-
-
-
-
-
-
-
-
-
-
-case 'M': case'm': I2C_Rx_get_version; break;
+case 'S': case 's':	Plot_cal(); break;							//Scans 328 cal-factor fronmm 0x10 to 0xF0
 
 case 'N': case'n': manual_cal_PCB_A_device(); break;															
 
-case 'O': case'o': break;										//Obsolete cal routine																					
+case 'R': case 'r':	PCB_test; break;							//For manufacturing test
 
-case 'P': case 'p': start_T2_for_ATMEGA_168_cal(1);	break;		//Obsolete: Generates 7_8125mS TWI slave interrupt  																				
+case 'M': case'm': I2C_Rx_get_version; break;
 
-case 'Q': case 'q':	Multiplexer_demo; break;
-
-case 'R': case 'r':	PCB_test; break;							//For manufacturint test
-
-case 'S': case 's':	Plot_cal(); break;							//Scans 328 cal-factor fronmm 0x10 to 0xF0
-		
 case 'W': case 'w':  I2C_Tx_LED_dimmer;break;
-
-case 'x': case 'X': diagnostic_mode;break;						//User enters 'x' at the p/r prompt and the mini-OS enters a at Eeprom location 0x3FC
-
-
-case 'Z': case 'z':	Read_AT328_EEPROM;break;					//Used to restore UNO device EEPROM from backup version on pcb_A device
-
-
-
-
-case 6:	unknown; break;											//1 signed integer													
 
 
 }}}
