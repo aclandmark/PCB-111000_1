@@ -1,7 +1,7 @@
 
 
 void basic_clock (void){
-for (int m = 0; m < 8; m++){									//AT_clock_mode =7 receives 8 chars (hours mins secs)
+for (int m = 0; m < 8; m++){									//AT_clock_mode = C receives 8 chars (hours mins secs)
 clock_buf[7-m] = I2C_data[m];}	
 refresh_clock_display;
 TCCR2B = 2;														//Set clock to 4096Hz and start it
