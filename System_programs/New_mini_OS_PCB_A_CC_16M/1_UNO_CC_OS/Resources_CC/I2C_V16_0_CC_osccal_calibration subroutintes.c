@@ -101,12 +101,12 @@ cal_error = compute_error(0);
 		Timer_T1_sub(T1_delay_500ms);
 		MCUSR &= (~(1 << PORF));
 		
-		mode = 'T';											//Required by ISR(TIMER1_OVF_vect) & (TIMER2_OVF_vect)
+		mode = 'S';		//T									//Required by ISR(TIMER1_OVF_vect) & (TIMER2_OVF_vect)
 		Get_ready_to_calibrate;
 		calibrate_plus_warm_up_time;
 		
 		if(cal_error > 1250){								//Rough clock calibration for error in excess of 1250
-		mode = 'U';											//UC with error > 1250 ensures that calibration 
+		mode =  'T';     //'U';											//UC with error > 1250 ensures that calibration 
 		initialise_timers_for_cal_error();					//centres on the lower of the two possible values for OSCCAL
 		start_timers_for_cal_error();
 		for(int m = 0x10; m <= 0xF0; m++)					//sample OSCCAL values from 0x10 upwards utill error < 1250
@@ -116,7 +116,7 @@ cal_error = compute_error(0);
 		else error_mag = cal_error * (-1);
 		if ((error_mag < 1000) && (m > 0x14))break;}}		//Warmup time for first 4 vaues of m 
 		
-		mode = 'O';											//Fine clock calibration
+		mode = 'R';  //'O';											//Fine clock calibration
 		OSCCAL_init = OSCCAL;
 		initialise_timers_for_cal_error();  				
 		start_timers_for_cal_error();
