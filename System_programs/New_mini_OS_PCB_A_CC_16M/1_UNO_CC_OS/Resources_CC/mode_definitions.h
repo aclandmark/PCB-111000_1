@@ -47,8 +47,8 @@ default: letter = 8; break;	}\
 if(letter == 8)break;\
 if((digit_num >= 8) || (digit_num < 0))break;\
 \
-if (mode == 'A'){clear_digits;clear_display;}\
-if (mode == 'a'){if(display_buf[letter] & (1 << digit_num))display_buf[letter] &= (~(1 << digit_num));\
+if (mode == 2){clear_digits;clear_display;}\
+if (mode == 3){if(display_buf[letter] & (1 << digit_num))display_buf[letter] &= (~(1 << digit_num));\
 else display_buf[letter] |= (1 << digit_num);} 
 
 
