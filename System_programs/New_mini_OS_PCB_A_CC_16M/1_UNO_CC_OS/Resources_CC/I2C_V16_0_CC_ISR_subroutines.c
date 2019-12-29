@@ -16,7 +16,8 @@ case 6: TCNT0 = 100;break;	//20ms period
 case 7: TCNT0 = 0; break;	//33ms period
 default: TCNT0 = 0;	break;}	//2mS period
 
-if((mode == 'G') || (mode == 'g')){
+//if((mode == 'G') || (mode == 'g')){
+if(mode == 'F'){
 TIMSK2 &= (!((1 << OCIE2A) | (1 << TOV2)));
 sei();
 Display_driver(); 
@@ -27,7 +28,8 @@ else {Display_driver(); }}
 if(eeprom_read_byte((uint8_t*)0x3FB) == 0x01){			//Low level brightness
 
 if(!(T0_interupt_cnt)){
-if((mode == 'G') || (mode == 'g')){
+//if((mode == 'G') || (mode == 'g')){
+if(mode == 'F'){
 TIMSK2 &= (!((1 << OCIE2A) | (1 << TOV2)));
 sei();
 Display_driver(); 
@@ -57,14 +59,18 @@ case 3: T0_interupt_cnt = 0; break;}
 
 ISR(TIMER1_OVF_vect) {
 switch (mode){
-case 'C':  case 'c':
+//case 'C':  case 'c':
+case 9:
 {if(!(mode_C_ptr)){for(int m = 0; m<=7; m++)display_buf[m]=0;}
 display_buf[7-mode_C_ptr] = '_';
 mode_C_ptr++; mode_C_ptr=mode_C_ptr%8;
 timer_T1_sub_with_interrupt(T1_delay_500ms);} break;
 
-case 'N':  case 'n': case 'O':  case 'o': case 'S':  case 's': 
-case 'T':  case 't': case 'U': case 'u': T1_OVF += 1; break;
+//case 'N':  case 'n': case 'O':  case 'o': case 'S':  case 's': 
+//case 'T':  case 't': case 'U': case 'u': T1_OVF += 1; break;
+
+case 'N':  case 'R': case 'M':  
+case 'S':  case 'T':  T1_OVF += 1; break;
 
 default: T1_ovf_flag = 1; TCCR1B = 0; break;}}
 
@@ -72,12 +78,14 @@ default: T1_ovf_flag = 1; TCCR1B = 0; break;}}
 
 ISR(TIMER2_OVF_vect) {
 long TCNT1_BKP;
-char cal_168_mode;
+//char cal_168_mode;
 switch (mode){
-case 'I':  case 'i': timer_2_counter++; if(timer_2_counter == 3)
+//case 'I':  case 'i': timer_2_counter++; if(timer_2_counter == 3)
+case 'K':  timer_2_counter++; if(timer_2_counter == 3)
 {timer_2_counter=0; display_float(Sc_Num_string);} break;
 
-case 'N':  case 'n':  case 'O':  case 'o': case 'S':  case 's': case 'T':  case 't':
+//case 'N':  case 'n':  case 'O':  case 'o': case 'S':  case 's': case 'T':  case 't':
+case 'N':  case 'R': case 'M':  case 'S':  
 TCCR1B = 0;							//Halt T1
 TCNT1_BKP = TCNT1;					//Copy the value of TCNT1
 TCNT1 = 0;							//Clear TCNT1
@@ -90,14 +98,15 @@ case 1: error_SUM = error_SUM + (TCNT1_BKP - 62500 + 65536); break;
 case 2: error_SUM = error_SUM + (TCNT1_BKP - 62500 + 131072); break;}
 T1_OVF = 0;}EA_counter++;break;
 
-case 'P': case 'p':
+/*case 'P': case 'p':OBSOLETE
 Initialise_I2C_master_read;
 cal_168_mode = (I2C_master_receive(0));	
 TWCR = (1 << TWINT ) | (1 << TWEN ) | (1 << TWSTO );
 if(cal_168_mode); else start_T2_for_ATMEGA_168_cal(0);				
-break;
+break;*/
 
-case 'U': case 'u':	
+//case 'U': case 'u':
+case 'T':	
 TCCR1B = 0;							//Halt T1
 TCNT1_BKP = TCNT1;					//Copy the value of TCNT1
 TCNT1 = 0;							//Clear TCNT1
@@ -111,8 +120,10 @@ T1_OVF = 0;}EA_counter++;break;
 
 default:
 timer_2_counter++; if(timer_2_counter == 16){timer_2_counter=0; 
-if((mode != 'G')&&(mode != 'g')){update_timer (); Ten_mS_tick = 41;}			//Internal clock modes 7,8 and 9
-if((mode == 'G') || (mode == 'g')){ OCR2A = 41;Ext_tick();}}break;}}
+//if((mode != 'G')&&(mode != 'g')){update_timer (); Ten_mS_tick = 41;}			//Internal clock modes 7,8 and 9
+//if((mode == 'G') || (mode == 'g')){ OCR2A = 41;Ext_tick();}}break;}}
+if(mode != 'F') {update_timer (); Ten_mS_tick = 41;}			//Internal clock modes 7,8 and 9
+if(mode == 'F') { OCR2A = 41;Ext_tick();}}break;}}
 
 
 
