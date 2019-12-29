@@ -119,7 +119,6 @@ MCUCR = (1<<IVSEL);
 if (!(PIND & (1 << PIND6)))								//Connected to PCB_A PB2 which can be set with the PCB_A reset switch (defaults high).
 {eeprom_write_byte((uint8_t*)0x3F7,0);
 wdt_enable(WDTO_30MS); while(1);}							  
-							
 
 while(1){													//Returns here following programming with/without verification or 
 do{sendString("h/t/r/D\t");}								//double click of PCB_A reset switch
