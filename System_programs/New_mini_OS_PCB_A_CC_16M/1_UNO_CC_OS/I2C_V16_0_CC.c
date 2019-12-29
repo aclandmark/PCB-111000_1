@@ -41,7 +41,7 @@ char *SW_info = "SW information: Operating system I2C_V16_1_UNO_CC\
 	
 
 
-/****Watchdog initiated for mode G only (user clock/stop watch with
+/****Watchdog initiated for mode F only (user clock/stop watch with
 external 10mS crystal interrupt).*********/
 
 /***********Brown-out:  This is set (using config bits only) for 2.9V*************/
@@ -84,9 +84,9 @@ Ten_mS_tick_counter = 0;
 
 
 	
-if((eeprom_read_byte((uint8_t*)0x3FB) == 0xFF) ||\
- (eeprom_read_byte((uint8_t*)0x3FB) == 0x01));			//Check multiplexer control has a valid value 
-else eeprom_write_byte((uint8_t*)0x3FB,0x01);			//(i.e. for normal or bright display)
+//if((eeprom_read_byte((uint8_t*)0x3FB) == 0xFF) ||\
+// (eeprom_read_byte((uint8_t*)0x3FB) == 0x01));			//Check multiplexer control has a valid value 
+//else eeprom_write_byte((uint8_t*)0x3FB,0x01);			//(i.e. for normal or bright display)
 
 sei();
 T0_interupt_cnt = 0;	
@@ -95,16 +95,25 @@ MUX_cntl = 0;
 if(eeprom_read_byte((uint8_t*)0x3FB) == 0xFF)
 {timer_T0_sub_with_interrupt(T0_delay_2ms);}			//Full display brightness
 else 
-{timer_T0_sub_with_interrupt(T0_delay_500us);}			//Normal display brightness
+{eeprom_write_byte((uint8_t*)0x3FB,0x01);
+timer_T0_sub_with_interrupt(T0_delay_500us);}			//Normal display brightness
 	
 	
 	
 	
 while(1){
 
-while((mode == 'G')||(mode == 'g')\
+/*while((mode == 'G')||(mode == 'g')\
 ||(mode == 'I')||(mode == 'i')\
- || (mode == 'P')||(mode == 'p'));	
+ || (mode == 'P')||(mode == 'p'));*/
+
+
+
+while((mode == 'F') || (mode == 'K'));
+
+
+
+	
 /********Code parks here following WDT, POR and Brown-out***************/
 while(1){
 TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);			//send a start condition  (this identical to a "repeated start")
@@ -122,9 +131,11 @@ payload_size = I2C_master_receive(1);
 if(payload_size)mode = I2C_master_receive(1);
 else mode = I2C_master_receive(0);
 
-if (mode != 'B') display_mask=0;							//dissable flashing digits
+//if (mode != 'B') display_mask=0;							//dissable flashing digits
+if (mode != 8) display_mask=0;							//dissable flashing digits
 
-if(payload_size){															//payload is zero for mode 'G'
+
+if(payload_size){															//payload is zero for mode 'F'
 
 for (int m = 0; m < payload_size; m++){									//payload_size = Num digits to be downloaded
 	if (m == (payload_size-1))I2C_data[m] = I2C_master_receive(0);
@@ -132,64 +143,71 @@ for (int m = 0; m < payload_size; m++){									//payload_size = Num digits to b
 	TWCR =  (1 << TWINT ) | (1 << TWEN ) | (1 << TWSTO );}				//Send stop bit	
 
 switch(mode){
-case 'a': case 'b': case 'B':case 'd': case 'D': case 'g': 
-case 'G': case 'j': case 'J': case 'w': case 'W': break;
+//case 'a': case 'b': case 'B':case 'd': case 'D': case 'g': 
+//case 'G': case 'j': case 'J': case 'w': case 'W': break;
+
+case 3:  case 8: case 7:  
+case 'F': case 'I':  case 'Q': break;
+
+
+
 default: {for(int m = 0; m < 8; m++)display_buf[m] = 0;}break;}			//case B added
 
 switch (mode){
 
 
-case 4:	I2C_Tx_2_integers; break;								//Uses the 32 vertical segments to display two binary numbers
+case 1:	I2C_Tx_2_integers; break;		//4						//Uses the 32 vertical segments to display two binary numbers
 
-case 'A': case 'a':	I2C_Tx_any_segment;	break;					//Illuminates/clears any of the 56 segments
+case 2: 								//A
+case 3: I2C_Tx_any_segment;	break;	//a						//Illuminates/clears any of the 56 segments
 	
-case 1: I2C_Tx_8_byte_array; break;								//Display a string of 8 digits
+case 4: I2C_Tx_8_byte_array; break;								//Display a string of 8 digits
 
 case 5:	I2C_Tx_display_char; break;								//Displays +/- char as number and binary																												
 
-case 'H': case 'h':	I2C_Tx_long;break;							//Displays 8 digit number
+case 6: I2C_Tx_long;break;							//Displays 8 digit number
 
-case 'D': case 'd':	I2C_Tx_Compile_tables();break;				//I2C_Tx_Initiate_tables() and I2C_Tx_Inc/dec_tables()
+case 7: I2C_Tx_Compile_tables();break;				//I2C_Tx_Initiate_tables() and I2C_Tx_Inc/dec_tables()
 
-case 'B': case 'b':	I2C_Tx_2URNs_from_IO();break;				//Generates numbers of type 0.1234 With an exponent											
+case 8: I2C_Tx_2URNs_from_IO();break;				//Generates numbers of type 0.1234 With an exponent											
 	
-case 'C': case 'c': I2C_Tx_Uarithmetic_OP();break;				//Takes numbers entered using mode B and does some arithmetic
+case 9: I2C_Tx_Uarithmetic_OP();break;				//Takes numbers entered using mode B and does some arithmetic
 
-case 'E': case 'e':	I2C_Tx_accumulator_1();	break;				//Implements add, subtract and clear modes											
+case 'A': I2C_Tx_accumulator_1();	break;				//Implements add, subtract and clear modes											
 
-case 'F': case 'f':	I2C_Tx_accumulator_2();break;				//Aquires data for use by accumulator											
+case 'B': I2C_Tx_accumulator_2();break;				//Aquires data for use by accumulator											
 
-case 7: basic_clock(); break;									//I2C_Tx_OS_timer(AT_clock_mode, start_time): Starts the timer/clock
+case 'C': basic_clock(); break;									//I2C_Tx_OS_timer(AT_clock_mode, start_time): Starts the timer/clock
 
-case 8: multi_mode_clock(); break;								//Used with subroutine I2C_Tx_Clock_command(char timer_mode, char command): Controls the timer/clock
+case 'D': multi_mode_clock(); break;								//Used with subroutine I2C_Tx_Clock_command(char timer_mode, char command): Controls the timer/clock
 
-case 9: stop_watch(); break;									//Used by I2C_Tx_Clock_command(one100ms_mode) and I2C_Tx_Clock_command(ten_ms_mode)
+case 'E': stop_watch(); break;									//Used by I2C_Tx_Clock_command(one100ms_mode) and I2C_Tx_Clock_command(ten_ms_mode)
 
-case 'G': case 'g': I2C_initiate_10mS_ref;break;				//Ten_mS_interrupt for combined clock and stopwatch;	
+case 'F': I2C_initiate_10mS_ref;break;				//Ten_mS_interrupt for combined clock and stopwatch;	
 	
-case 3: I2C_Tx_BWops; break;									//Used to illustarte bit wise logic operations
+case 'G': I2C_Tx_BWops; break;									//Used to illustarte bit wise logic operations
 
-case 'Y': case 'y':	Message_from_the_OS();break;																			
+case 'H': Message_from_the_OS();break;																			
 
-case 'J': case 'j':	I2C_displayToLong;break;					//Converts display to long number and transmits it to the UNO device														
+case 'I': I2C_displayToLong;break;					//Converts display to long number and transmits it to the UNO device														
 
-case 'k': case 'K':	I2C_Tx_real_num;break;						//Displays a real number														
+case 'J': I2C_Tx_real_num;break;						//Displays a real number														
 
-case 'I': case 'i':	I2C_Tx_float_num;break;						//Scrolls scientific number accross the display												
+case 'K': I2C_Tx_float_num;break;						//Scrolls scientific number accross the display												
 
-case 'Q': case 'q':	Multiplexer_demo; break;
+case 'L': Multiplexer_demo; break;
 
-case 'S': case 's':	Plot_cal(); break;							//Scans 328 cal-factor fronmm 0x10 to 0xF0
+case 'M': Plot_cal(); break;							//Scans 328 cal-factor fronmm 0x10 to 0xF0
 
-case 'N': case'n': manual_cal_PCB_A_device(); break;															
+case 'N': manual_cal_PCB_A_device(); break;															
 
-case 'R': case 'r':	PCB_test; break;							//For manufacturing test
+case 'O': PCB_test; break;							//For manufacturing test
 
-case 'M': case'm': I2C_Rx_get_version; break;
+case 'P': I2C_Rx_get_version; break;
 
-case 'W': case 'w':  I2C_Tx_LED_dimmer;break;
+case 'Q': I2C_Tx_LED_dimmer;break;
 
-
+default: break;
 }}}
 
 /**********Modes 'T' and 't' are not available***************************/
