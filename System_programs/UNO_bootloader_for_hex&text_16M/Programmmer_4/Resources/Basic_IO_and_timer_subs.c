@@ -49,7 +49,7 @@ return UDR0;}
 
 
 /*********************************************************************************************/
-void newline(void){sendString ("\r\n");}
+//void newline(void){sendString ("\r\n");}
 
 
 
