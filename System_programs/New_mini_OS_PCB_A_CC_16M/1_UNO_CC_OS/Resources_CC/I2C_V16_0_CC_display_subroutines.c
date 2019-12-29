@@ -106,21 +106,26 @@ switch(buf_ptr){
 	case 5: if (display_mask & 0x20){if ((strobe[5]++)%18 <= 12) {digit_5;}} else{digit_5;} break;
 	case 6: if (display_mask & 0x40){if ((strobe[6]++)%18 <= 12) {digit_6;}} else{digit_6;} break;
 	case 7: if (display_mask & 0x80){if ((strobe[7]++)%18 <= 12) {digit_7;}} else{digit_7;} break;}
+
 switch(mode){
-case 1:
-case 7: 
-case 8:
-case 9:
-case 'b': case 'B': case 'c': case 'C':
+case 4: case 6: case 7: case 8: case 9:
+case 'A': case 'B': case 'C': 
+case 'D': case 'E': case 'F': 
+/*case 'b': case 'B': case 'c': case 'C':
 case 'd': case 'D': case 'e': case 'E': case 'f': case 'F': 
 case 'g': case 'G': case 'h': case 'H': case 'i': case 'I':
 case 'j': case 'J': case 'k': case 'K': case 'M': case 'm':
-case 'Q': case 'q': Char_definition(); break;
-case 'a':
-case 'A':
-case 3: Seg_definitions(); break;  
-case 4:
-case 6:
+case 'Q': case 'q':*/ 
+case 'I': case 'J': case 'K':
+case 'L': case 'P': 
+Char_definition(); break;
+
+case 2:
+case 3: 
+case 'G': Seg_definitions(); break; 
+  
+case 1:
+//case 6 Obsolete
 switch(buf_ptr){
 case 0: 	if(display_buf[0] & 0x01) one_U; if (display_buf[0] & 0x02) ONE_U;
 			if(display_buf[2] & 0x01) one_L; if (display_buf[2] & 0x02) ONE_L; break;
