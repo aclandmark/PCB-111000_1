@@ -17,6 +17,8 @@ void string_to_slave_I2C(char *);
 unsigned long Binary_points_to_Decimal_L (unsigned int, unsigned int);
 long Binary_points_to_Decimal_Signed (long);
 
+
+
 /*********************************************************************/
 void Disp_Hex(int n){ 
 unsigned char i; int sign;
@@ -31,6 +33,8 @@ display_buf[i] = n % 10  +  '0';
 i++;
 }while((n/=10)>0);
 if (sign < 0)display_buf[i] = '-';}}
+
+
 
 /*********************************************************************/
 void Disp_CharS(signed char n){ 
@@ -47,6 +51,7 @@ i++;
 if (sign < 0)display_buf[i] = '-';}}
 
 
+
 /*********************************************************************/
 void Disp_CharU(unsigned char n){ 
 unsigned char i; 
@@ -56,6 +61,7 @@ do{
 display_buf[i] = n % 10  +  '0';
 i++;
 }while((n/=10)>0);}
+
 
 
 /*********************************************************************/
@@ -73,7 +79,7 @@ else{
 result[i] = num % 10  +  '0'; i++;}while((num/=10)>0);				//convert number to string
 
 if (i > 8) {for(int m = 0; m <= 7; m++){result[m] = result[m+i-8];}}  
-if (i < 8) exponent++;}				//not sure why last expression is needed
+if (i < 8) exponent++;}				
 
 zero_counter = 0; while (result[zero_counter] == '0')zero_counter++;	// count the number of trailing zeros
 digit_counter = 8 - zero_counter;
@@ -104,13 +110,15 @@ break;
 case 4:
 {i=0; do{
 result[i] = num % 10  +  '0'; i++;}while((num/=10)>0);}				//convert number to string
-for (int m = 0; m<= 4; m++){display_buf[7-m] = result[8-m];} display_buf[2] = 'X';  //
+for (int m = 0; m<= 4; m++){display_buf[7-m] = result[8-m];} display_buf[2] = 'X';  
 display_buf[1] = exponent/10 + '0';
 display_buf[0] = exponent%10 + '0';
 display_mask = 0b11111000;
 break;}
 
 for(int p = 0; p < 8; p++)strobe[p] = 0;}					//synchronise strobe
+
+
 
 /*********************************************************************/
 void Display_num(long n){
@@ -128,6 +136,8 @@ if (sign < 0)display_buf[i] = '-';}
 else 
 {for(int m = 0; m <= 7; m++)display_buf[m] = '_';}}
 
+
+
 /*********************************************************************/
 void Display_real_num(long number_1){
 unsigned int RHS_of_BP_LB, RHS_of_BP_HB;
@@ -140,17 +150,20 @@ RHS_of_BP_LB = 0;
 RHSDP = Binary_points_to_Decimal_L (RHS_of_BP_LB,  RHS_of_BP_HB);
 
 if(number_1 < 0){
-if (!((number_1 >> 16)+1)){display_buf[7] = '-'; display_buf[6] = '0';}	//sendString("-0");
+if (!((number_1 >> 16)+1)){display_buf[7] = '-'; display_buf[6] = '0';}	
 else displayLongNum(10, ((number_1 >> 16)+1));}
 
 else displayLongNum(10, (number_1 >> 16));
 displayDecimal(10, RHSDP, 5);}
+
+
 
 /*********************************************************************/
 void displayLongNum(char radix, long long_num){
 char array[12];							//Long has 10 chars + sign + null terminator	
 SBtoAL(array, long_num, radix);			//calls the Binary to askii subroutine
 displayNumericString(array);}				//Prints characters in reverse order
+
 
 
 /*********************************************************************/
@@ -178,11 +191,14 @@ if(array[m] < 10)array[m] += '0'; else array[m] += '7';
 m++;} while ((num = num/radix) > 0);
 if (sign < 0) {array[m] = '-';m++;}}
 
+
+
 /*********************************************************************/
 void displayNumericString(char* s){					
 int n=0;
 while (s[n] != '\0')n++;							//scroll to end of string counting the number of characters
 for(int m = n; m; m--)display_buf[7+m-n] = (*(s + m-1));}		//print last character first
+
 
 
 /*********************************************************************/
@@ -198,6 +214,8 @@ for(int k = 0; k <= (8-No_dps); k++)print_out_string[k] = ' ';
 print_out_string[9] = '.'; 
 
 {int m=8, n=0; while(display_buf[m-1]) m--; while(m) {display_buf[m-1] = print_out_string[9-n];m--, n++;}}} 
+
+
 
 /*********************************************************************/
 void float_to_askii(long number, signed char expnt, char *print_out_string)
@@ -256,6 +274,7 @@ Sc_Num_string_pointer=0;
 display_char_skip_counter = 0;}
 
 
+
 /*********************************************************************/
 char decimalOverflow(char radix, unsigned long Hex, int No_dps){
 long inc=1;
@@ -265,6 +284,7 @@ for(int k = 0; k < (8-No_dps); k++)inc = inc*10;
 inc = inc*5;
 Hex += inc;
 if(Hex >= 2000000000)return 0; else return 1;}
+
 
 
 /*********************************************************************/
