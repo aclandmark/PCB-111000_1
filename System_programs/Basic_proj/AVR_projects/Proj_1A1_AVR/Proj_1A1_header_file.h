@@ -12,7 +12,7 @@
 
 void I2C_Tx_2_integers(unsigned int, unsigned int);
 void Timer_T1_sub(char, unsigned int);
-
+void I2C_Tx_LED_dimmer(void);
 
 #define T1_delay_50ms 5,0xFE78
 #define T1_delay_100ms 5,0xFCF2
@@ -28,9 +28,10 @@ void Timer_T1_sub(char, unsigned int);
 #define setup_HW \
 setup_watchdog;\
 Unused_I_O;\
+set_up_switched_inputs;\
 set_up_I2C;\
-ADMUX |= (1 << REFS0);
-
+ADMUX |= (1 << REFS0);\
+I2C_Tx_LED_dimmer();
 
 /*****************************************************************************/
 #define setup_watchdog \
@@ -57,5 +58,13 @@ PORTB = 0xFF;\
 PORTC  = 0xFF;\
 PORTD  = 0xFF;
 
+
+/*****************************************************************************/
+#define set_up_switched_inputs \
+MCUCR &= (~(1 << PUD));\
+DDRD &= (~((1 << PD2)|(1 << PD7)));\
+PORTD |= ((1 << PD2) | (1 << PD7));\
+DDRB &= (~(1 << PB2));\
+PORTB |= (1 << PB2);
 
 
