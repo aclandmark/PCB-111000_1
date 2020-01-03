@@ -48,8 +48,8 @@ char test_num, test_digit, sign_bit;
 
 char *SW_Version = "\r\nOS: I2C_V16_1_UNO_CC\r\n";
 char *SW_info = "SW information: Operating system I2C_V16_1_UNO_CC\
-  Projects V1_7 and Bootloader V5_UNO_CC.\
-  \r\nProgrammed using Project_programmer_AVR\r\n";
+  Projects V1_7 and PCB_A_Bootloader V5_CC.\
+  \r\nProgrammed using Project_programmer_AVR_V1\r\n";
 	
 
 
