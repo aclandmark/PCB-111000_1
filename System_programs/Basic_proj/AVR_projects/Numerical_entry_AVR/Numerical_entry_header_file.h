@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 void display_num_string (const char*, int);
+void I2C_Tx_LED_dimmer(void);
 
 
 void I2C_Tx_any_segment_clear_all(void);
@@ -35,9 +36,11 @@ void USART_init (unsigned char, unsigned char);
 #define setup_HW \
 setup_watchdog;\
 Unused_I_O;\
+set_up_switched_inputs;\
 set_up_I2C;\
 ADMUX |= (1 << REFS0);\
-USART_init(0,16);
+USART_init(0,16);\
+I2C_Tx_LED_dimmer();
 
 
 /*****************************************************************************/
@@ -67,10 +70,21 @@ PORTD  = 0xFF;
 
 
 
-
 /*****************************************************************************/
 #define clear_I2C_interrupt \
 TWCR = (1 << TWINT);
 
 
+
 /*****************************************************************************/
+#define set_up_switched_inputs \
+MCUCR &= (~(1 << PUD));\
+DDRD &= (~((1 << PD2)|(1 << PD7)));\
+PORTD |= ((1 << PD2) | (1 << PD7));\
+DDRB &= (~(1 << PB2));\
+PORTB |= (1 << PB2);
+
+
+
+
+
