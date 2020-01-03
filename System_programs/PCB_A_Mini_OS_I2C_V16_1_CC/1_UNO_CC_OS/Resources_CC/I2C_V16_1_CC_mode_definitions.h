@@ -152,16 +152,6 @@ if (sign_bit == 'u') {Disp_CharU (output_2);}
 
 
 /********************************************************************************************/
-#define unknown; \
-for (int m = 0; m < 2; m++){\
-display_buf[m] = I2C_data[m];}\
-display_buf[2] = display_buf[0];display_buf[3] = display_buf[1];\
-for (int m = 4; m < 8; m++)display_buf[m] = 0;
-
-
-
-
-/********************************************************************************************/
 #define PCB_test; \
 TIMSK0 &= (~(1 << TOIE0));\
 clear_digits; clear_display;\
