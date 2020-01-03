@@ -13,6 +13,7 @@ TWCR = (1 << TWEA) | (1 << TWEN);\
 while (!(TWCR & (1 << TWINT)));\
 TWDR;
 
+
 void I2C_Tx(char, char, char*);
 void send_byte_with_Ack(char);
 void send_byte_with_Nack(char);
@@ -31,10 +32,11 @@ TWCR = (1 << TWINT);}
 
 
 
+
 /*********************************************************************/
 void I2C_Tx_any_segment_clear_all(void){
 char segment = 'a'; char digit_num = 0;
-char s[2]; char num_bytes=2; char mode = 'A';
+char s[2]; char num_bytes=2; char mode = 2;
 s[0] = segment;
 s[1] = digit_num; 
 I2C_Tx(num_bytes,mode, s);}
@@ -43,7 +45,7 @@ I2C_Tx(num_bytes,mode, s);}
 
 /************************************************************************/
 void I2C_Tx_any_segment(char segment, char digit_num){
-char s[2]; char num_bytes=2; char mode = 'a';
+char s[2]; char num_bytes=2; char mode = 3;
 s[0] = segment;
 s[1] = digit_num; 
 I2C_Tx(num_bytes,mode, s);}
@@ -61,11 +63,11 @@ TIFR1 |= (1<<TOV1);
 TCCR1B = 0;}
 
 
+
 /*********************************************************************/
 void Char_to_PC(char data){
 while (!(UCSR0A & (1 << UDRE0)));
 UDR0 = data;}
-
 
 
 
@@ -90,14 +92,12 @@ char receiveChar(void)
 {return UDR0;}
 
 
+
 /*********************************************************************/
 char isCharavailable (char m){int n = 0;
 while (!(UCSR0A & (1 << RXC0))){n++;
 if (n>8000) {m--;n = 0;}if (m == 0)return 0;}
 return 1;}
-
-
-
 
 
 
@@ -125,5 +125,18 @@ void send_byte_with_Nack(char byte){
 TWDR = byte;													//Send payload size: Zero in this case
 TWCR = (1 << TWINT) | (1 << TWEN);								//clear interrupt and set Enable Acknowledge
 while (!(TWCR & (1 << TWINT)));}
+
+
+
+/************************************************************************/
+void I2C_Tx_LED_dimmer(void){
+char Dimmer_control = 0; 
+int m = 0,n = 0;
+
+while((PINB & 0x04)^0x04) 
+{n++;
+if (n>1200) {m+=1;n = 0;}}
+if (m >= 50){Dimmer_control = 1;
+I2C_Tx(1, 'Q', &Dimmer_control);}}
 
 
