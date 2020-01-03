@@ -17,11 +17,15 @@ void I2C_Tx_Compile_tables(void);
 void I2C_Tx_accumulator_1(void);
 void I2C_Tx_accumulator_2(void);
 void Message_from_the_OS(void);
+void basic_clock (void);
+void multi_mode_clock(void);
+void stop_watch(void);
 
-volatile char payload_size;							//zero to hide clock, 1 to update 10mS 2 to update 100ms and 8 to update seconds
+
+volatile char payload_size;							
 volatile int disp_ptr;
-volatile char Char_received, exit_loop = 0, display_mask;		//ISR UART
-volatile char mode=1, timer_mode, inc_secs, inc_mins;					//ISR T0
+volatile char Char_received, exit_loop = 0, display_mask;		
+volatile char mode=1, timer_mode, inc_secs, inc_mins;				
 volatile char display_buf[8], clock_buf[8], stop_watch_buf[8],strobe[8];
 volatile int buf_ptr, mode_C_ptr;
 volatile char T1_ovf_flag=0, timer_2_counter;
@@ -35,17 +39,15 @@ char Sc_Num_string[16];
 int Sc_Num_string_length, Sc_Num_string_pointer, display_char_skip_counter;
 
 volatile int EA_counter, EA_buff_ptr;
-int buffer[41];	//Used to store "long" results, however for this application results are always less than 32000
+int buffer[41];	
 volatile char T1_OVF;
 volatile long error_SUM;
-//char OSCCAL_test;
 volatile char MUX_cntl, T0_interupt_cnt;
 
 char OSCCAL_WV;
 char I2C_data[10];
 long cal_error;
 char OSCCAL_DV, OSCCAL_UC;
-
 
 char  display_backup[9];
 signed char exponent_BKP[2];
@@ -57,7 +59,6 @@ unsigned long RHSofDP;
 signed char expnt_result;
 char result[4];
 int accumlator, interim_result;
-
 
 char clock_flag;
 char PIC_cmd;
@@ -111,6 +112,17 @@ RHSofDP = 0;expnt_result = 0;
 #define T1_delay_1sec 5,0xE17B
 #define one_sec_delay_with_interrupts; TIMSK1 |= (1 << TOIE1);one_sec_delay; TIMSK1 &= (~(1 << TOIE1));
 
+
+#define Initialise_dislay_brightness; \
+if ((eeprom_read_byte((uint8_t*)(0x3FB)) != 0xFF) &&\
+(eeprom_read_byte((uint8_t*)(0x3FB)) != 0xFE) &&\
+(eeprom_read_byte((uint8_t*)(0x3FB)) != 0xFD))\
+eeprom_write_byte((uint8_t*)(0x3FB), 0xFD);\
+T0_interupt_cnt = 0;
+
+
+
+
 #define	digit_3		PORTB &= (~(1 << PB0));
 #define	digit_2		PORTB &= (~(1 << PB2));
 #define	digit_1		PORTB &= (~(1 << PB3));
@@ -141,6 +153,7 @@ PORTC |= ((1 << PC0) | (1 << PC1) | (1 << PC2));
 PORTD &= (~(seg_b | seg_c | seg_d | seg_e | seg_f | seg_g));
 
 #define clear_display_buffer; for(int m = 0; m<=7; m++)display_buf[m] = 0;
+
 
 #define one_U 	PORTD |= (seg_b);
 #define ONE_U 	PORTD |= (seg_f);
@@ -175,13 +188,16 @@ PORTD &= (~(seg_b | seg_c | seg_d | seg_e | seg_f | seg_g));
 #define T0_delay_1500us 3,69
 #define T0_delay_1ms 3,128
 #define T0_delay_667us 3,173
-#define T0_delay_500us 3,194
+#define T0_delay_500us 3,192
 #define T0_delay_250us 2,6
+#define T0_delay_125us 3,240
+
 
 #define T1_delay_3S 5, 0xA492
 #define T1_delay_500ms 5, 0xF0C3
 #define T1_delay_250ms 5, 0xF862
 #define T1_delay_125ms 5, 0xFC31
+#define T1_delay_100ms 5,0xFCF2
 #define T1_delay_10ms 3, 0xF63C
 
 #define refresh_clock_display;   for (int n = 0; n < 8; n++){display_buf[n] = clock_buf[n];}
