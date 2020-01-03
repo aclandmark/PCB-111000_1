@@ -8,4 +8,4 @@
 
 # include "Resources_CC/I2C_V16_1_CC_clock_stop_watch_subroutines.c"
 # include "Resources_CC/I2C_V16_1_CC_Eeprom_subroutines.c"
-# include "Resources_CC/mode_definitions.h"
+# include "Resources_CC/I2C_V16_1_CC_mode_definitions.h"
