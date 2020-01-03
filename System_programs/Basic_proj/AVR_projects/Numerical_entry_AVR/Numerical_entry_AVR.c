@@ -34,7 +34,7 @@ int main (void){
 
 char   digit;
 int digit_num=0;											//defines number of next digit on display						
-const char* string_ptr = 0;										//pointer: will be loaded with the address of a segment string 
+const char* string_ptr = 0;									//pointer: will be loaded with the address of a segment string 
 
 
 CLKPR = (1 << CLKPCE);
@@ -74,7 +74,7 @@ waitforkeypress(); I2C_Tx_any_segment_clear_all();}}		//clear display and repeat
 
 
 /*****************************************************************************/
-void display_num_string (const char* s, int digit_num){			//Subroutine requires a pointer to the string		
+void display_num_string (const char* s, int digit_num){		//Subroutine requires a pointer to the string		
 int char_ptr=0;												//containing segments used to define a digit
 char letter;
 
