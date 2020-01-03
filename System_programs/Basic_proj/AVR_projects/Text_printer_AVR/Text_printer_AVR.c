@@ -143,7 +143,7 @@ if(keypress == 's') {wdt_enable(WDTO_60MS); while(1);}}
 //Num_to_PC(10,MCUSR_copy);
 
 
-start_address = 0x5E7F;
+start_address = 0x5C7F;		////////
 Prog_mem_address_H = start_address >> 8;
 Prog_mem_address_L = start_address;
 read_flash ();
@@ -151,13 +151,13 @@ if (Flash_readout == 0xFF){String_to_PC("No text. Reset UNO\r\n");while(1);}
 
 
 String_to_PC("\r\n"); 
-start_address = 0x5E7F;	// 0x6C7F;																//start adddress of text
+start_address = 0x5C7F;																//start adddress of text
 Num_strings = string_counter(start_address);										//Count the number of strings
 String_to_PC("Total numbers of strings & characters are  ");
 Num_to_PC(10,Num_strings); Char_to_PC('\t');
 Num_to_PC(10,char_counter);
 
-String_to_PC("\r\nEnter string number or zero to exit");								//Request string
+String_to_PC("\r\nEnter string number or zero to exit");							//Request string
 
 while(1){
 text_num = Num_from_KBD();
@@ -230,7 +230,7 @@ TCCR1B = 0;}
 
 /************************************************************************************/
 void I2C_Tx_2_integers(unsigned int s1, unsigned int s2){			
-char num_bytes=4; char mode=4; char s[4];
+char num_bytes=4; char mode=1; char s[4];
 for (int m = 0;  m < 4; m++){
 switch (m){
 case 0: s[m] = s1; break; 											//Send S1 lower byte
@@ -341,9 +341,9 @@ return number;}
 
 /*********************************************************************/
 void Num_to_PC(char radix, long long_num){
-char array[12];							//Long has 10 chars + sign + null terminator	
-SBtoAL(array, long_num, radix);			//calls the Binary to askii subroutine
-NumericString_to_PC(array);}				//Prints characters in reverse order
+char array[12];														//Long has 10 chars + sign + null terminator	
+SBtoAL(array, long_num, radix);										//calls the Binary to askii subroutine
+NumericString_to_PC(array);}										//Prints characters in reverse order
 
 /*********************************************************************/
 void SBtoAL(char array[], long num, char radix){					//Signed Binary to Askii
@@ -352,12 +352,12 @@ long sign;
 
 if (num == 0x80000000){
 switch(radix){
-case 10: array[0] = '8';array[1] = '4'; array[2] = '6';		//0x80000000 * -1 = 0
+case 10: array[0] = '8';array[1] = '4'; array[2] = '6';			//0x80000000 * -1 = 0
 array[3] = '3';array[4] = '8';array[5] = '4'; array[6] = '7';
 array[7] = '4';array[8] = '1';array[9] = '2';
 array[10] = '-'; array[11] = '\0'; break;
 
-case 16: array[0] = '0';array[1] = '0'; array[2] = '0';		//0x80000000 * -1 = 0
+case 16: array[0] = '0';array[1] = '0'; array[2] = '0';			//0x80000000 * -1 = 0
 array[3] = '0';array[4] = '0';array[5] = '0'; array[6] = '0';
 array[7] = '8';array[8] = '-';array[9] = '\0';
 array[10] = '\0'; array[11] = '\0'; break; } return;}
@@ -374,8 +374,8 @@ if (sign < 0) {array[m] = '-';m++;}}
 /*********************************************************************/
 void NumericString_to_PC(char* s){					
 int n=0;
-while (s[n] != '\0')n++;							//scroll to end of string counting the number of characters
-for(int m = n; m; m--)Char_to_PC(*(s + m-1));}		//print last character first
+while (s[n] != '\0')n++;											//scroll to end of string counting the number of characters
+for(int m = n; m; m--)Char_to_PC(*(s + m-1));}					//print last character first
 
 
 
@@ -391,7 +391,7 @@ if (isCharavailable(1)){temp = receiveChar();}keypress = '\r';}
 return keypress;}
 
 /************************************************************************/
-void I2C_Tx_8_byte_array(char s[]){									//was I2C_Tx_1
+void I2C_Tx_8_byte_array(char s[]){				
 char num_bytes=8; char mode=1;
 I2C_Tx(num_bytes,mode, s);}
 
@@ -403,15 +403,15 @@ long I2C_displayToNum(void){
 long L_number = 0;
 char receive_byte;
 char num_bytes=0;
-char mode = 'J';
+char mode = 'I';
 
 waiting_for_I2C_master;		
 send_byte_with_Ack(num_bytes);
 send_byte_with_Nack(mode);
-TWCR = (1 << TWINT) | (1 << TWEN);			//clear interrupt and leave I2C active
+TWCR = (1 << TWINT) | (1 << TWEN);						//clear interrupt and leave I2C active
 waiting_for_I2C_master;
 
-for (int m = 0; m<=3; m++){				//Receive 4 chars and assemble into unsigned long result
+for (int m = 0; m<=3; m++){							//Receive 4 chars and assemble into unsigned long result
 if (m ==3){receive_byte = receive_byte_with_Nack();}
 else {receive_byte = receive_byte_with_Ack();}
 switch(m){
@@ -433,7 +433,7 @@ return byte;}
 /***********************************************************/
 char receive_byte_with_Nack(void){
 char byte;
-TWCR = (1 << TWEN) | (1 << TWINT);		//Set Ack enable and clear interrupt
+TWCR = (1 << TWEN) | (1 << TWINT);						//Set Ack enable and clear interrupt
 while (!(TWCR & (1 << TWINT)));						//Wait for interrupt
 byte = TWDR;
 return byte;}
