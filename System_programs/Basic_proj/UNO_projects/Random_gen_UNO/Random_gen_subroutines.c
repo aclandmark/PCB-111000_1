@@ -20,7 +20,7 @@ TWDR;
 
 /************************************************************************************/
 void I2C_Tx_2_integers(unsigned int s1, unsigned int s2){			
-char num_bytes=4; char mode=4; char s[4];
+char num_bytes=4; char mode=1; char s[4];
 for (int m = 0;  m < 4; m++){
 switch (m){
 case 0: s[m] = s1; break; 											//Send S1 lower byte
