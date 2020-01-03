@@ -34,7 +34,7 @@ TWCR = (1 << TWINT);}
 /*********************************************************************/
 void I2C_Tx_any_segment_clear_all(void){
 char segment = 'a'; char digit_num = 0;
-char s[2]; char num_bytes=2; char mode = 'A';
+char s[2]; char num_bytes=2; char mode = 2;
 s[0] = segment;
 s[1] = digit_num; 
 I2C_Tx(num_bytes,mode, s);}
@@ -43,7 +43,7 @@ I2C_Tx(num_bytes,mode, s);}
 
 /************************************************************************/
 void I2C_Tx_any_segment(char segment, char digit_num){
-char s[2]; char num_bytes=2; char mode = 'a';
+char s[2]; char num_bytes=2; char mode = 3;
 s[0] = segment;
 s[1] = digit_num; 
 I2C_Tx(num_bytes,mode, s);}
