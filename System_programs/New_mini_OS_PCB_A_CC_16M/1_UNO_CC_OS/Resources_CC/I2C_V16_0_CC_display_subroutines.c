@@ -17,11 +17,14 @@ TCNT0 = St_point;
 TCCR0B = Counter_speed;}
 
 
+
 /*****************************************************************************************/
 void timer_T1_sub_with_interrupt(char Counter_speed, unsigned int Start_point){ 
 TCNT1H = (Start_point >> 8);
 TCNT1L = Start_point & 0x00FF;
 TCCR1B = Counter_speed;}
+
+
 
 /*****************************************************************************************/
 void Timer_T1_sub(char Counter_speed, unsigned int Start_point){ 
@@ -29,7 +32,7 @@ TCNT1H = (Start_point >> 8);
 TCNT1L = Start_point & 0x00FF;
 TIFR1 = 0xFF;
 TCCR1B = Counter_speed;
-while(!(TIFR1 && (1<<TOV1)));
+while(!(TIFR1 & (1<<TOV1)));
 TIFR1 |= (1<<TOV1); 
 TCCR1B = 0;}
 
@@ -40,6 +43,8 @@ void Ext_tick(){entry_point='A';
 TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN) | (1 << TWIE);		//send a start condition with TWI interupt
 disp_ptr = 0;
 payload_size=0;}
+
+
 
 
 /*****************************************************************************************/
@@ -55,13 +60,6 @@ case '6': six; break;
 case '7': seven; break;
 case '8': eight; break;
 case '9': nine; break;
-/*case 'A': PORTB |= (seg_a); break;
-case 'B': PORTD |= (seg_b); break;
-case 'C': PORTD |= (seg_c); break;
-case 'D': PORTD |= (seg_d); break;
-case 'E': PORTD |= (seg_e); break;
-case 'F': PORTD |= (seg_f); break;
-case 'G': PORTD |= (seg_g); break;*/
 case 'P': decimalP; break;
 case '.':
 case '_': PORTD |= (seg_d); break;
@@ -90,12 +88,10 @@ if (display_buf[5] & m) PORTD |= (seg_e);
 if (display_buf[6] & m) PORTD |= (seg_f);}
 
 
+
 /*****************************************************************************************/
 void Display_driver()			//ISR calls this
-{
-//if(!(buf_ptr)){clear_digits; clear_display; }
-
-buf_ptr++; buf_ptr = buf_ptr%8;
+{buf_ptr++; buf_ptr = buf_ptr%8;
 clear_digits; clear_display; 
 switch(buf_ptr){
 	case 0: if (display_mask & 0x01){if ((strobe[0]++)%18 <= 12) {digit_0;}} else{digit_0;} break;
@@ -111,11 +107,6 @@ switch(mode){
 case 4: case 6: case 7: case 8: case 9:
 case 'A': case 'B': case 'C': 
 case 'D': case 'E': case 'F': 
-/*case 'b': case 'B': case 'c': case 'C':
-case 'd': case 'D': case 'e': case 'E': case 'f': case 'F': 
-case 'g': case 'G': case 'h': case 'H': case 'i': case 'I':
-case 'j': case 'J': case 'k': case 'K': case 'M': case 'm':
-case 'Q': case 'q':*/ 
 case 'I': case 'J': case 'K':
 case 'L': case 'P': 
 Char_definition(); break;
@@ -125,7 +116,6 @@ case 3:
 case 'G': Seg_definitions(); break; 
   
 case 1:
-//case 6 Obsolete
 switch(buf_ptr){
 case 0: 	if(display_buf[0] & 0x01) one_U; if (display_buf[0] & 0x02) ONE_U;
 			if(display_buf[2] & 0x01) one_L; if (display_buf[2] & 0x02) ONE_L; break;
