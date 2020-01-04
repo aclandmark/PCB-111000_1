@@ -1,16 +1,14 @@
 
 
 
-
-
-/********  ATMEGA pcb bootloader runs in the boot space of the ATMEGA328**********/
+/********  ATMEGA pcb bootloader: runs in the boot space of the PCB_A ATMEGA328**********/
 
 /*Developed for use with CC displays
 Compile it using optimisation level s ONLY and load into flash at address 0x7000
 It shares the ATMEGA 328 with the display control program which runs in the application code space.
 Rx/Tx work at 57.6k
 
-PCB_A_bootloader is used to program the UNO device with its bootloader and the default user project 
+PCB_A_bootloader is used to program the UNO device with its bootloader, verification and the default user projects 
 combined into a single hex file.
 */
 
@@ -18,8 +16,8 @@ combined into a single hex file.
 0x3FF		user cal if set
 0x3FE		user cal if set
 0x3FD		Default cal supplied by Atmel
-0x3FC		If 1: press 'x' diagnostic mode else press 'r' normal mode
-0x3FB		If 0 use multiplexter (T0) period of 4ms else use period of 2mS (std)
+0x3FC		No longer used.
+0x3FB		Controls multiplexter (T0) on interval:  0xFF for 2ms, 0xFE for 500uS and 0xFD for 125uS
 0x3FA		No longer used.
 0x3F9		Reset status byte: set to zero by Project_programmer_AVR
 			when the mini-OS is programmed to flash.
@@ -35,13 +33,18 @@ combined into a single hex file.
 Reset Operation:
 The Project Programmer is loaded onto the UNO device and used to program pcb_A device with PCB_A_bootloader and I2C_V16_0_CC.
 It sets PCB_A device EEPROM locations 0x3F9 and 0x3F4 to zero.
-Following programming pcb_A device jumps to loation 0x7000 reads EEPROM 0x3F9 (which is zero) and jumps to location zero.
+Following programming pcb_A device jumps to loation 0x7000 reads EEPROM 0x3F9 (which is zero) and jumps to location zero (display controller).
 Execution of I2C_V16_0_CC follows.  This program reads EEprom location 0x3F4.  Because it is zero it resets the UNO device 
 forcing it to abandon "Project_programmer" and run the new UNO bootloader. 
 
 Note: If "Project_programmer" runs on pcb_A it can only program the UNO EEPROM (text area, locations above 0x3F0 are protected).
 It cannot be used to program the UNO flash and will not write to locations 0x3F9 or 4.
+
+A single click of PCB_A reset switch resets the user app running on the UNO
+A double click forces the Hex/text programmer also running on the UNO device to run.
+
 */
+
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -87,7 +90,7 @@ DDRC |= (1 << DDC3);									//Generate a 2mS UNO reset pulse on PC3
 two_msec_delay;						
 Reset_H;												//Release UNO from reset (using WPU)
 DDRC &= (~(1 << DDC3));								//Reset line remains high untill SW_reset takes
-wdt_enable(WDTO_120MS); while(1);}		//250MS			//effect and control jumps to location zero, use 250ms if cal routine is included
+wdt_enable(WDTO_120MS); while(1);}						//effect and control jumps to location zero, use 250ms if cal routine is included
 
 
 
@@ -103,7 +106,7 @@ Reset_H;												//the UNO selects its boot loader
 DDRC &= (~(1 << DDC3));								//Leave PC3 as week pull up
 USART_Rx_init(0,16);									//Activate UART receiver
 if ((waitforkeypress()) != 'p')						//For keypres h,t or r
-{wdt_enable(WDTO_30MS); while(1);}	//60MS						//return control to line zero
+{wdt_enable(WDTO_30MS); while(1);}						//return control to line zero
 else {													//For keypress p: Run pcb_bootloader
 
 MCUCR = (1<<IVCE);  									//use interrupt vector table starting at start of boot section
@@ -127,7 +130,7 @@ do{sendString("?  ");one_second_delay;} 				//User prompt
 while((isCharavailable() == 0));
 keypress = receiveChar();	
  if (keypress == 'p')break;
-if((keypress == 'r') || (keypress == 'x')){
+if((keypress == 'r') || (keypress == 'x')){			//Keypress x launches diagnostic mode which is now obsolete
 if (keypress == 'x') 
 {eeprom_write_byte((uint8_t*)0x3FC, 0x1);}
 Reset_H;
