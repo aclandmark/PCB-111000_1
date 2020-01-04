@@ -1,5 +1,7 @@
 
 /*Proj_6G_message_from_the_OS
+
+Loaded with Hex_txt_programmer but requires PCB_A_Mini_OS_I2C_V16_1_CC to function.
 *********************************************************************/
 
 
