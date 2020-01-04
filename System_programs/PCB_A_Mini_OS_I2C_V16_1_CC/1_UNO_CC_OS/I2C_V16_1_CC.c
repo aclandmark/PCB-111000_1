@@ -1,16 +1,15 @@
 /*********************
-Projects version 9
-I2C program version 4
+Display control part of PCB_A_Mini_OS_I2C_V16_1_CC.
+Also offers services which the user app calls over ther I2C bus
+Services include display of binary or decimal numbers, display of individual segments
+Clock/stop watch functions and arithmetic.
 
-V9.9 Prevents users applying impractical user-cal values to the ATMEGA 328
-Performs scan of the ATMEGA 328 clock cal factor
-Following POR check cal factor and perform auto clock recovery if necassary
 
 
 I2C opperation:	The PCB_A 328 hosts the master I2C block
 The UNO 328 hosts the slave I2C block.  The master is permanently active however slave is only
 turned on when the user project needs to initiate a transaction.   In this way the user project controls
-the I2C bus without hosting the master.  It was done this way because a PIC 640 was originally chosen to host
+the I2C bus without hosting the master.  It was done this way because a PIC 16F640 was originally chosen to host
 the user projects.  The PIC only offered the slave implementation of the I2C bus.
 
 
@@ -19,15 +18,15 @@ the user projects.  The PIC only offered the slave implementation of the I2C bus
 0x3FF	user cal if set
 0x3FE	user cal if set
 0x3FD	Default cal supplied by Atmel
-0x3FC	If 1: press 'x' diagnostic mode else press 'r' normal mode  This mode is now discontinued
-0x3FB	If 0 use multiplexter (T0) period of 4ms else use period of 2mS (std)
+0x3FC	Set to 1 if diagnostic mode required.  Diagnostic mode is now discontinued
+0x3FB	Controls multiplexter (T0) on interval:  0xFF for 2ms, 0xFE for 500uS and 0xFD for 125uS
 0x3FA	Not used
-0x3F9	Reset status_1
+0x3F9	Reset status_1: Zero Indicates that PCB_A has just been programmed by Project_programmer_AVR
 0x3F8	prog_counter_H
 0x3F7	prog_counter_L
 0x3F6	cmd_counter_H
 0x3F5	cmd_counter_L
-0x3F4	Reset_status_2
+0x3F4	Reset_status_2: Zero resets UNO immediately after PCB_A has been programmed triggering the h/t/r/D prompt
 
 
 
@@ -111,7 +110,7 @@ default: 	eeprom_write_byte((uint8_t*)(0x3FB), 0xFE);				//BUG Extra line added 
 	
 while(1){
 
-while((mode == 'F') || (mode == 'K'));
+while((mode == 'F') || (mode == 'K'));				//Multiplexer continues to work, otherwise requires reset to escape.
 
 	
 /********Code parks here following WDT, POR and Brown-out***************/
