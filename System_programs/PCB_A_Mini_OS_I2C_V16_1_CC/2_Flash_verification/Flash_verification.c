@@ -1,12 +1,14 @@
 /*
 "Flash_verification" routine designed for use with the "PCB_bootloader" program.
-"Flash_verification" starts at address 0x5D00 and is reached via a jump command
+"Flash_verification" starts at address 0x5E00 and is reached via a jump command
 located at the end of the PCB_bootloader.  Normal HW setup is not therefore required.
 Data passed between the bootloader and read routines is placed in EEPROM 
 
 "Flash_verification" also programs the UNO fuses where possible leaving them as supplied,
 however Fuse High is changed from 0xDE to 0xD0 to increase the size of the boot partition to
-0x1000 bytes an ensure that the EEPROM survives chip erasure.
+0x1000 bytes and ensure that the EEPROM survives chip erasure.
+Lock bye is changed from 0xFF to 0xEF to protect the bootloader partition from being
+accidently overwritten.
 
 
 
