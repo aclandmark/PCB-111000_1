@@ -7,9 +7,9 @@ It programs both hex and text files to flash and has two modes, one simply progr
 the files which is particularly useful when developing text files. 
 
 The "Hex_text programmer" is loaded in the bootloader partition at 	0x7000 using the PCB_A bootloader
-It works alongside a default user application loaded at adddress	0x5E80
-A hex file verification routine loaded at address					0x6180
-A text file verification routine loaded at address					0x6C60
+It works alongside a default user applications loaded at adddresses	0x5E60 and 0x5C90
+A hex file verification routine loaded at address					0x6200
+A text file verification routine loaded at address					0x6C70
 Control is always passed back to the "Hex_text programmer" using a WDTout and EEP loaction 0x3FC.
 Other WDTouts required to lauch the user app at address 0x0000 can therefore be identified.
 
@@ -21,9 +21,9 @@ MCUSR is copied directly to 0x3FC
 WDTouts are used by both programmer and user applications.
 They are used to exit the text and hex verification routines.  
 These WDTouts are identified by writing 1 to bit 7 of 0x3FC.
-WDTouts are also used when mode r (run) is selectd at the h/t/r/D use prompt
+WDTouts are also used when mode r (run) is selectd at the h/t/r/D user prompt
 or when the PCB_A reset switch is pressed.
-There they are identified by setting 0x3F7 to zero as a result of which 0x3FC is set to 1 << EXTRST.
+They are identified by setting 0x3F7 to zero as a result of which 0x3FC is set to 1 << EXTRST.
 For user app generated WDTouts MCUSR is copied directly to 0x3FC and program control jumps straight to location zero.
 
 
@@ -33,7 +33,7 @@ PCB_A reset signalling line:	The pcb_a reset switch signals lines PD5 or PD6 (fo
 
 								Depending on the line state program control either jumps to the user app or 
 								the programmer user prompt. 
-								(Both lines are connected to simply pcb development.)
+								(Both lines are connected to simplify pcb development.)
 						
 								A single click of pcb_a reset switch returns control to the user app
 								A double click returns controll to the hex/text programmer and also enables 
@@ -53,19 +53,19 @@ Because all programmer algorithms have been developed to run at 8MHz, the system
 frequency to an 8MHz clock. 
 
 Compile it using optimisation level s ONLY
-Note the normal warning messages when C and assemble files are combined (i.e.integer from pointer without a cast).
+Note the normal warning messages when C and assembly files are combined (i.e.integer from pointer without a cast).
 Rx/Tx work at 57.6k with no handskaking, no parity, 8 data bits and 1 stop bit
 
 EEPROM reservations: 
-0x3FF	user cal if set
-0x3FE	user cal if set
-0x3FD	Default cal supplied by Atmel
-0x3FC	Copy of MCUSR and also indicates WDTout from cal, or hex/text verification routines 
-0x3FB/A	prog_counter
-0x3F9/8	cmd_counter
-0x3F7	Reset Control
-0x3F6	PRN
-0x3F5	PRN
+0x3FF	user cal if set	No longer used
+0x3FE	user cal if set No longer used
+0x3FD	Default cal supplied by Atmel No longer used
+0x3FC	Copy of MCUSR and also indicates WDTout hex/text verification routines 
+0x3FB/A	prog_counter for use by verifiication routines
+0x3F9/8	cmd_counter for use by verifiication routines
+0x3F7	Reset Control (set to zero to indicate that user app is to be launched.)
+0x3F6	Reserved for use by Pseudo Random Noise generator
+0x3F5	Second PRN reservation
 */
 
 
@@ -204,7 +204,7 @@ Timer_T0_sub_with_interrupt(5,0);									//Start Timer0 with interrupt
 UCSR0B |= (1<<RXCIE0); 											//Activate UART interrupt
 sei();																//Set global interrupt
 
-address_in_flash = 0x5C7E;		//////////////						//First character will be storred at 0x5FFF not 0xFFE
+address_in_flash = 0x5C7E;											//First character will be storred at 0x5C7F not 0x5C7E
 
 while (1){
 while (r_pointer == w_pointer);										//wait for w_pointer to be incremented
@@ -224,7 +224,7 @@ address_in_flash -= 2;												//next address in flash
 store[r_pointer] = 0;												//clear the contents of the location in array store
 inc_r_pointer;														//restore the value of "r_pointer" to that of "w_pointer"
 
-if (!((0x5C7E - address_in_flash)%128)){	////////				//If page buffer is full
+if (!((0x5C7E - address_in_flash)%128)){							//If page buffer is full
 address_in_flash += 2;												//Get the address of the first entry in the page
 Prog_mem_address_H = address_in_flash >> 8;							//Prepare the address for the assembly routines
 Prog_mem_address_L = address_in_flash;
@@ -234,8 +234,8 @@ page_write();														//Assembly routine
 address_in_flash -=2;}												//Restore address_in_flash
 if(!(endoftext)) break;}											//Break when two '\0' chars have been appended to text stored in the array
 
-if((0x5C7E - address_in_flash)%128){/////////					//Write remaining chars in partialy full page buffer
-address_in_flash += (0x5C7E - address_in_flash)%128 - 126;	///////////////Get address of first character in the page
+if((0x5C7E - address_in_flash)%128){/////////						//Write remaining chars in partialy full page buffer
+address_in_flash += (0x5C7E - address_in_flash)%128 - 126;			//Get address of first character in the page
 
 Prog_mem_address_H = address_in_flash >> 8;
 Prog_mem_address_L = address_in_flash;
