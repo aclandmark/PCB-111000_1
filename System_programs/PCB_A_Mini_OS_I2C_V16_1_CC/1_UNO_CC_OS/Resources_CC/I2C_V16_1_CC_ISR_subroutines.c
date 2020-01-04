@@ -3,35 +3,7 @@ char I2C_master_receive(char);
 
 /*****************************************************************************************/
 
-/*if(eeprom_read_byte((uint8_t*)0x3FB) == 0x01){			//Low level brightness
 
-if(!(T0_interupt_cnt)){
-//if((mode == 'G') || (mode == 'g')){
-if(mode == 'F'){
-TIMSK2 &= (!((1 << OCIE2A) | (1 << TOV2)));
-sei();
-Display_driver(); 
-TIMSK2 |= ((1 << OCIE2A) | (1 << TOV2));}
-else {Display_driver(); }}
-
-
-switch (MUX_cntl){
-case 0: TCNT0 = 194; break;		//500uS period
-case 1:	TCNT0 = 128; break;		//1mS period  CHECK
-case 2: TCNT0 = 69; break;		//1500uS period CHECK
-case 3: TCNT0 = 0; break;		//2mS period
-case 4: TCNT0 = 178; break;		//2500uS period
-case 5: TCNT0 = 162; break;		//3mS period
-case 6: TCNT0 = 100;break;		//5ms period
-case 7: TCNT0 = 194;break;		//8ms period
-default: TCNT0 = 194; break;}	//500uSS period
-
-switch(T0_interupt_cnt){
-case 0: T0_interupt_cnt = 1;break;
-case 1: {clear_display;} T0_interupt_cnt = 2; break;
-case 2: T0_interupt_cnt = 3; break;
-case 3: T0_interupt_cnt = 0; break;}
-}}*/
 
 ISR(TIMER0_OVF_vect) {
 
@@ -70,8 +42,6 @@ case 6: TCNT0 = 100;break;		//5ms period
 case 7: TCNT0 = 194;break;		//8ms period
 default: TCNT0 = 194; break;}	//500uSS period
 
-//TCNT0 = 192;	
-
 switch(T0_interupt_cnt){
 case 0: T0_interupt_cnt = 1;break;
 case 1: {clear_display;} T0_interupt_cnt = 2; break;
@@ -79,31 +49,7 @@ case 2: T0_interupt_cnt = 3; break;
 case 3: T0_interupt_cnt = 0; break;}}
 
 
-
-
-
-
-
-/*if(eeprom_read_byte((uint8_t*)0x3FB) == 0xFE){					//normal brightness 500uS interrupts TCNT0 = 192;
-if(!(T0_interupt_cnt)){
-
-if(mode == 'F'){
-TIMSK2 &= (!((1 << OCIE2A) | (1 << TOV2)));
-sei();
-Display_driver(); 
-TIMSK2 |= ((1 << OCIE2A) | (1 << TOV2));}
-else {Display_driver(); }}
-TCNT0 = 192;	
-
-switch(T0_interupt_cnt){
-case 0: T0_interupt_cnt = 1;break;
-case 1: {clear_display;} T0_interupt_cnt = 2; break;
-case 2: T0_interupt_cnt = 3; break;
-case 3: T0_interupt_cnt = 0; break;}}*/
-
-
-
-if(eeprom_read_byte((uint8_t*)0x3FB) == 0xFD){					//low brightness 500uS interrupts TCNT0 = 240;
+if(eeprom_read_byte((uint8_t*)0x3FB) == 0xFD){					//low brightness 125uS interrupts TCNT0 = 240;
 if(!(T0_interupt_cnt)){
 if(mode == 'F'){
 TIMSK2 &= (!((1 << OCIE2A) | (1 << TOV2)));
