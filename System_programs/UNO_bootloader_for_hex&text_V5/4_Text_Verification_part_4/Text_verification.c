@@ -1,6 +1,6 @@
 /*
 This program is used to verify that a text file has been successully loaded into flash.
-It is loaded onto the UNO device at address 0x6B90 and works alongside the "Hex_text_programmer".
+It is loaded onto the UNO device at address 0x6C70 and works alongside the "Hex_text_programmer".
 It is accessed by the "Hex_text_programmer" using an assembly jump command and a WDTout returns 
 controll the the "Hex_text_programmer"
 The EEPROM is used to share variables between the two programs.
@@ -12,8 +12,9 @@ Rx/Tx work at 57.6k
 Note:
 
 This program contains two subroutines, one to count the number of text strings and one to print out
-any given string.  The first string starts at location 0x5FFF, and occupies addresses below 0x5FFF.
-The application and its text strings share the flash from addresses zero to 0x5FFF (24kB).
+any given string.  The first string starts at location 0x5C7F, and occupies addresses below 0x5C7F.
+The application and its text strings share the flash from addresses zero to 0x5C7F (>23kB).
+Each string is termintaed with the '\0' char and the final string is ternimated wth two '\0' chars.
 It is anticipated that these subroutines will be used in any user aplication putting strings in flash.
 */
 
