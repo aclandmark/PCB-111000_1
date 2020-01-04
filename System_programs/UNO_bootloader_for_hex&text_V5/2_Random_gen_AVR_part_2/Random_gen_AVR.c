@@ -1,5 +1,7 @@
 
 /*
+Loaded with Hex_txt_programmer but requires PCB_A_Mini_OS_I2C_V16_1_CC to function.
+
 Random display based on Pseudo Random Number PRN generator.
 Default user project loaded onto UNO to ensure that there is always something to run.
 To rienstate the default project press D at the h/r/t prompt.
