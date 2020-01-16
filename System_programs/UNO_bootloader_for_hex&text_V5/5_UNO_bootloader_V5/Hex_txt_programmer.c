@@ -66,6 +66,7 @@ EEPROM reservations:
 0x3F7	Reset Control (set to zero to indicate that user app is to be launched.)
 0x3F6	Reserved for use by Pseudo Random Noise generator
 0x3F5	Second PRN reservation
+0x3F4	flash text string pointer
 */
 
 
@@ -114,10 +115,9 @@ default: 													//POR, WDTout, BOR
 		Prog_mem_address_H = 0;
 		Prog_mem_address_L = 0;
 		read_flash ();
-		if (Flash_readout == 0xFF)asm("jmp 0x5E60");
+		if (Flash_readout == 0xFF)asm("jmp 0x5E50");
 		else asm("jmp 0x0000");break;}						//WDT due to user program, POR or BOR,mode r or D which also generate a WDTout
-
-
+	
 setup_HW;													//Initialises all IO to week pull up; UART introduces 5mS delay
 
 MCUCR = (1<<IVCE);  										//Select the interrupt vector table at the start of boot section
@@ -140,17 +140,17 @@ case 't': 	mode = 't'; text_programmer(); 					//Request standard text file ownl
 case 'r':	Prog_mem_address_H = 0;
 			Prog_mem_address_L = 0;
 			read_flash ();
-			if (Flash_readout == 0xFF)asm("jmp 0x5E60");	//Detect the absense of an User App and run default app.
+			if (Flash_readout == 0xFF)asm("jmp 0x5E50");	//Detect the absense of an User App and run default app.
 			eeprom_write_byte((uint8_t*)0x3F7,0);			//Indicates user program is being launched using a WDTout
 			wdt_enable(WDTO_15MS); 							//Run the user application (WDTout triggers jump to 0x0000)
 			while(1);break; 
 
 case 'h': 	mode = 'h';hex_programmer();					//Hex file download with optional verification
-			asm("jmp 0x6200");	
+			asm("jmp 0x61E0");	
 			while(1);break;
 
 case 'T': 	mode = 't'; text_programmer(); 					//Text file download with verification
-			asm("jmp 0x6C70");								
+			asm("jmp 0x6C30");								
 			while(1); break;
 
 case 'D':	Prog_mem_address_H = 0;							//Erase start of user app and trigger default app.
@@ -199,6 +199,8 @@ text_started =0; endoftext =3;txt_counter = 0;
 Rx_askii_char_old = '0';
 
 sendString("\r\nText_F?");
+//sendString("T_F?");
+
 
 Timer_T0_sub_with_interrupt(5,0);									//Start Timer0 with interrupt
 UCSR0B |= (1<<RXCIE0); 											//Activate UART interrupt
@@ -243,10 +245,9 @@ Prog_mem_address_L = address_in_flash;
 Page_erase ();
 page_write();
 }UCSR0B &= (~(1<<RXCIE0));cli();
-clear_read_block();}												//Subroutine provided in assembly file  (Not required for mode 't'??)
-
-
-
+clear_read_block();													//Subroutine provided in assembly file  (Not required for mode 't'??)
+eeprom_write_byte((uint8_t*)0x3F4,0x40);								//Reset string pointer
+}
 /*********************************************************************************************************/
 void hex_programmer(void){
 
@@ -258,6 +259,7 @@ Flash_flag = 0;  HW_address = 0;  section_break = 0; orphan = 0;
 w_pointer = 0; r_pointer = 0; short_record=0;  cmd_counter = 0;
 
 sendString("\r\nHex_F?");
+//sendString("H_F?");
 
 UCSR0B |= (1<<RXCIE0); sei();										//Receive interrupts now active
 
