@@ -7,10 +7,11 @@ The UNO flash is programmed using the PCB_A bootloader.
 The reason foor this is that the devices run under different configuration settings.
 
 
-To make the program as easy as possible to use, the strings are stored in program memory space 
-rather than EEPROM. The result of this is that they also consume large amounts of SRAM
-which is required to store user strings before they are copied to the target EEPROM.
+To make the program as easy as possible to use, the strings used for user prompts are 
+stored in program memory space rather than the host EEPROM. 
+Strings to be programmed to the target EEPROM are also temporarily stored in SRAM.
 Use of an anything with less SRAM than the Atmega 328 to host this program is not therefore recommended.
+
 
 The programmer runs under configuarion settings		Extended: 0xFF		High: 0xD7			Low: 0xE2
 The important parameters are: Watch dog under program control, EEprom preserved through chip erase and 8HMz clock
