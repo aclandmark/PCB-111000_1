@@ -1,6 +1,6 @@
 /*********************
 Display control part of PCB_A_Mini_OS_I2C_V16_1_CC.
-Also offers services which the user app calls over ther I2C bus
+Also offers services which the user app calls over the I2C bus
 Services include display of binary or decimal numbers, display of individual segments
 Clock/stop watch functions and arithmetic.
 
