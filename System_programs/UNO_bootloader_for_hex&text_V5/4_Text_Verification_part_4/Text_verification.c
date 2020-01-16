@@ -35,9 +35,8 @@ void print_string_num(int, int);
 int main (void){ 
 
 char Num_strings;																	//The number of strings written to flash
-int  start_address; 																//Address in flash of first character in a string,
-
-eeprom_write_byte((uint8_t*)0x3FC,	(eeprom_read_byte((uint8_t*)0x3FC) | 0x80));
+int  start_address; 
+char next_string_no;																//Address in flash of first character in a string,
 
 char_counter = 0;																	//counts the number of characters in the text file (excludes \r & \n)
 
@@ -45,17 +44,39 @@ newline();
 start_address = 0x5C7F;																//start adddress of text
 Num_strings = string_counter(start_address);										//Count the number of strings
 
+if (!(eeprom_read_byte((uint8_t*)0x3F4) & 0x80))
+{eeprom_write_byte((uint8_t*)0x3FC,(eeprom_read_byte((uint8_t*)0x3FC) | 0x80));
+
+
 for(int text_num = 1; text_num <= Num_strings; text_num++)
 {print_string_num(text_num,start_address);
-if(text_num == 1){sendString("\tAK to continue");}
+if(text_num == 1){sendString("\tAK?");}
 sendString("\r\n"); waitforkeypress();
+sendString("\r\n");}}
 
-sendString("\r\n");}
+else
+{next_string_no = (eeprom_read_byte((uint8_t*)0x3F4) & 0x3F);
+print_string_num(next_string_no,start_address);
+next_string_no += 1;
+if(next_string_no > Num_strings)next_string_no = 1;
+eeprom_write_byte((uint8_t*)0x3F4,	next_string_no | 0x40);
+
+
+for(int m = 0; m < 4; m++)sendString("\r\n");
+if (waitforkeypress() == 'X'){eeprom_write_byte((uint8_t*)0x3F4,0);}}
+
 
 wdt_enable(WDTO_15MS);
 while(1);
 
 return 1;}
+
+
+
+
+
+
+
 
 
 
