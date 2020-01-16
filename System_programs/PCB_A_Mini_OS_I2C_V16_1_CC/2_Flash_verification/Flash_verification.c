@@ -23,6 +23,8 @@ int main (void){
 
 /*****************Power-up and make contact with target****************************/
 Define_programmining_pins; 
+
+
 /***********************New Config bytes for UNO device*************************************************/
 Atmel_config(write_extended_fuse_bits_h,0x5);						//Sets BOD to 2.9V
 Atmel_config(write_fuse_bits_H_h,0xD0);								//1kB boot partition and EEPROM survives chip erasure
