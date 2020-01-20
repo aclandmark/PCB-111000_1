@@ -53,7 +53,7 @@
 
 
 # MCU name
-MCU = atmega168
+MCU = atmega328
 
 
 # Processor frequency.
