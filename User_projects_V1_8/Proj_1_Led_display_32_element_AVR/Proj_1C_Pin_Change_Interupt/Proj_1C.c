@@ -10,7 +10,7 @@ Testing your reaction time
 
 
 
-unsigned int PORT_1, mask;				//Variables used by both the main routine and also by the ISR	
+volatile unsigned int PORT_1, mask;				//Variables used by both the main routine and also by the ISR	
 	
 
 int main (void){
