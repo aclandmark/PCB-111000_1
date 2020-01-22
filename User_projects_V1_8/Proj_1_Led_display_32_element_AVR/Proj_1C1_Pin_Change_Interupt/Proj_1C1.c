@@ -13,7 +13,7 @@ if it equals anything else skip the next statement.
 
 
 
-unsigned int PORT_1, mask;			
+volatile unsigned int PORT_1, mask;			
 char switch_control;				//Prevents rapid switch_3 presses from shooting leds down at random
 
 int main (void){
