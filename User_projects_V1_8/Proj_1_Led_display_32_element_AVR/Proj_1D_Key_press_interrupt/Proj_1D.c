@@ -5,9 +5,7 @@
 
 #include "Proj_1D_header_file.h"
 
-
-
-int p;												//p is defined for both main and ISR routines. It is the
+volatile int p;										//p is defined for both main and ISR routines. It is the
 													//number of leds that will be skipped every time that
 													//the display increments.
 int main (void){
@@ -38,11 +36,7 @@ sei();												//skipping any leds
 	PORT_1 = PORT_1 >> 16;}}}						//PORT_1 is shifted 16 places to the right to to a led that does exist
 													//and the row increments
 
-
-
 /*****************Routine executed by a keypress at the PC keyboard if global interrupts are set*******************/
-
-
 
 ISR(USART_RX_vect){
 switch(receiveChar()){	
@@ -53,9 +47,6 @@ case '4': if (p==4)p = 12; else p=4; break;		//Other keypresses are ignored
 case '5': if (p==5)p = 11; else p=5; break;
 case '6': if (p==6)p = 10; else p=6; break;
 case '7': p=7; break;}}
-
-
-
 
 
 /************Local versions of waitforkeypress() and receiveChar()************/
