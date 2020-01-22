@@ -5,7 +5,7 @@
 #include "Proj_1E_header_file.h"
 
 
-int m;
+volatile int m;											//volatile apparently not needed?
 unsigned int PORT_1, PORT_2;	
 
 int main (void){	
