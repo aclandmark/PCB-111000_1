@@ -7,7 +7,7 @@
 
 
 
-volatile int p;                                              //p is defined for both main and ISR routines. It is the
+volatile int p;                                      //p is defined for both main and ISR routines. It is the
                                                     //number of leds that will be skipped every time that
                                                      //the display increments.
 int main (void){
@@ -46,10 +46,10 @@ sei();                                              //skipping any leds
 
 ISR(USART_RX_vect){
 switch(receiveChar()){  
-case '1': if (p==1)p = 15; else p=1; break;   //If user presses key "1": set p to 1 or 15 and exit break block
-case '2': if (p==2)p = 14; else p=2; break;   //If user presses key "2": set p to 2 or 14 and exit break block    
-case '3': if (p==3)p = 13; else p=3; break;   //Continue for keypresses 3 to 7
-case '4': if (p==4)p = 12; else p=4; break;   //Other keypresses are ignored
+case '1': if (p==1)p = 15; else p=1; break;     //If user presses key "1": set p to 1 or 15 and exit break block
+case '2': if (p==2)p = 14; else p=2; break;     //If user presses key "2": set p to 2 or 14 and exit break block    
+case '3': if (p==3)p = 13; else p=3; break;     //Continue for keypresses 3 to 7
+case '4': if (p==4)p = 12; else p=4; break;     //Other keypresses are ignored
 case '5': if (p==5)p = 11; else p=5; break;
 case '6': if (p==6)p = 10; else p=6; break;
 case '7': p=7; break;}}
