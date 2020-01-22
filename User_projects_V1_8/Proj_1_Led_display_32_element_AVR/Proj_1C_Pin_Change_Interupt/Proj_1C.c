@@ -10,7 +10,7 @@ Testing your reaction time
 
 
 
-volatile unsigned int PORT_1, mask;				//Variables used by both the main routine and also by the ISR	
+volatile unsigned int PORT_1, mask;		//Variables used by both the main routine and also by the ISR	
 	
 
 int main (void){
@@ -27,8 +27,8 @@ I2C_Tx_2_integers
 (PORT_1 & mask, (~mask) ^ PORT_1);		//LOGIC: "Dead" leds are transferred to the bottom row
  
 Timer_T0_10mS_delay_x_m(10);			//Program execution spends most time waiting here, so this is where the interrupt almost always occurs						
-PORT_1 = (PORT_1 << 1);				//Move on to next display location			
-}}I2C_Tx_2_integers(0, 0xFFFF);		//When all leds are dead illuminate all the bottom leds and then
+PORT_1 = (PORT_1 << 1);					//Move on to next display location			
+}}I2C_Tx_2_integers(0, 0xFFFF);			//When all leds are dead illuminate all the bottom leds and then
 Timer_T0_10mS_delay_x_m(100);			//pause for 1 sec before starting all over again.			 
 SW_reset;}
 
