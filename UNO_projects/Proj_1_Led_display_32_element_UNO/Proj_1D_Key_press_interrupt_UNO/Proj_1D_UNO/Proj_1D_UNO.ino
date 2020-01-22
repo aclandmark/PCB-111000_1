@@ -61,13 +61,13 @@ case '7': p=7; break;}}
 /************Local versions of waitforkeypress() and receiveChar()************/
 
 char waitforkeypress_local(void){
-while (!(UCSR0A & (1 << RXC0)));  //Bit 7 (RXC0 Receive complete) of UART Control and Status Register A (UCSR0A)
-return UDR0;}           //is set when a character is received by the UART
-                  //Repeat the while-loop endlessly until the bit is set
-                  //then return the contents of UDR0 the I/O register
+while (!(UCSR0A & (1 << RXC0)));              //Bit 7 (RXC0 Receive complete) of UART Control and Status Register A (UCSR0A)
+return UDR0;}                                //is set when a character is received by the UART
+                                              //Repeat the while-loop endlessly until the bit is set
+                                              //then return the contents of UDR0 the I/O register
 
 
-char receiveChar_local(void)    //We know that a character is already in UDR0 because of the interrupt
-{return UDR0;}            //and immediately return it to the calling routine (i.e. the ISR)
+char receiveChar_local(void)                  //We know that a character is already in UDR0 because of the interrupt
+{return UDR0;}                                 //and immediately return it to the calling routine (i.e. the ISR)
 
 /********************************************************/
