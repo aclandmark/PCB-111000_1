@@ -39,4 +39,4 @@ send_byte_with_Ack(mode);
 for (int m = 0;  m < num_bytes; m++){
 if (m==num_bytes-1){send_byte_with_Nack(s[m]);}					//Last byte, no ackowledgement needed
 else {send_byte_with_Ack(s[m]);}}
-TWCR = (1 << TWINT);}*/											//Clear interrupt and close I2C slave
+TWCR = (1 << TWINT);}	*/										//Clear interrupt and close I2C slave
