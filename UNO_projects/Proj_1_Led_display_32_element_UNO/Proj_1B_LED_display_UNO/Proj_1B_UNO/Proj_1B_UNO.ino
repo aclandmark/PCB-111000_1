@@ -22,6 +22,7 @@ while(1){
     
   I2C_Tx_2_integers(PORT_1, ~PORT_1);                 //the ~ symbol inverts the ones and zeros
   Timer_T0_10mS_delay_x_m(6);                         //Can be replaced with waitforkeypress();     
+  //waitforkeypress();
   if (m<=5){PORT_1 |= (PORT_1 << 1);m += 1;}          //m += 1; is shorthand for m = m+1;     
   else PORT_1 = PORT_1 << 1;                          //once "m" is 6 simply shift the display left       
   if(overflow)PORT_1 |= 1;                            //if overflow is 1 execute "PORT_1 |= 1;".
