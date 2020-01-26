@@ -32,6 +32,9 @@ INTRODUCING SOME NEW C TOPICS
 
 PROGRAM OPERATION	
 
+After uploading the sketch open a terminal program and click on connect (57600 Baud, no parity or handshaking, 8 data bits and 1 stop bit).
+Then press 1,2,3,4,5,6,7 or x.
+Before uploading a sketch again remember to disconnect the terminal program.
 
 The main process that of controlling the display is interrupted for a brief instant by a keypress. This calls an ISR that affects the main process, changing the number of leds that are skipped every time that the display increments.  
 
