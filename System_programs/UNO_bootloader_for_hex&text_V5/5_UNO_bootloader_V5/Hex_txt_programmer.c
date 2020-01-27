@@ -67,6 +67,8 @@ EEPROM reservations:
 0x3F6	Reserved for use by Pseudo Random Noise generator
 0x3F5	Second PRN reservation
 0x3F4	flash text string pointer
+0x3F2	PRN generator random number HB
+0x3F1	PRN generator random number LB
 */
 
 
