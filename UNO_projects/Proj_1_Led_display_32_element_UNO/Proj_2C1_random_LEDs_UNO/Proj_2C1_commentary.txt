@@ -1,47 +1,18 @@
-/*OPTIONS FOR A NEW PATTERN GENERATOR THAT USES ALL THE LEDS 
+
+
+A NEW PATTERN GENERATOR THAT USES ALL THE LEDS 
 
 
 
 IT INTRODUCES
 
-The project I2C subroutine "I2C_Tx_any_segment(segment, digit_num)".
+The project I2C subroutines "I2C_Tx_any_segment(segment, digit_num)" and "I2C_Tx_any_segment_clear_all()"
 
 Note: 
 1.	The segments are labelled "a" to "g" and "segment - 'a'" takes on the values 0 to 6
 Digits are labelled 0 to 7 and writing to a led toggles it on or off.
 
-2.	Logic required to backup the display may looks a bit tricky, requires paper and pencil to get it.
+2.	Logic required to backup the display may looks a bit tricky and require paper and pencil to get it.
 
 
-
-The LED dimmer	A TEST ROUTINE FOR THE DISPLAY BRIGHTNESS CONTROL.
-
-
-Uses an Interrupt on key press to toggle the brightness control.
-
-
-THIS INTRODUCES
-
-
-1.	Project subroutine I2C_Tx().	This transmits data to the PCB 111000_1 Atmega 328 over the I2C bus.  
-
-
-2.	Pointers: 	Look at the ISR: It makes the following subroutine call 
-	I2C_Tx(1, 'W', &Dimmer_control); 	
-
-The "&" before the variable "Dimmer_control" means that the subroutine "I2C_Tx" expects the calling routine to provide the data memory location (i.e. its address) and uses and possibly modifies whatever data it finds in that memory location. 
-
-In this case Proj_2C1 defines a memory location and calls it "Dimmer_control". The subroutine call hands the address of "Dimmer_control" to the subroutine rather than the actual value.  
-
-
-3. Subroutine void I2C_Tx(char num_bytes, char mode, char* s){}.	
-
-This is the subroutine being called by I2C_Tx(1, 'Q', &Dimmer_control);  
-
-It provides memory locations num_bytes and mode for the 1 and Q. 
-The -*- signifies that it does not provide memory for variable -s- but expects the calling routine to provide it. 
-
-Note: Q is the mini-OS mode that toggles the display brightness. 
-
-The pointer is used because I2C_Tx() is also used to send arrays of data (to be considered later).
 
