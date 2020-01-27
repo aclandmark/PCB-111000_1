@@ -40,18 +40,20 @@ Note
 
 
 
-IT ALSO INTRODUCES
+IT ALSO INTRODUCES 	The LED dimmer.	A test routine for the display brightness control.
+Uses an Interrupt on key press to toggle the brightness control.
 
 
 1.	Project subroutine I2C_Tx().	This transmits data to the PCB 111000_1 Atmega 328 over the I2C bus.  
 
 
 
-2.	Pointers: 	Look at the ISR: The following statement: I2C_Tx(1, 'Q', &Dimmer_control); is used to call subroutine I2C_Tx();
+2.	Pointers: 	Look at the ISR: It makes the following subroutine call 
+	I2C_Tx(1, 'Q', &Dimmer_control); 	
 
-The -&- before the variable Dimmer_control means that the subroutine I2C_Tx() expects the calling routine to provide the data memory location of the variable (i.e. its address). It uses and possibly modifies whatever data it finds in that memory location. 
+The "&" before the variable "Dimmer_control" means that the subroutine "I2C_Tx" expects the calling routine to provide the data memory location (i.e. its address) and uses and possibly modifies whatever data it finds in that memory location. 
 
-In this case Proj_1B1 defines a memory location and calls it "Dimmer_control". The subroutine call hands the address of Dimmer_control to the subroutine rather than the actual value.  
+In this case Proj_2B1 defines a memory location and calls it "Dimmer_control". The subroutine call hands the address of "Dimmer_control" to the subroutine rather than the actual value. 
 
 
 
@@ -65,4 +67,5 @@ It provides memory locations num_bytes and mode for the 1 and Q. The -*- signifi
 Note: Q is the mini-OS mode that toggles the display brightness. 
 
 The pointer is used because I2C_Tx() is also used to send arrays of data (to be considered later).
+
 
