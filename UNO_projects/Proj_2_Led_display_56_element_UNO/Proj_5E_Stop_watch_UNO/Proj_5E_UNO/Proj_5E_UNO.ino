@@ -9,8 +9,8 @@ volatile char T1_ovf_flag = 0;                            //requires volatile la
 int main (void){
 
 setup_HW;
-User_prompt;
-User_instructions;
+//User_prompt;
+//User_instructions;
 
 setup_and_enable_PCI;
 disable_pci_on_sw1_and_sw2;                               //pci on sw1 & 3 not required 
