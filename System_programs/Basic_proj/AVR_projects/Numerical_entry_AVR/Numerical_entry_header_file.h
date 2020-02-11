@@ -5,22 +5,21 @@
 #include <stdint.h>
 #include <stdio.h>
 
+
 void display_num_string (const char*, int);
-void I2C_Tx_LED_dimmer(void);
+
+void USART_init (unsigned char, unsigned char);
+char receiveChar(void);
+char isCharavailable(char);
 void Timer_T0_10mS_delay_x_m(int);
-void Timer_T0_sub(char, unsigned char);
-
-
+void I2C_Tx_LED_dimmer(void);
 void I2C_Tx_any_segment_clear_all(void);
 void I2C_Tx_any_segment(char, char);
-
 void Timer_T1_sub(char, unsigned int);
 void Char_to_PC(char);
 void String_to_PC(const char*);
 char waitforkeypress(void);
-char receiveChar(void);
-char isCharavailable(char);
-void USART_init (unsigned char, unsigned char);
+
 
 char MCUSR_copy;
 
@@ -36,22 +35,13 @@ char MCUSR_copy;
 #define T1_delay_500ms 5,0xF0BE
 
 
+
 /*****************************************************************************/
 #define SW_reset {wdt_enable(WDTO_30MS);while(1);}
 
 
+
 /*****************************************************************************/
-/*#define setup_HW \
-setup_watchdog;\
-Unused_I_O;\
-set_up_switched_inputs;\
-set_up_I2C;\
-ADMUX |= (1 << REFS0);\
-USART_init(0,16);\
-I2C_Tx_LED_dimmer();*/
-
-
-
 #define setup_HW \
 setup_watchdog;\
 set_up_I2C;\
@@ -85,8 +75,6 @@ eeprom_write_byte((uint8_t*)0x3F4,\
 \
 asm("jmp 0x6C60");}
 
-//for(int m = 0; m < 4; m++)String_to_PC("\r\n");
-
 
 
 /*****************************************************************************/
@@ -99,9 +87,11 @@ WDTCSR = 0;
 #define wdr()  __asm__ __volatile__("wdr")
 
 
+
 /*****************************************************************************/
 #define set_up_I2C \
 TWAR = 0x02;
+
 
 
 /*****************************************************************************/
@@ -113,6 +103,7 @@ DDRD = 0;\
 PORTB = 0xFF;\
 PORTC  = 0xFF;\
 PORTD  = 0xFF;
+
 
 
 
