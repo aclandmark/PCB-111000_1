@@ -46,18 +46,6 @@ return 0;}
 
 
 
-
-
-void USART_init (unsigned char UBRROH_N, unsigned char UBRR0L_N ){
-UCSR0B = 0;
-UBRR0H = UBRROH_N;  									
-UBRR0L = UBRR0L_N;  								
-UCSR0A = (1 << U2X0);
-UCSR0B = (1 << RXEN0) | (1<< TXEN0);
-UCSR0C =  (1 << UCSZ00)| (1 << UCSZ01);}
-
-
-
 /*************************************************************************************/
 int uart_putchar(char c, FILE *mystr_output)
 	{if (c == '\n')
@@ -93,24 +81,4 @@ if ((keypress != '\r') && (keypress != '\n'))putchar(keypress);
 
 return keypress;}}
 
-
-
-
-/*********************************************************************/
-char receiveChar(void)
-{return UDR0;}
-
-
-
-/*********************************************************************/
-char isCharavailable (char m){int n = 0;
-while (!(UCSR0A & (1 << RXC0))){n++;
-if (n>8000) {m--;n = 0;}if (m == 0)return 0;}
-return 1;}
-
-
-/*************************************************************************************/
-char decimal_digit (char data){
-if (((data > '9') || (data < '0')) )return 0;
-else return 1;}
 
