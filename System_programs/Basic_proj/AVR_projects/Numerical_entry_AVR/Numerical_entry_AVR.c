@@ -1,10 +1,10 @@
 
-#include <avr/io.h>
+/*#include <avr/io.h>
 #include <avr/wdt.h>
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 #include <stdint.h>
-#include <stdio.h>
+#include <stdio.h>*/
 
 
 /*****************************************************************************/
@@ -93,12 +93,4 @@ default: break;}char_ptr++;}}								//incrementing "char_ptr" steps through the
 															//Selecting segment letters in turn
 
 
-void Timer_T0_10mS_delay_x_m(int m)
-{for (int n = 0; n < m; n++){Timer_T0_sub(T0_delay_10ms);}}
-
-void Timer_T0_sub(char Counter_speed, unsigned char Start_point){ 
-TCNT0 = Start_point;
-TCCR0B = Counter_speed;
-while(!(TIFR0 & (1<<TOV0)));
-TIFR0 |= (1<<TOV0); TCCR0B = 0;}
 
