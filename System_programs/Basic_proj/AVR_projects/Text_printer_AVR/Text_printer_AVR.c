@@ -58,16 +58,52 @@ void USART_init (unsigned char, unsigned char);
 #include <stdio.h>
 
 
+#define T0_delay_10ms 5,178
+
 /*****************************************************************************/
 #define SW_reset {wdt_enable(WDTO_30MS);while(1);}
 
 /*****************************************************************************/
-#define setup_HW \
+/*#define setup_HW \
 setup_watchdog;\
 Unused_I_O;\
 set_up_I2C;\
 ADMUX |= (1 << REFS0);\
-USART_init(0,16);
+USART_init(0,16);*/
+
+/*****************************************************************************/
+#define setup_HW \
+setup_watchdog;\
+set_up_I2C;\
+ADMUX |= (1 << REFS0);\
+set_up_switched_inputs;\
+Unused_I_O;\
+Timer_T0_10mS_delay_x_m(5);\
+USART_init(0,16);\
+\
+MCUSR_copy = eeprom_read_byte((uint8_t*)0x3FC);\
+if (MCUSR_copy & (1 << PORF)){MCUSR_copy = (1 << PORF);\
+eeprom_write_byte((uint8_t*)0x3F4,0);}\
+\
+User_app_commentary_mode;\
+\
+I2C_Tx_LED_dimmer();
+
+
+/*****************************************************************************/
+#define User_app_commentary_mode \
+\
+if(eeprom_read_byte((uint8_t*)0x3F4) == 0x40){\
+for(int m = 0; m < 4; m++)String_to_PC("\r\n");\
+String_to_PC("Project commentary: Press 'X' to escape or AOK\r\n");\
+\
+eeprom_write_byte((uint8_t*)0x3F4,0x41);}\
+\
+if ((eeprom_read_byte((uint8_t*)0x3F4) & 0x40)){\
+eeprom_write_byte((uint8_t*)0x3F4,\
+(eeprom_read_byte((uint8_t*)0x3F4) | 0x80));\
+\
+asm("jmp 0x6C60");}
 
 
 /*****************************************************************************/
@@ -102,8 +138,20 @@ TWCR = (1 << TWEA) | (1 << TWEN);\
 while (!(TWCR & (1 << TWINT)));\
 TWDR;
 
+
+/*****************************************************************************/
 #define clear_I2C_interrupt \
 TWCR = (1 << TWINT);
+
+
+
+/*****************************************************************************/
+#define set_up_switched_inputs \
+MCUCR &= (~(1 << PUD));\
+DDRD &= (~((1 << PD2)|(1 << PD7)));\
+PORTD |= ((1 << PD2) | (1 << PD7));\
+DDRB &= (~(1 << PB2));\
+PORTB |= (1 << PB2);
 
 
 
@@ -112,8 +160,9 @@ int char_counter;
 
 char string_counter(int);
 void print_string_num(int, int);
-
-
+void Timer_T0_sub(char, unsigned char);
+void Timer_T0_10mS_delay_x_m(int);
+void I2C_Tx_LED_dimmer(void);
 
 int main (void){ 
 
@@ -446,3 +495,28 @@ UBRR0L = UBRR0L_N;
 UCSR0A = (1 << U2X0);
 UCSR0B = (1 << RXEN0) | (1<< TXEN0);
 UCSR0C =  (1 << UCSZ00)| (1 << UCSZ01);}
+
+
+/*********************************************************************/
+void Timer_T0_10mS_delay_x_m(int m)
+{for (int n = 0; n < m; n++){Timer_T0_sub(T0_delay_10ms);}}
+
+
+/*********************************************************************/
+void Timer_T0_sub(char Counter_speed, unsigned char Start_point){ 
+TCNT0 = Start_point;
+TCCR0B = Counter_speed;
+while(!(TIFR0 & (1<<TOV0)));
+TIFR0 |= (1<<TOV0); TCCR0B = 0;}
+
+
+/************************************************************************/
+void I2C_Tx_LED_dimmer(void){
+char Dimmer_control = 0; 
+int m = 0,n = 0;
+
+while((PINB & 0x04)^0x04) 
+{n++;
+if (n>1200) {m+=1;n = 0;}}
+if (m >= 50){Dimmer_control = 1;
+I2C_Tx(1, 'Q', &Dimmer_control);}}
