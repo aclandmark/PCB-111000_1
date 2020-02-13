@@ -34,6 +34,12 @@ TARGET CHIP EEPROM reservations
 A hex file that comes even near to filling the Atmega 328 program space must be split into 
 two or more files which can be sent separately.  The LED flashes when the download is in progress.
 As soon as it stops flashing the next file can be sent.
+
+Note: it appears that the Arduino GUI polls its target device at regular intervals using the null character.
+This interferres with PCB 111000_UNO when text files are being programmed to EEPROM.  The "EEPROM_programmer_sub.c" file
+of this projects is therefore very slightly diffent from the eqivalent file used by "Project_programmmer_AVR". A line 
+has been introduced to ensure that null characters received during a text file download are ignored.
+
 */
 
 
