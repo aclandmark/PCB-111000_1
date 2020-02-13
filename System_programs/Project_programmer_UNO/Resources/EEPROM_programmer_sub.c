@@ -50,6 +50,7 @@ void Upload_data(int, int);
 void Upload_data_1(int, int);
 void Upload_data_2(int, int);
 char next_char_from_PC(void);
+void Upload_text(int);
 
 unsigned char RBL = 255;
 
@@ -188,7 +189,8 @@ Read_write_mem('I', 0x0, (EEP_pointer >> 8));
 Read_write_mem('I', 0x1, (EEP_pointer & 0x00FF));						//Save address in EEPROM available for first data item
 Read_write_mem('I', 0x2, data_counter);									//Save number of data items (each occupy 16 bits)	
 waitforkeypress();
-Upload_text(EEP_pointer);   
+//Upload_text(EEP_pointer); 
+Upload_text(EEP_pointer);  
 if (data_counter > 0) Upload_data (EEP_pointer, data_counter);  
 break;  
 
@@ -243,15 +245,17 @@ int *ptr_file_pointer,\
 char *ptr_DL_flag,\
 int *ptr_array_pointer, unsigned char EEPROM_buffer[]){	
 int UART_counter = 0;
-char text_char;
+char text_char, text_char_old, keypress;
 
 
 //Ignore short preliminary text section until the first -"- is encounter which signals the start of the first string to be saved to EEPROM
 
 
-text_char = waitforkeypress();	UART_counter++;							//Count characters as they are downloaded from the PC									
-while(1){text_char = next_char_from_PC(); UART_counter++; 				//Ignore characters untill a -"- is detected, then place them
-if (text_char == '"') break;}											//in an EEPROM buffer if being downloaded for the first time	
+text_char = waitforkeypress();												//Count characters as they are downloaded from the PC									
+if (text_char !=  '\0')UART_counter++;										//Arduino seems to down load several spurious nulls during download.
+while(1){text_char = next_char_from_PC(); 
+if ((text_char !=  '\0'))UART_counter++; 									//Ignore characters untill a -"- is detected, then place them
+if (text_char == '"') break;}												//in an EEPROM buffer if being downloaded for the first time	
 
 
 //Save text to EEPROM_buffer untill it is full or second -"- is encountered 
@@ -259,7 +263,8 @@ if (text_char == '"') break;}											//in an EEPROM buffer if being downloade
 
 	
 while(!(*ptr_DL_flag))													//EEPROM buffer full? No: Enter loop 1. Yes: skip Loop 1. 
-{text_char = next_char_from_PC(); UART_counter++; 						//Loop 1: Acquire text characters and increment "UART_counter"
+{if((text_char = next_char_from_PC()) == '\0')continue; else UART_counter++; 
+
 if (text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip loop 2.
 	{if (UART_counter > *ptr_file_pointer)								//Loop 2: Text downloaded for first time? Yes: Enter Loop 3. No: skip loop 3
 		{switch (text_char)												//Loop 3: Detect carraige return and new line:
@@ -497,9 +502,6 @@ return askiX4_to_hex_V2 (data_string);}
 
 
 
-
-
-
 /********************************************************************************************************************************************/
 void Upload_text(int EEP_pointer)
 {char string_char;
@@ -603,12 +605,12 @@ sendHex (16, (address_first_data_item));
 
 
 
-
-
-
 /********************************************************************************************************************************************/
 char next_char_from_PC(void){
 unsigned int n = 0;
 while (!(UCSR0A & (1 << RXC0))){n++;
 if (n > 15000) return 0;}													
 return UDR0;}
+
+
+
