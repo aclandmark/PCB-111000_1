@@ -31,7 +31,7 @@ I2C_Tx_2_integers(PORT_1, PORT_2);         //update the display
 if(PORT_1 == PORT_2)                      //If a single vertical line in illuminated
 {Timer_T0_10mS_delay_x_m(35);              //start a timer and pause
 if(switch_2_up)break;                     //If switch 3 has been released "break" out of the while loop
-else while(switch_3_down);}               //else wait for it to be released
+else while(switch_2_down);}               //else wait for it to be released
 
 if(PORT_1 != PORT_2)                      //If disjointed segments are illuminated
 {Timer_T0_10mS_delay_x_m(8);}}            //momentarily pause before returning  
