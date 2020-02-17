@@ -61,42 +61,6 @@ I2C_Tx_LED_dimmer();
 
 
 
-/*#define setup_HW \
-CLKPR = (1 << CLKPCE);\
-CLKPR = (1 << CLKPS0);\
-setup_watchdog;\
-set_up_I2C;\
-ADMUX |= (1 << REFS0);\
-set_up_switched_inputs;\
-Unused_I_O;\
-Timer_T0_10mS_delay_x_m(5);\
-USART_init(0,16);\
-\
-MCUSR_copy = eeprom_read_byte((uint8_t*)0x3FC);\
-if (MCUSR_copy & (1 << PORF)){MCUSR_copy = (1 << PORF);\
-eeprom_write_byte((uint8_t*)0x3F4,0);}\
-\
-User_app_commentary_mode;\
-\
-I2C_Tx_LED_dimmer();*
-
-
-/*****************************************************************************/
-/*#define User_app_commentary_mode \
-\
-if(eeprom_read_byte((uint8_t*)0x3F4) == 0x40){\
-for(int m = 0; m < 4; m++)String_to_PC("\r\n");\
-String_to_PC("Project commentary: Press 'X' to escape or AOK\r\n");\
-\
-eeprom_write_byte((uint8_t*)0x3F4,0x41);}\
-\
-if ((eeprom_read_byte((uint8_t*)0x3F4) & 0x40)){\
-eeprom_write_byte((uint8_t*)0x3F4,\
-(eeprom_read_byte((uint8_t*)0x3F4) | 0x80));\
-\
-asm("jmp 0x6C60");}*/
-
-
 /*****************************************************************************/
 #define setup_watchdog \
 if (MCUSR & (1 << WDRF))watch_dog_reset = 1;\
