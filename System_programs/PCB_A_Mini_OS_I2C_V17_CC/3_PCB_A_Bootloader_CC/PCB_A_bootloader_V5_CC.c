@@ -130,7 +130,7 @@ do{sendString("?  ");one_second_delay;} 				//User prompt
 while((isCharavailable() == 0));
 keypress = receiveChar();	
 if (keypress == 'p'){
-sendString ("\n\rUNO_update?");break;}								//Program new UNO hex_text_botloader (use new config bytes)
+sendString ("\n\rUNO_update?");break;}					//Program new UNO hex_text_botloader (use new config bytes)
 if(keypress == 'q')										//Keypress q program Arduino code (Use Arduino Config bytes)
 {eeprom_write_byte((uint8_t*)0x3FC, 0x1);
 sendString ("\n\rRestore Arduino code?");break;}
@@ -143,7 +143,6 @@ asm("jmp 0x5D00");}
 
 PageSZ = 0x40; PAmask = 0x3FC0;							//Define flash parameters
 
-//sendString ("\n\rUNO_Hex_file?"); 		
 while ((keypress = waitforkeypress()) != ':')			//Ignore characters before the first ':'
 
 
