@@ -45,10 +45,10 @@ signed char expnt;
 char test_num, test_digit, sign_bit;
 
 
-char *SW_Version = "\r\nPCB_A Mini-OS: I2C_V16_1_CC\r\n";
+char *SW_Version = "\r\nPCB_A Mini-OS: I2C_V17_CC\r\n";
 char *SW_info = "SW information:\
   Compatible with User Projects V1_7, PCB_A_Bootloader V5_CC.\r\n\
-  an UNO_bootloader_for_hex&text_V5\
+  and UNO_bootloader_for_hex&text_V5\
   \r\nProgrammed using Project_programmer_AVR_V1\r\n";
 	
 
