@@ -63,9 +63,9 @@ setup_328_HW;												//see "Resources\ATMEGA_Programmer.h"
 /*****************Power-up and make contact with target****************************/
 
 while(1){
-do{sendString("S  ");} 
+do{sendString("s  ");} 
 while((isCharavailable(255) == 0));						//User prompt 
-if(receiveChar() == 'S')break;}
+if(receiveChar() == 's')break;}
 
 
 Atmel_powerup_and_target_detect;   							//Leave target in programming mode 													    
@@ -87,16 +87,16 @@ PageSZ = 0x40; PAmask = 0x3FC0; FlashSZ=0x4000;
 EE_top = 0x400-0x10;										//Last 16 bytes reseerved for system use
 text_start = 0x5;											//First 5 bytes reserved for programmer use
 
-sendString(" detected\r\nPress P or E to program flash \
-or EEPROM (or X to escape).");
+sendString(" detected\r\nPress -p- or -e- to program flash \
+or EEPROM (or -x- to escape).");
 
 while(1){
 op_code = waitforkeypress();
 switch (op_code){
 
-case 'E': Prog_EEPROM(); break;
+case 'e': Prog_EEPROM(); break;
 
-case 'D':													//Delete contents of the EEPROM
+case 'd':													//Delete contents of the EEPROM
 sendString("\r\nReset EEPROM! D or AOK to escape");			//but leave cal data.
 newline();
 if(waitforkeypress() == 'D'){
@@ -119,10 +119,10 @@ if (Atmel_config(read_fuse_bits_h, 0) == 0xFF)
 {sendString("\r\nCannot be used to program UNO flash\r\n");
 Exit_Programmer;}
 
-sendString("\r\nSend Program file (or X to escape).\r\n");
+sendString("\r\nSend Program file (or x to escape).\r\n");
 
 while ((keypress = waitforkeypress()) != ':')				//Ignore characters before the first ':'
-{if (keypress == 'X'){Exit_Programmer;}}					//X pressed to escape
+{if (keypress == 'x'){Exit_Programmer;}}					//X pressed to escape
 
 Initialise_variables_for_programming_flash;
 
