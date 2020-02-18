@@ -66,7 +66,7 @@ int App_reservation;
 EEP_pointer = text_start;												//Start saving user strings/data at address 0x05
 
 sendString\
-("\r\nPress W, R or D to write to, read from or delete");
+("\r\nPress -w- or -r- to write to or read from ");
 if (pcb_type == 1)sendString (" the UNO");
 else sendString (" PCB_A");
 
@@ -145,7 +145,7 @@ if(App_reservation > 0){
 sendString("\r\nApp: Start addr's  ");
 sendHex(16, (EE_top - App_reservation));newline();						//Display first address to be used by the application
 sendString ("X to escape or AOK\r\n");
-if(waitforkeypress() == 'X') 
+if(waitforkeypress() == 'x') 
 {binUnwantedChars();	wdt_enable(WDTO_1S); while(1);}}				//Accidental key press: Press X to start again.
 binUnwantedChars();		
 EE_top = EE_top - App_reservation;										//Variable "EEPROM" stores highest address available for user strings and data. 
