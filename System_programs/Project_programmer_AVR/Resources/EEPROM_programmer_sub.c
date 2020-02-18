@@ -65,7 +65,7 @@ int App_reservation;
 EEP_pointer = text_start;												//Start saving user strings/data at address 0x05
 
 sendString\
-("\r\nPress W, R or D to write to, read from or delete ");
+("\r\nPress -w- or -r- to write to or read from ");
 if (pcb_type == 1)sendString ("the UNO");
 else sendString ("PCB_A");
 
