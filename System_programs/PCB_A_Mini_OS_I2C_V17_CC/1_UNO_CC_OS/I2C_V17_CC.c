@@ -32,7 +32,7 @@ the user projects.  The PIC only offered the slave implementation of the I2C bus
 
 ***********************/
 
-# include "I2C_V16_1_Header_file_CC.h"
+# include "I2C_V17_Header_file_CC.h"
 
 
 int main (void){
