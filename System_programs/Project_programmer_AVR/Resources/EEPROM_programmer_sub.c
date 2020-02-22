@@ -247,9 +247,11 @@ char text_char;
 //Ignore short preliminary text section until the first -"- is encounter which signals the start of the first string to be saved to EEPROM
 
 
-text_char = waitforkeypress();	UART_counter++;							//Count characters as they are downloaded from the PC									
-while(1){text_char = next_char_from_PC(); UART_counter++; 				//Ignore characters untill a -"- is detected, then place them
-if (text_char == '"') break;}											//in an EEPROM buffer if being downloaded for the first time	
+text_char = waitforkeypress();												//Count characters as they are downloaded from the PC									
+if (text_char !=  '\0')UART_counter++;										//Arduino seems to down load several spurious nulls during download.
+while(1){text_char = next_char_from_PC(); 
+if ((text_char !=  '\0'))UART_counter++; 									//Ignore characters untill a -"- is detected, then place them
+if (text_char == '"') break;}												//in an EEPROM buffer if being downloaded for the first time	
 
 
 //Save text to EEPROM_buffer untill it is full or second -"- is encountered 
@@ -257,8 +259,10 @@ if (text_char == '"') break;}											//in an EEPROM buffer if being downloade
 
 	
 while(!(*ptr_DL_flag))													//EEPROM buffer full? No: Enter loop 1. Yes: skip Loop 1. 
-{text_char = next_char_from_PC(); UART_counter++; 						//Loop 1: Acquire text characters and increment "UART_counter"
-if (text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip loop 2.
+{if((text_char = next_char_from_PC()) == '\0')continue; 				//Ignore null chars loop back to top of the while loop
+else UART_counter++; 													//Loop 1: Acquire text characters and increment "UART_counter"
+
+if(text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip loop 2.
 	{if (UART_counter > *ptr_file_pointer)								//Loop 2: Text downloaded for first time? Yes: Enter Loop 3. No: skip loop 3
 		{switch (text_char)												//Loop 3: Detect carraige return and new line:
 			{case '\n':													//combine them if necessary and replace with '\0'
