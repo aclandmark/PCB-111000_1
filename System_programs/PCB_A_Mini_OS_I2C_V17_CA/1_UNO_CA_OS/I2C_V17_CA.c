@@ -27,12 +27,12 @@ the user projects.  The PIC only offered the slave implementation of the I2C bus
 0x3F6	cmd_counter_H
 0x3F5	cmd_counter_L
 0x3F4	Reset_status_2: Zero resets UNO immediately after PCB_A has been programmed triggering the h/t/r/D prompt
-
+0x3F3	8 bit PRN gen EEP subroutines
 
 
 ***********************/
 
-# include "I2C_V16_1_Header_file_CA.h"
+# include "I2C_V17_Header_file_CA.h"
 
 
 int main (void){
