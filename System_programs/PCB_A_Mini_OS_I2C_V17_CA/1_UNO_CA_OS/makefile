@@ -37,7 +37,7 @@ MCU = atmega328
 FORMAT = ihex
 
 # Target file name (without extension).
-TARGET = I2C_V16_1_CA
+TARGET = I2C_V17_CA
 
 
 # List C source files here. (C dependencies are automatically generated.)
