@@ -263,7 +263,8 @@ if (text_char == '"') break;}												//in an EEPROM buffer if being download
 
 	
 while(!(*ptr_DL_flag))													//EEPROM buffer full? No: Enter loop 1. Yes: skip Loop 1. 
-{if((text_char = next_char_from_PC()) == '\0')continue; else UART_counter++; 
+{if((text_char = next_char_from_PC()) == '\0')continue; 				//Ignore null chars loop back to top of the while loop
+else UART_counter++; 													//Loop 1: Acquire text characters and increment "UART_counter"
 
 if (text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip loop 2.
 	{if (UART_counter > *ptr_file_pointer)								//Loop 2: Text downloaded for first time? Yes: Enter Loop 3. No: skip loop 3
