@@ -1,5 +1,8 @@
 char PRN_8bit_GEN(void);
 
+
+
+
 void Message_from_the_OS(void){
 
 int text_max, eeprom_ptr;
@@ -45,11 +48,12 @@ char PRN_8bit_GEN(void){
 unsigned int bit;
 char lfsr;
 
-lfsr = eeprom_read_byte((uint8_t*)(0x1FF));
+lfsr = eeprom_read_byte((uint8_t*)(0x3F3));
 bit = (( lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 4)) & 1;
 lfsr = (lfsr >> 1) | (bit << 7);
-eeprom_write_byte((uint8_t*)(0x1FF),lfsr);
+eeprom_write_byte((uint8_t*)(0x3F3),lfsr);
 return lfsr;}
+
 
 
 
