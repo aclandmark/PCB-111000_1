@@ -163,13 +163,15 @@ sendHex(10,prog_counter); sendString(" in:  ");
 sendHex(10,read_ops); sendString(" out\r\n");
 
 
-Read_write_mem('I', 0x3F9, 0);							//Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
-Read_write_mem('I', 0x3F4, 0);							//Read by Led driver (1_UNO_CC_OS). Resets UNO immediately after PCB_A has
-UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));				//been programmed triggering the h/t/r/D prompt so that the project_programmer
-Reset_H;												//(i.e. this program when running on the UNO device) can be removed.
+UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));				
+if(pcb_type == 1)	
+Read_write_mem('I', 0x3FC,0x80);
+if(pcb_type == 2)												//PCB_A
+{Read_write_mem('I', 0x3F9, 0);								//Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
+Read_write_mem('I', 0x3F4, 0);}							//Read by Led driver (1_UNO_CC_OS). Resets UNO immediately after PCB_A has
+Reset_H;													//(i.e. this program when running on the UNO device) can be removed.
 while(1);
 return 1;}
-
 
 
 
