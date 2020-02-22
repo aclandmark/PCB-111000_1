@@ -246,9 +246,15 @@ PORTD |= ((1 << PD2)|(1 << PD3)|(1 << PD4)|(1 << PD5)|(1 << PD6)|(1 << PD7));
 #define Config_Xtal_port \
 ASSR = (1 << AS2);	
 
-
-
+/************************************************************************************************************************************/
 #define Exit_Programmer \
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));\
+if(pcb_type == 1)\
+Read_write_mem('I', 0x3FC,0x80);\
+if(pcb_type == 2)\
+{Read_write_mem('I', 0x3F9, 0);\
+Read_write_mem('I', 0x3F4, 0);}\
 Reset_H;\
-wdt_enable(WDTO_60MS); while(1);
+while(1);
+
+
