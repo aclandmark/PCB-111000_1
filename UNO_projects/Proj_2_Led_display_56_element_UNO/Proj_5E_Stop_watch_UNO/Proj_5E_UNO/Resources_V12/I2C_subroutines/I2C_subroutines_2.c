@@ -23,7 +23,7 @@ char receive_byte_with_Nack(void);
 void I2C_Rx_RN(unsigned long *, signed char *);
 
 void Num_to_PC(char, long);
-void String_to_PC(char*);
+void String_to_PC(const char*);
 void Exp_to_PC (signed char);
 
 
