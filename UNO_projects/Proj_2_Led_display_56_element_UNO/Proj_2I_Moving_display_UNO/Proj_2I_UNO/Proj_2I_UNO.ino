@@ -1,11 +1,18 @@
-#include "Proj_2I_header_file.h"
+
+
+/**************Proj_2 Moving_Displaying********************
+Enter number as for Proj 2G and follow instructions*/
 
 
 /*
 Moving display:  This is usefull for displaying numbers in scientific notation where 8 digits may not be sfficient
 For example -1.87E-8  will fill the entire display
-Note: Entry of numbers is so important that it is best left to the mini-OS that resides on the PCB 111000_1 (pcb_a)Atmega 328
+Note: Entry of numbers is so important that it is best left to the mini-OS that resides on the PCB_A Atmega 328
  */
+
+
+
+#include "Proj_2I_header_file.h"
 
 
 
