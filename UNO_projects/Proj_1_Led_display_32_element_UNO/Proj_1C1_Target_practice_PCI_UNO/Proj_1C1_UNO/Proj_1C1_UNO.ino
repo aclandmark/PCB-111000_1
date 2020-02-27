@@ -1,13 +1,15 @@
 
-/*Proj_1C_LED_display    
+/**************Proj_1C_LED_display***************************
+Target practice: Testing your reaction time******************/
 
-Testing your reaction time
-************************************************************/
+
 
 #include "Proj_1C1_header_file.h"
 
+
 volatile unsigned int PORT_1, mask;         //Variables used by both the main routine and also by the ISR 
 char switch_control;                        //Prevents rapid switch_3 presses from shooting leds down at random  
+
 
 
 int main (void){
@@ -35,6 +37,6 @@ SW_reset;}
 /**************ISR Routine executed every time that switch 3 is  operated**************************************/
 ISR(PCINT2_vect) {                            //This ISR momentarily interrupts the main routine
 if(switch_2_up)return;                        //It notes which LED has just been shot down and 
-if (switch_control) return;                   //Return early if "switch_control" is 1
-mask &= ~PORT_1;                              //writes zero at its location in the "mask" register
+if (switch_control) return;                   //returns early if "switch_control" is 1
+mask &= ~PORT_1;                              //Write zero at its location in the "mask" register
 switch_control = 1;}                          //Set switch conrol to 1.
