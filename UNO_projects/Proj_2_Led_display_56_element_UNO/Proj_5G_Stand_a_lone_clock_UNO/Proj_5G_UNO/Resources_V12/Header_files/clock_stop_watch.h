@@ -11,6 +11,8 @@
 
 
 
+
+
 /***********Define clock display functions and modes***************/
 #define reset_clock_1   {digits[0] = 0; for (int m = 1; m < 8; m++)digits[m] = '0'; }
 #define reset_clock_2   {for (int m = 0;  m < 8; m++)\
@@ -19,11 +21,14 @@ I2C_Tx_8_byte_array_plus_mode(7, digits);I2C_Tx_3(8, '2');}
 
 
 
-#define AT_clock_mode 'C'								//Used by I2C_Tx_OS_timer() to set and start the mini_OS clock
+
+
+
+#define AT_clock_mode 'C'
 #define AT_exit_stop_watch 10, '1'
 #define AT_mode_1 1
 
-#define display_clock 'D', '1'							//Used by subroutine I2C_Tx_Clock_command()
+#define display_clock 'D', '1'
 #define hide_clock 'D', '2'
 #define pause_clock 'D', '3'
 #define increment_seconds 'D', '5'
@@ -31,7 +36,7 @@ I2C_Tx_8_byte_array_plus_mode(7, digits);I2C_Tx_3(8, '2');}
 #define decrement_seconds 'D', '7'
 #define increment_minutes 'D', '8'
 
-#define display_current_time 'E', '1'					//Used by I2C_Tx_Clock_command()
+#define display_current_time 'E', '1'
 #define display_stored_times 'E', '4'
 #define store_time 'E', '2'
 #define one100ms_mode 'E', '1'
