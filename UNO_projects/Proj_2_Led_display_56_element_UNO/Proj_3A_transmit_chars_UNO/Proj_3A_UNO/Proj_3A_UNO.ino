@@ -1,4 +1,9 @@
 
+/**************Proj_3A_transmit_chars********************/
+/*Upload the project and then open the serial monitor
+At the user prompt press both R and r*/
+
+
 #include "Proj_3A_header_file.h"
 
 int main (void){
