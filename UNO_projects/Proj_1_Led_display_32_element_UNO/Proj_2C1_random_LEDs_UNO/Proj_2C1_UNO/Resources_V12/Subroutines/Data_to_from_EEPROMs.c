@@ -9,8 +9,6 @@ char Char_from_EEPROM(int);
 void Text_to_EEPROM(int*, char);
 char Text_from_EEPROM(int*);
 void Read_on_chip_EEPROM(int);
-void save_cal_bytes(char*, char*);
-void restore_cal_bytes(char, char);
 void Read_Hello_world_string(void);
 
 char PRN_8bit_GEN(void);
@@ -49,25 +47,6 @@ while(1){
 temp_char =  eeprom_read_byte((uint8_t*)(EEPROM_address++));   
 if (temp_char != '\0') Char_to_PC(temp_char);
 else {newline(); break;}}}
-
-
-
-/****************************************************/
-void save_cal_bytes(char*cal_1, char*cal_2){
-*cal_1 =eeprom_read_byte((uint8_t*)(0x1F7));
-*cal_2 =eeprom_read_byte((uint8_t*)(0x1F8));
-Num_to_PC(16,*cal_1); Char_to_PC(' ');
-Num_to_PC(16,*cal_2); }
-
-
-
-/****************************************************/
-void restore_cal_bytes(char cal_1, char cal_2){
-eeprom_write_byte((uint8_t*)(0x1F7), cal_1);
-eeprom_write_byte((uint8_t*)(0x1F8), cal_2);
-Num_to_PC (16,eeprom_read_byte((uint8_t*)(0x1F7)));
-Char_to_PC(' ');
-Num_to_PC (16,eeprom_read_byte((uint8_t*)(0x1F8)));}
 
 
 
