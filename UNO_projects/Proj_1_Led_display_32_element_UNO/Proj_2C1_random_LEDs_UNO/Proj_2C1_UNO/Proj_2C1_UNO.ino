@@ -1,7 +1,8 @@
 
+/**************Proj_2C1_random_LED kaleidoscope***************************/
 
-/*Proj_2C1_random_LEDs
-************************************************************/
+
+
 
 #include "Proj_2C1_header_file.h"
 
