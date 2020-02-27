@@ -1,5 +1,9 @@
 
+/**************Proj_2B1_LED_display***************************
+Snow storm display*******************************************/
 
+/*Pres sw2 to pause the display. Open serial monitor and send any char
+to change the display intensity.  (Remember to set "no line ending".)*/
 
 
 #include "Proj_2B1_header_file.h"
