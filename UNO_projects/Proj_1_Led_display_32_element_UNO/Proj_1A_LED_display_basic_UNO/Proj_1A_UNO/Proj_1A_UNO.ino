@@ -10,7 +10,7 @@ Basic LED display********************************************/
 
 
 /********************Version 1**************************************************************/
-int main (void){                          //The "main" routine lies between a pair of {} brackets.
+/*int main (void){                          //The "main" routine lies between a pair of {} brackets.
 
 unsigned int PORT_1=1;                    //PORT_1 is an address in data memory initially set to 1 (binary 0000000000000001)
                                           //Note: that PORT_1 holds 16 bits (binary digits) of data 
@@ -24,10 +24,10 @@ setup_HW;
     PORT_1 = PORT_1 << 1;                 //The contents of address "PORT_1" are shifted one place left
     }SW_reset;                            //every time that the "for-loop" is executed
 }
-
+*/
 
 /***********************ALTERNATIVE FORM************************************************/
-/*                                        //Start of comment section which is ignored by compiler
+                                        //Start of comment section which is ignored by compiler
 int main (void)
 {unsigned int PORT_1;                    //start of main routine           
 setup_HW;
@@ -38,4 +38,3 @@ while(1){                   				      //While loop starts here
     Timer_T0_10mS_delay_x_m(6);
     PORT_1 = PORT_1 << 1;}}}          		//All loops including main end here
                                           //End of comment section
-*/
