@@ -1,9 +1,17 @@
 
+/**************Proj_2G1_Displaying numbers********************/
 
+/*Upload the sketch and open the Serial monitor or a terminal program
+Press R at the user prompt and send a number.  Notice that the digits 
+must be reversed to give the wanted number
+Press PCB_A reset switch to initialise he display
+*/   
 
 
 
 #include "Proj_2G_header_file.h"        //See this file for the definitions of the digits 0 to 9
+
+
  
 int main (void){
 
