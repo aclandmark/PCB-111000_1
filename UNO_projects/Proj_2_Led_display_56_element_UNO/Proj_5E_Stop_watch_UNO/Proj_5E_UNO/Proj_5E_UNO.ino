@@ -1,5 +1,7 @@
-
-
+/**************Proj_5E_Stop_watch********************/
+/*Works from a 5V supply independently of the PC, see
+ Proj_5E_header_file.h for user instructions*/
+ 
 
 #include "Proj_5E_header_file.h"
 
