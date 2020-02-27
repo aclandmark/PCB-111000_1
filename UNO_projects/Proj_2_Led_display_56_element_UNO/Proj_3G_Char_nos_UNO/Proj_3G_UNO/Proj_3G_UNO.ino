@@ -1,3 +1,5 @@
+/**************Proj_3G_Char_nos:  Demo operation of binary numbers********************/
+/*Press middle switch to increment display, sw1 to decrement it and sw3 to change the sign*/
 
 
 #include "Proj_3G_header_file.h"
