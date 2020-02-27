@@ -1,4 +1,7 @@
 
+/**************Proj_3E_Acquire_and process_Data_from_the _KBD********************/
+/*Open terminal program, press 'r' at the user prompt, enter number and then press any key (AK)*/
+
 #include "Proj_3E_header_file.h"
 
 int main (void){
