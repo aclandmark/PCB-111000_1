@@ -1,4 +1,9 @@
 
+/**************Proj_1E_LED_display***************************
+The UNO device performs two functions. It controls the display 
+and does some arithmetic*************************************/
+
+/*Open the serial monitor and press sw2 to see the arithmretic*/
 
 
 
