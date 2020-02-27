@@ -1,10 +1,16 @@
 
+/**************Proj_5B_Demo_Clock********************/
+
+/*At the user prompt press 'r' to start a timer or
+R to enter the time and then start the clock*/
+
+
 
 #include "Proj_5B_header_file.h"
 
 
 void set_time(void);
-void timer_utoa(char);
+void timer_utoa(unsigned char);
 void Display_time(void);
 
 char digits[8];                                                               //Global variables
@@ -15,16 +21,17 @@ unsigned int sec_counter;
 int main (void){
 char User_response;
 setup_HW;
-String_to_PC("Press 'R' to enter time or 'r' to start at time zero  ");
 User_prompt;
-if(User_response == 'R')set_time();
+
+if(User_response == 'R'){set_time();}
+  
 else {reset_clock_1; msecsH = 0; msecsL = 0;  }
 I2C_Tx_8_byte_array(digits);
 
 String_to_PC("AK to start\r\n");
 waitforkeypress();binUnwantedChars ();
 
-while(1){Timer_T0_10mS_delay_x_m(100);sec_counter++; Display_time();}}
+while(1){Timer_T0_10mS_delay_x_m(100);sec_counter++; Display_time();}}		//1 second tick
 
 
 
