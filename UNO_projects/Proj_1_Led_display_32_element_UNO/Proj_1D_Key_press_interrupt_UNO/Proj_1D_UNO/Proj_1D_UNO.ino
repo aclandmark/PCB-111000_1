@@ -1,6 +1,11 @@
 
+/**************Proj_1D_LED_display***************************
+Uses PC Keypresses to change the basic display***************/
 
 
+
+/*Click on tools and open the serial monitor or use a terminal program such as Bray++ or Tera Term
+Port setings are Baud rate 57600, 8 data bits, 1 stop bit no parity and no handshaking*/
 
 
 #include "Proj_1D_header_file.h"
