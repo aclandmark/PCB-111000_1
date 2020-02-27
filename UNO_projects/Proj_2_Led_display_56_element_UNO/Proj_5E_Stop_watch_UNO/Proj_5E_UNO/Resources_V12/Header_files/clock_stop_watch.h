@@ -11,11 +11,16 @@
 
 
 
+
+
 /***********Define clock display functions and modes***************/
 #define reset_clock_1   {digits[0] = 0; for (int m = 1; m < 8; m++)digits[m] = '0'; }
 #define reset_clock_2   {for (int m = 0;  m < 8; m++)\
 {if ((m==2) || (m== 5))digits[m] = ' '; else digits[m] = '0'; }\
 I2C_Tx_8_byte_array_plus_mode(7, digits);I2C_Tx_3(8, '2');}
+
+
+
 
 
 
