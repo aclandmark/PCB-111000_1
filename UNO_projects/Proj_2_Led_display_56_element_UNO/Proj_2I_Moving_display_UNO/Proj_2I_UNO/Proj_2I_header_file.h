@@ -16,10 +16,10 @@
 #define seven "abc"
 #define eight "abcdefg"
 #define nine "abcfg"
-#define null '\0'
+#define null "\0"
 
 void display_num_string (const char*, int);
-char digit_array_to_display(const char*, char);
+char digit_array_to_display(char*, char);
 
 #define rotate_display_left  for(int m = 16; m; m--)digit_array[m] = digit_array[m-1];\
 digit_array[0] = digit_array[16];
