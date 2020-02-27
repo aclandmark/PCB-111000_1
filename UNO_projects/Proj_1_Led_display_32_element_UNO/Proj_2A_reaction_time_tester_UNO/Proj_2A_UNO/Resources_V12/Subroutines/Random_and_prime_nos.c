@@ -16,10 +16,10 @@ char PRN_8bit_GEN(void){
 unsigned int bit;
 char lfsr;
 
-lfsr = eeprom_read_byte((uint8_t*)(0x1FF));
+lfsr = eeprom_read_byte((uint8_t*)(0x3F3));
 bit = (( lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 4)) & 1;
 lfsr = (lfsr >> 1) | (bit << 7);
-eeprom_write_byte((uint8_t*)(0x1FF),lfsr);
+eeprom_write_byte((uint8_t*)(0x3F3),lfsr);
 return lfsr;}
 
 
@@ -30,16 +30,15 @@ return lfsr;}
 unsigned int PRN_16bit_GEN(unsigned int start){
 unsigned int bit, lfsr;
 
-if(!(start)) lfsr = (eeprom_read_byte((uint8_t*)(0x3F2)) << 8) + eeprom_read_byte((uint8_t*)(0x3F1));
+if(!(start)) lfsr = (eeprom_read_byte((uint8_t*)(0x3F3)) << 8) + eeprom_read_byte((uint8_t*)(0x3F2));
 else lfsr = start;
 bit = (( lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
 lfsr = (lfsr >> 1) | (bit << 15);
 if(!(start)){
-eeprom_write_byte((uint8_t*)(0x3F2),(lfsr>>8));
-eeprom_write_byte((uint8_t*)(0x3F1),lfsr);}
+eeprom_write_byte((uint8_t*)(0x3F3),(lfsr>>8));
+eeprom_write_byte((uint8_t*)(0x3F2),lfsr);}
 
 return lfsr;}
-
 
 
 
