@@ -1,16 +1,10 @@
 
-/*
-ATMEGA 168 EEPROM reservations
-0x1F7	User cal value
-0x1F8	User cal value
-0x1F9	Default cal value
-*/
 
 
-int Mux_cntl_2;
-int test;
+
 char watch_dog_reset = 0;
-char MCUSR_copy;
+char User_response;
+
 
 #define T0_delay_5ms 5,220
 #define T0_delay_4ms 4,227
@@ -125,6 +119,8 @@ TWCR = (1 << TWEA) | (1 << TWEN);\
 while (!(TWCR & (1 << TWINT)));\
 TWDR;
 
+
+/*****************************************************************************/
 #define clear_I2C_interrupt \
 TWCR = (1 << TWINT);
 
