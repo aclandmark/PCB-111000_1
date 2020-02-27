@@ -1,6 +1,17 @@
 
 
+/**************Proj_2A_LED_display***************************
+Reaction time tester*****************************************/
+
+/*Press the middle switch to start the display and release
+it as soon as the LEDS line up to make them flash*/
+
+
+
+
 #include "Proj_2A_header_file.h"
+
+
 
 int main (void){
 unsigned int rand;                      //random number
