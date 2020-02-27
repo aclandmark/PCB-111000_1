@@ -1,10 +1,18 @@
 
+/**************Proj_1F_LED_display***************************
+Generates 6 displays depending on the pcb switch presses****/
+
+
 
 #include "Proj_1F_header_file.h"
+
+
 
 volatile char T1_OVF;                           //T1_OVF is set to 1 by TIMER 1 ISR or alternatively by a keypress ISR
 unsigned int PORT_1,PORT_2,n, n_max;           //"n" records the increment number and "n_max" records the value at which it is reset to 0    
 char switch_press, p;                           //"switch_press" is used to remember which switches have most recently been pressed
+ 
+                                                
                                                 //here it can vary between 1 and 5 resulting in 5 different displays
 int main (void){
 setup_HW;
