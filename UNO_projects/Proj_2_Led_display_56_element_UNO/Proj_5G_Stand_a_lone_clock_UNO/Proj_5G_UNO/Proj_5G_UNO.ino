@@ -1,4 +1,12 @@
 
+/**************Proj_5G_Stand_a_lone_clock********************/
+
+
+/*Works from a 5V supply independently of the PC,
+ Having uploaded the sketch press the PCB_A reset switch 
+ to print out instructions on  the serial monitor or
+ see Proj_5G_header_file.h
+ Note: having entered the time press sw1 to start the clock.*/
 
 
 
