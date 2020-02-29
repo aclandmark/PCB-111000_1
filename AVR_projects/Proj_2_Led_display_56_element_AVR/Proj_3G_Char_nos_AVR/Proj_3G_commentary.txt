@@ -1,5 +1,5 @@
 
-***********************************************************/
+***********************************************************
 Proj_3G_Char_nos
 
 USES THE DISPLAY TO EXPLORE THE OPERATION OF BINARY NUMBERS
