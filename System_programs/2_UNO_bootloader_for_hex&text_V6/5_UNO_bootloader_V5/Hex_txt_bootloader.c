@@ -131,13 +131,10 @@ if (!(PIND & (1 << PIND5)))									//Reset control CA display: PD5 is connected
 wdt_enable(WDTO_30MS); while(1);}							  
 
 while(1){													//Returns here following programming with/without verification or 
-do{sendString("h/t/r/D\t");}								//double click of PCB_A reset switch
+do{sendString("H/h/t/r/D\t");}								//double click of PCB_A reset switch
 while((isCharavailable(255) == 0));                        //User prompt
 
 switch (receiveChar()){ 
-
-case 't': 	mode = 't'; text_programmer(); 					//Request standard text file ownload
-			break;                      
 	
 case 'r':	Prog_mem_address_H = 0;
 			Prog_mem_address_L = 0;
@@ -145,21 +142,19 @@ case 'r':	Prog_mem_address_H = 0;
 			if (Flash_readout == 0xFF)asm("jmp 0x5E50");	//Detect the absense of an User App and run default app.
 			eeprom_write_byte((uint8_t*)0x3F7,0);			//Indicates user program is being launched using a WDTout
 			wdt_enable(WDTO_15MS); 							//Run the user application (WDTout triggers jump to 0x0000)
-			while(1);break; 
+			while(1); 
 
-case 'h': 	mode = 'h';hex_programmer();					//Hex file download with optional verification
+case 'H': 	mode = 't'; text_programmer();
+case 'h':	mode = 'h';hex_programmer();					//Hex file download with optional verification
 			asm("jmp 0x61E0");	
-			while(1);break;
 
 case 'T': 	mode = 't'; text_programmer(); 					//Text file download with verification
 			asm("jmp 0x6C30");								
-			while(1); break;
 
 case 'D':	Prog_mem_address_H = 0;							//Erase start of user app and trigger default app.
 			Prog_mem_address_L = 0;
 			Page_erase ();							
 			wdt_enable(WDTO_15MS);while(1);
-			break;
 
 default: 	break;}}
 
