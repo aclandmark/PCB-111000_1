@@ -131,7 +131,7 @@ if (!(PIND & (1 << PIND5)))									//Reset control CA display: PD5 is connected
 wdt_enable(WDTO_30MS); while(1);}							  
 
 while(1){													//Returns here following programming with/without verification or 
-do{sendString("H/h/t/r/D\t");}								//double click of PCB_A reset switch
+do{sendString("h/t/r/D      ");}								//double click of PCB_A reset switch
 while((isCharavailable(255) == 0));                        //User prompt
 
 switch (receiveChar()){ 
@@ -144,7 +144,7 @@ case 'r':	Prog_mem_address_H = 0;
 			wdt_enable(WDTO_15MS); 							//Run the user application (WDTout triggers jump to 0x0000)
 			while(1); 
 
-case 'H': 	mode = 't'; text_programmer();
+case 't': 	mode = 't'; text_programmer();
 case 'h':	mode = 'h';hex_programmer();					//Hex file download with optional verification
 			asm("jmp 0x61E0");	
 
