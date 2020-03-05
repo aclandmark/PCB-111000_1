@@ -73,7 +73,7 @@ sendHex(10,read_ops); sendString(" out\r\n");
 
 Reset_H;															//Exit programming mode
 DDRC &= (~(1 << DDC3));
-sendString("h/t/r/D\t");											//First user prompt of UNO bootloader
+sendString("h/t/r/D      ");											//First user prompt of UNO bootloader
 timer_T1_sub(T1_delay_500mS);
 
 Reset_L;												
