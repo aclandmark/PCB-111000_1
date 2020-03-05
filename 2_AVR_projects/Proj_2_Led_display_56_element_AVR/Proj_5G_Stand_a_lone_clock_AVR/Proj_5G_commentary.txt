@@ -1,0 +1,38 @@
+
+
+*********************************************************
+Proj_5G_Stand_a_lone_clock. 
+
+
+
+IT INTRODUCES
+
+A clock that can be setup and adjusted completely independently of a PC and uses the 
+crystal controlled timer provided by the mini-OS.
+
+
+OPERATION
+
+Following POR or programming, PCI is active and switches 1 and 2 are used to enter the start time
+When this is complete PCI is disabled and program execution polls the three switches in turn waiting 
+for the user to select either pause or blank the display or adjust the time.
+
+
+
+USER INSTRUCTIONS
+
+Power cycle the project pcb.
+Press SW2 to select each digit of the clock display.
+Press SW1 to move onto the next digit
+When this process is complete the clock starts automatically.
+
+
+During operation the three switches are continuously polled
+Press sw2 to toggle the display ON and OFF
+Press sw1 to pause or resume the clock
+To adjust the clock:
+pulse sw3 then press sw1 and sw2 to advance the time
+or press and hold sw3 (for 500ms)
+then press sw1 and sw2 to retard the time
+Always pulse sw3 when the time is correct
+
