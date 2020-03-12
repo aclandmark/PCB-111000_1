@@ -125,8 +125,13 @@ setup_HW;													//Initialises all IO to week pull up; UART introduces 5mS 
 MCUCR = (1<<IVCE);  										//Select the interrupt vector table at the start of boot section
 MCUCR = (1<<IVSEL);
 
-//if (!(PIND & (1 << PIND5)))									//Reset control CA display: PD5 is connected to PCB_A PB1 which defaults low
-if (!(PIND & (1 << PIND6)))								//Connected to PCB_A PB2 which can be set with the PCB_A reset switch (defaults high).
+
+//For CA displays PIND6 is controlled using PCB_A PB1 which drives a segment on the display and defaults to high when the display is cleared
+//For CC displays PIND6 is controlled using PCB_A PB2 which drives a digit on the display and defaults to high when the display is cleared
+//A link on PCB_A is used to differentiate between CC and CA versions of PCB_A.
+
+
+if (!(PIND & (1 << PIND6)))								//Reset control pin.  If set low by PCB_A control passes to the user_app
 {eeprom_write_byte((uint8_t*)0x3F7,0);
 wdt_enable(WDTO_30MS); while(1);}							  
 
