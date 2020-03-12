@@ -69,7 +69,7 @@ default: continue; break;}									//Illegal key press: Go immediately to the st
 
 															//Send the address of the required string to subroutine "display_num_string();"
 display_num_string(string_ptr, digit_num);digit_num++;} 
-while (digit_num <= 8);										//return to the top of the "do" loop until all digits have been illuminated
+while (digit_num <= 7);										//return to the top of the "do" loop until all digits have been illuminated
 
 waitforkeypress(); I2C_Tx_any_segment_clear_all();}}		//clear display and repeat
 
@@ -95,6 +95,3 @@ case 'g': I2C_Tx_any_segment(letter, digit_num);break;		//update display one seg
 case 0:  return; break;										//zero indicates the end of the string
 default: break;}char_ptr++;}}								//incrementing "char_ptr" steps through the string
 															//Selecting segment letters in turn
-
-
-
