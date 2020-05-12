@@ -3,7 +3,7 @@
 //For details of scanf.
 //https://appelsiini.net/2011/simple-usart-with-avr-libc/
 
-#include "../Header_files/I_O_from switches.h"
+#include "../Header_files/I_O_from_switches.h"
 
 int uart_putchar(char c, FILE *mystr_output);
 int uart_getchar(FILE *mystr_input);				//accepts any char
