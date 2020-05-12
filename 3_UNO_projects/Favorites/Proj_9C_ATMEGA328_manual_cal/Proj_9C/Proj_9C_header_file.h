@@ -5,12 +5,11 @@
 #include "Resources_V15/I2C_Subroutines/I2C_subroutines_1.c"
 #include "Resources_V15/I2C_Subroutines/I2C_subroutines_2.c"
 #include "Resources_V15/Subroutines/Basic_PC_comms.c"
+#include "Resources_V15/Header_files/I_O_from_switches_UNO.h"    //Responds to switch activity
+
 
 #include "Resources_V15/Subroutines/Integers_to_from_PC.c"
 
 
 #include "Resources_V15/I2C_Subroutines/I2C_slave_Rx_Tx.c"
 #include "Resources_V15/I2C_Subroutines/I2C_diagnostic.c"
-
-#include "Resources_V15/Subroutines/Data_to_from_EEPROMs.c"
-#include "Resources_V15/Subroutines/Random_and_prime_nos.c"
