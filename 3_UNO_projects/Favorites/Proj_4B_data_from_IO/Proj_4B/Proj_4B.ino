@@ -38,6 +38,8 @@ long num;
 
 setup_UNO;
 
+User_prompt;
+
 String_to_PC("\r\nDATA FROM I/O");
 String_to_PC(message_1);
 
