@@ -9,10 +9,10 @@ Note: User project is no longer responsible for driving the display.
  
 Introduces Project subroutines:
 
-  Num_from_KBD()              This takes numerical key presses displays them and converts them to a number
-  I2C_displayToNum()            The mini-OS converts the numerical string to a binary number
-  Num_to_PC()               This converts a number to askii characters and sends them to the PC
-  display_in_scientific_notation)     Sends number to PC and display    
+  Num_from_KBD()                        This takes numerical key presses displays them and converts them to a number
+  I2C_displayToNum()                    The mini-OS converts the numerical string to a binary number
+  Num_to_PC()                           This converts a number to askii characters and sends them to the PC
+  display_in_scientific_notation)       Sends number to PC and display    
   Divide_and_round()
  
  Having downloaded the program start up a terminal program and press 'r' at the user prompt
