@@ -84,4 +84,5 @@ ISR(TIMER1_OVF_vect) {TCCR1B = 0; T1_ovf_flag = 1;}         //stop timer 1 and s
 /*******************************************************************************************************************************/
 ISR(PCINT0_vect) {if(switch_3_up){return;}
 I2C_Tx_Clock_command(AT_exit_stop_watch);
+while(switch_3_down);
 SW_reset;}
