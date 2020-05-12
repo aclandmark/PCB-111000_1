@@ -32,6 +32,9 @@ int main (void){
 char  Op = 'P';
 
 setup_UNO;
+
+User_prompt;
+
 User_instructions;
 config_sw3_for_PCI;
 
