@@ -17,7 +17,7 @@ int main (void){
 unsigned int rand;                      //random number
 unsigned int PORT_1, PORT_2;
 
-setup_HW;
+setup_UNO;
 while(switch_2_up);                     //wait for switch 3 to be pressed before starting
 
 
