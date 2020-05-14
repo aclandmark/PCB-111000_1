@@ -19,7 +19,7 @@ unsigned long counter_squared, counter=1;             //32 bits are reserved for
 m=1; 
 PORT_1=1;
 overflow=0;
-setup_HW;  
+setup_UNO;  
 sei();              
 T1_65ms_clock_tick();                                 //This subroutine starts HW clock Timer 1 that generates an interrupt every 65mS
 
