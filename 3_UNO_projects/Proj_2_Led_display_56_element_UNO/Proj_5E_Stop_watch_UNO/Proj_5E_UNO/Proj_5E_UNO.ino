@@ -10,7 +10,7 @@ volatile char T1_ovf_flag = 0;                            //requires volatile la
                                                          //even though "T1_ovf_flag" is used in "main" 
 int main (void){
 
-setup_HW;
+setup_UNO;
 //User_prompt;
 //User_instructions;
 
