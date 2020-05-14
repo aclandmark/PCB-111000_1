@@ -9,7 +9,7 @@ At the user prompt press both R and r*/
 int main (void){
 char symbol, User_response;
 
-setup_HW;
+setup_UNO;
 User_prompt;                                //Respond by pressing either 'R' or 'r'
 
 switch(User_response){
