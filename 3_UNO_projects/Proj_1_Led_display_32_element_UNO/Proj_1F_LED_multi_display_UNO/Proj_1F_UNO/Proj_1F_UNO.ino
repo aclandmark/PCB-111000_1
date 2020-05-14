@@ -15,7 +15,7 @@ char switch_press, p;                           //"switch_press" is used to reme
                                                 
                                                 //here it can vary between 1 and 5 resulting in 5 different displays
 int main (void){
-setup_HW;
+setup_UNO;
 setup_and_enable_PCI;                           //All three user switched generate PCI
 T1_OVF = 0;
 sei();
