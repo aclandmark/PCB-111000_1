@@ -11,7 +11,7 @@ char display_bkp[7];                                            //One element to
 int main (void){
 char segment=0, digit_num=0, seg_counter = 0,direction = 0; 
 
-setup_HW;
+setup_UNO;
 wdt_enable(WDTO_2S);                                           //WDT prevents display from being completed in either direction
 
 I2C_Tx_any_segment_clear_all();                                //Initialise display
