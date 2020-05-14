@@ -10,7 +10,7 @@ int main (void){
 
 op=0;
 mode = 'u';                                               //mode: signed or unsigned
-setup_HW;
+setup_UNO;
 I2C_Tx_display_char(digit,mode);
 setup_and_enable_PCI;
 sei();
