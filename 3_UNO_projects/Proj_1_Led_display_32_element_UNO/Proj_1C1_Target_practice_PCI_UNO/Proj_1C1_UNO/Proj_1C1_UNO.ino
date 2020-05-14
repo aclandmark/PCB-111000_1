@@ -13,7 +13,7 @@ char switch_control;                        //Prevents rapid switch_3 presses fr
 
 
 int main (void){
-setup_HW;
+setup_UNO;
 config_sw1_and_sw2_for_PCI;                   //SW1 is not used         
 
 mask = 0xFFFF;                                //0xFFFF = 0b1111111111111111 indicating that none of the leds have yet been shot down
