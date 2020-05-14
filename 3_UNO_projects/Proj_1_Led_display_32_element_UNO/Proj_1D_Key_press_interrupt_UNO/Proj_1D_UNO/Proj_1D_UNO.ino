@@ -18,7 +18,7 @@ volatile int p;                                      //p is defined for both mai
 int main (void){
 long PORT_1=1;                  
 char row=0;                                         //set row to 0 for the top row of leds or 1 for the bottom 
-setup_HW;
+setup_UNO;
 UCSR0B |= (1 << RXCIE0);                            //Enables the serial port Rx interrupt. Sets "RCIE0" without needing to know which bit it is
 
 p=1;                                                //Set "p" to 1 so the the display increments without  
