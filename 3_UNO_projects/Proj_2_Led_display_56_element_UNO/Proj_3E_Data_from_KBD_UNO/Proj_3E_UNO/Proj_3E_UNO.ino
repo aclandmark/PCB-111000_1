@@ -9,7 +9,7 @@ long Num_1;
 char digits[8];
 int counter = 0;
 
-setup_HW;
+setup_UNO;
 User_prompt;
 
 String_to_PC("Enter positive number & terminate with Return key.\r\n");
