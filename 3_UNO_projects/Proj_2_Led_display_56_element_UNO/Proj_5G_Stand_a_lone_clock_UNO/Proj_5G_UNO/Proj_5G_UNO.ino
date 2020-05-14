@@ -24,8 +24,11 @@ char keypress = 0;
 int main (void){
 char display_mode;
 
-setup_HW;                       
+setup_UNO;
+if (switch_2_down)
+{User_prompt; 
 User_instructions;
+while(switch_2_down);}
 time_from_IO();
 I2C_Tx_OS_timer(AT_clock_mode, start_time);                                             //Send Start clock command (AT clock mode is 7)
 
