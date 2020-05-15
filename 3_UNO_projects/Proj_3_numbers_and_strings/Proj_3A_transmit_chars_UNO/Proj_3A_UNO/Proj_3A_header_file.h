@@ -6,5 +6,5 @@
 #include "Resources_V15/Subroutines/Basic_PC_comms.c"
 #include "Resources_V15/I2C_Subroutines/I2C_slave_Rx_Tx.c"
 
-void Num_to_PC_local(char);
-void Char_to_PC_local(char);
+void Num_to_PC_local(unsigned char);
+void Char_to_PC_local(unsigned char);
