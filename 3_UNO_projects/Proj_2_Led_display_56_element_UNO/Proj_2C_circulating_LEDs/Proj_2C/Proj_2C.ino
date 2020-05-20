@@ -6,8 +6,6 @@
 
 /*OPTIONS FOR A NEW PATTERN GENERATOR THAT USES ALL THE LEDS 
 
-
-
 IT INTRODUCES
 
 The project I2C subroutines "I2C_Tx_any_segment(segment, digit_num)" and "I2C_Tx_any_segment_clear_all()".
@@ -18,7 +16,6 @@ Digits are labelled 0 to 7 and writing to a led toggles it on or off.
 
 2.  Logic required to backup the display looks tricky, requires paper and pencil to get it.
 Beginners: Why not concentrate on doing a decent display? The switch block can have any length.
-
 
 OPERATION
 
@@ -31,35 +28,35 @@ Press sw_2 to reverse the display and any key to activate the WDT.*/
 
 
 
-int n;                          //Provided for use in "while(n < 20){}" loop
-char display_bkp[7];                  //One element to backup each segment letter 
+int n;                                                        //Provided for use in "while(n < 20){}" loop
+char display_bkp[7];                                          //One element to backup each segment letter 
 
 
 int main (void){
 char segment=0, digit_num=0;  
 
 setup_UNO;
-Two_50ms_WDT_with_interrupt;              //See .h file
+Two_50ms_WDT_with_interrupt;                                
 
+if(Arduino_non_WDTout)                                       //Normal start up i.e. POR or post programming
+  {for(int m = 0; m < 8; m++)
+  Char_to_EEPROM(m,0);}                                       //clear backup space in EEPROM
 
-if (!(watch_dog_reset))                 //Normal start up i.e. POR or post programming
-{for(int m = 0; m < 8; m++)
-Char_to_EEPROM(m,0);}                 //clear backup space in EEPROM
+else 
+  {for(int m = 0; m < 7; m++)                                //New start following Watch dog timeout
+  {display_bkp[m] = Char_from_EEPROM(m);}                    //Read data saved in EEPROM back to "display_bkp"
+  restore_display(display_bkp);                              //Restore the display
+  clear_Arduino_WDT_flag;}                                   //Clear ARDUINO Watchdog timeout
 
-else {for(int m = 0; m < 7; m++)            //New start following Watch dog timeout
-{display_bkp[m] = Char_from_EEPROM(m);}       //Read data saved in EEPROM back to "display_bkp"
-restore_display(display_bkp);             //Restore the display
-watch_dog_reset = 0;}
+UCSR0B |= (1 << RXCIE0);                                     //Set Interrupt on key press (for test purposes only)
+sei();                                                       //Global enable interrupt
 
-UCSR0B |= (1 << RXCIE0);                //Set Interrupt on key press (for test purposes only)
-sei();                          //Global enable interrupt
-
-while(1){                       //Generate pattern
+while(1){                                                    //Generate pattern
 if(Char_from_EEPROM(7))
-{n = Char_from_EEPROM(7)+1;Char_to_EEPROM(7,0);}    //Re-instate value of "n" following WDT
+{n = Char_from_EEPROM(7)+1;Char_to_EEPROM(7,0);}             //Re-instate value of "n" following WDT
 else n = 0;
-while(n < 20){                      //We cannot use (int n = 0; n < 20; n++) {} 
-switch(n){                        //because n would have to be used outside the loop
+while(n < 20){                                              //We cannot use (int n = 0; n < 20; n++) {} 
+switch(n){                                                  //because n would have to be used outside the loop
 case 0: segment = 'a'; digit_num = 0; break;
 case 1: segment = 'a'; digit_num = 1; break;
 case 2: segment = 'a'; digit_num = 2; break;
@@ -81,14 +78,14 @@ case 17: segment = 'd'; digit_num = 0; break;
 case 18: segment = 'c'; digit_num = 0; break;
 case 19: segment = 'b'; digit_num = 0; break;}
 
-I2C_Tx_any_segment(segment, digit_num);         //Update display
-backup_the_display(segment, digit_num);         //keep backup up to date
-Timer_T0_10mS_delay_x_m(10); n +=1; wdr();}     //delay and reset watch dog
+I2C_Tx_any_segment(segment, digit_num);                     //Update display
+backup_the_display(segment, digit_num);                     //keep backup up to date
+Timer_T0_10mS_delay_x_m(10); n +=1; wdr();}                 //delay and reset watch dog
 
-if (switch_3_up) {I2C_Tx_any_segment_clear_all();     //Normally clear display before repeating it
-for(int m = 0; m < 7; m++)display_bkp[m] = 0;}      //and clear display_bkp
-                            //If switch 2 pressed do not clear display
-Timer_T0_10mS_delay_x_m(10);}}              //Just pause before toggling leds off one at a time
+if (switch_2_up) {I2C_Tx_any_segment_clear_all();           //Normally clear display before repeating it
+for(int m = 0; m < 7; m++)display_bkp[m] = 0;}              //and clear display_bkp
+                                                            //If switch 2 pressed do not clear display
+Timer_T0_10mS_delay_x_m(10);}}                              //Just pause before toggling leds off one at a time
 
 
 
@@ -115,7 +112,9 @@ sei();while(1);}
 
 
 /*****************************************************************/
-ISR (WDT_vect){                     //save "display_bkp" to EEPROM before applying reset
+ISR (WDT_vect){                                           //save "display_bkp" to EEPROM before applying reset
+
+set_Arduino_WDTout;
 for(int m = 0; m < 7; m++){
 Char_to_EEPROM(m,display_bkp[m]);}
-Char_to_EEPROM(7,n);}                 //save value of n
+Char_to_EEPROM(7,n);}                                     //save value of n
