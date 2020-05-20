@@ -24,14 +24,12 @@ default: break;}
 
 /********************************************************************************************/
 # define I2C_Tx_LED_dimmer; \
-\
-eeprom_write_byte((uint8_t*)(0x3FB),\
-(eeprom_read_byte((uint8_t*)(0x3FB)) +1));\
-\
-if (eeprom_read_byte((uint8_t*)(0x3FB)) == 0)\
-eeprom_write_byte((uint8_t*)(0x3FB), 0xFD);\
-\
+switch(I2C_data[0]){\
+case 1: eeprom_write_byte((uint8_t*)(0x3FB),0xFD); break;\
+case 2: eeprom_write_byte((uint8_t*)(0x3FB),0xFE); break;\
+case 3: eeprom_write_byte((uint8_t*)(0x3FB),0xFF); break;}\
 T0_interupt_cnt = 0;
+
 
 
 
