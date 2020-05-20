@@ -130,12 +130,20 @@ I2C_Tx(1, 'Q', &Dimmer_control);}
 /************************************************************************/
 void I2C_Tx_LED_dimmer_UNO(void){
 char Dimmer_control = 0; 
-int m = 0,n = 0;
+unsigned int n = 0, Port_1=0xCCCC;
 
 while((PINB & 0x04)^0x04) 							//while switch_3 down
-{n++;
-if (n>1200) {m+=1;n = 0;}}
-if (m >= 50){Dimmer_control = 1;
-I2C_Tx(1, 'Q', &Dimmer_control);}}
+{n++; if (n >= 60000)break;}
+
+
+while((PINB & 0x04)^0x04)
+{Dimmer_control = (Dimmer_control + 1)%4;
+if(!(Dimmer_control))continue;
+I2C_Tx(1, 'Q', &Dimmer_control);
+I2C_Tx_2_integers(Port_1, ~Port_1);
+Timer_T0_10mS_delay_x_m(50);}}
+
+
+
 
 
