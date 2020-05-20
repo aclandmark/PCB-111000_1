@@ -210,7 +210,7 @@ case 'O': PCB_test; break;							//For manufacturing test: Dissables the multipl
 
 case 'P': I2C_Rx_get_version; break;
 
-case 'Q': I2C_Tx_LED_dimmer;break;
+case 'Q':  if(I2C_data[0]){I2C_Tx_LED_dimmer;}break;
 
 default: break;}}}
 
