@@ -28,7 +28,7 @@ while (1){                              //Infinite loop that could be replaced b
 while(1){                                //Infinite loop. 
 Timer_T0_10mS_delay_x_m(1);              //The "break" statement is used to exit this loop
 while(switch_2_up);                       //halt if switch 3 is released
-rand = (PRN_16bit_GEN(0))%3 + 1;          //generate a random number (1,2 or 3)
+rand = (PRN_16bit_GEN_UNO(0))%3 + 1;      //generate a random number (1,2 or 3)
 for (int m = 0; m < rand; m++)            //set up a loop   
 {if (PORT_1 == 0b1000000000000000)        //Either reinitialise PORT_1 
 PORT_1 = 0b0000000000000001;              //or
