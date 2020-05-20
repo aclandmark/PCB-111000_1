@@ -13,7 +13,7 @@ ATMEGA 168 EEPROM reservations
 
 
 int Mux_cntl_2;
-int test;
+//int test;
 char watch_dog_reset = 0;
 char User_response;
 
@@ -134,6 +134,7 @@ set_up_switched_inputs;\
 Unused_I_O;\
 Timer_T0_10mS_delay_x_m(5);\
 USART_init(0,16);\
+if ((PINB & 0x04)^0x04)\
 I2C_Tx_LED_dimmer_UNO();
 
 
@@ -198,6 +199,36 @@ WDTCSR = 0x00;
 wdr();\
 WDTCSR |= (1 <<WDCE) | (1<< WDE);\
 WDTCSR = (1<< WDE) | (1 << WDIE) |  (1 << WDP0)  |  (1 << WDP1);
+
+
+#define Two_50ms_WDT_with_interrupt \
+wdr();\
+WDTCSR |= (1 <<WDCE) | (1<< WDE);\
+WDTCSR = (1<< WDE) | (1 << WDIE) |  (1 << WDP2);
+
+
+#define One_sec_WDT_with_interrupt \
+wdr();\
+WDTCSR |= (1 <<WDCE) | (1<< WDE);\
+WDTCSR = (1<< WDE) | (1 << WDIE) |  (1 << WDP1) | (1 << WDP2);
+
+
+
+#define SW_reset_with_interrupt \
+wdr();\
+WDTCSR |= (1 <<WDCE) | (1<< WDE);\
+WDTCSR = (1<< WDE) | (1 << WDIE) |  (1 << WDP0);
+
+
+#define Arduino_non_WDTout \
+Char_from_EEPROM(0x3F1)
+
+
+#define set_Arduino_WDTout \
+Char_to_EEPROM( 0x3F1, 0);
+
+#define clear_Arduino_WDT_flag \
+Char_to_EEPROM( 0x3F1, 0xFF);
 
 
 /*****************************************************************************/
