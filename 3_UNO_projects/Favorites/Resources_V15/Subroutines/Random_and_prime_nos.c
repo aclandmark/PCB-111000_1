@@ -1,8 +1,12 @@
 
 char PRN_8bit_GEN(void);
 unsigned int PRN_16bit_GEN(unsigned int);
-unsigned int PRN_16bit_GEN(unsigned int);
 void I2C_Tx_snowstorm_display(void);
+
+char PRN_8bit_GEN_UNO(void);
+unsigned int PRN_16bit_GEN_UNO(unsigned int);
+void I2C_Tx_snowstorm_display_UNO(void);
+
 void prime_no_generator(int,int, int*);
 void prime_no_generator_plus(int,int,  int*);
 int Product_search (int);
@@ -49,6 +53,50 @@ while(1){
 PRN = PRN_16bit_GEN (0);									//Generate a new PRN (0) tells subroutine to use the EEPROM
 I2C_Tx_2_integers(PRN, (PRN<<1));							//Display two "pseudo random numbers"
 Timer_T1_sub(T1_delay_100ms);}}
+
+
+
+/*****************************************************************/
+char PRN_8bit_GEN_UNO(void){
+unsigned int bit;
+char lfsr;
+
+lfsr = eeprom_read_byte((uint8_t*)(0x3F3));
+bit = (( lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 4)) & 1;
+lfsr = (lfsr >> 1) | (bit << 7);
+eeprom_write_byte((uint8_t*)(0x3F3),lfsr);
+return lfsr;}
+
+
+/*****************************************************************/
+
+unsigned int PRN_16bit_GEN_UNO(unsigned int start){
+unsigned int bit, lfsr;
+
+if(!(start)) lfsr = (eeprom_read_byte((uint8_t*)(0x3F3)) << 8) + eeprom_read_byte((uint8_t*)(0x3F2));
+else lfsr = start;
+bit = (( lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
+lfsr = (lfsr >> 1) | (bit << 15);
+if(!(start)){
+eeprom_write_byte((uint8_t*)(0x3F3),(lfsr>>8));
+eeprom_write_byte((uint8_t*)(0x3F2),lfsr);}
+
+return lfsr;}
+
+
+
+/************************************************************************/
+void I2C_Tx_snowstorm_display_UNO(void){
+
+int PRN;
+
+while(1){
+PRN = PRN_16bit_GEN_UNO (0);									//Generate a new PRN (0) tells subroutine to use the EEPROM
+I2C_Tx_2_integers(PRN, (PRN<<1));							//Display two "pseudo random numbers"
+Timer_T1_sub(T1_delay_100ms);}}
+
+
+
 
 
 
