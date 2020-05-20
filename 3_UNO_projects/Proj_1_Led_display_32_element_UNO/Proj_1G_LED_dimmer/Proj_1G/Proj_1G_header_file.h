@@ -11,3 +11,5 @@
 #include "../../Resources_V12/Subroutines/Random_and_prime_nos.c"
 #include "../../Resources_V12/I2C_Subroutines/I2C_diagnostic.c"
 */
+
+void I2C_Tx_local(char, char, char*);
