@@ -30,14 +30,7 @@ in progress, using the following code
 
   " cli(); sec_counter = sec_counter_V; sei();"
 
-4.  Brown-out recovery.
-
-BO is set to 2.7V to protect the device memories if the project_pcb is run from batteries which are subsequently allowed 
-to become discharged. It is also used here to disable the display and reduce battery load.  
-(Note: testing this facility has been rather limited).
-
-
-5.  Project subroutine "I2C_initiate_10mS_ref();" 
+4.  Project subroutine "I2C_initiate_10mS_ref();" 
 
 This is used to initiate the 10mS TWI interrupt
 Note:
@@ -78,12 +71,6 @@ Release sw1 to increment time
 sw3 to decrement time
 Both switches to restore normal operation. 
 
-Note: 
-The number of WD time outs is given following a POR or programming.   
-If a different project was run previously the EEPROM location may have 
-been used for something else in which case the result will be erroneous.
-A keypress interrupt has been implemented to test the operation of the WDT.
-
 
 Switch location SW1(PD2) - SW2(PD7) - SW3(PB2)
 PD2&7 call ISR(PCINT2_vect)
@@ -107,19 +94,18 @@ long clock_resume_time=0;                                                       
 
 
 /*****************Normal program entry mode: Everything is OK********************************/
+if(Arduino_non_WDTout){
+clear_Arduino_WDT_flag;
 
-//if((MCUSR & (1 << PORF)) || (MCUSR & (1 << EXTRF))){                              //Detects POR or quit programming mode
-//MCUSR = 0;                                                                        //must reset status register
-
-if(!(MCUSR)){
 setup_UNO;
-User_prompt;
-User_instructions;
-String_to_PC("\r\n Number of WDTouts:  ");
-Num_to_PC(10, eeprom_read_byte((uint8_t*)16));                                    //Sends number of WDTouts
-newline();
+
+if (eeprom_read_byte((uint8_t*)(2)))
+{User_prompt;
+User_instructions;}
+
 for(int m = 0; m<=11; m++)
 {eeprom_write_byte((uint8_t*)(m+7), 0);}                                         //clear BKP space
+//eeprom_write_byte((uint8_t*)(19), 0xFF);
 
 while(1){if(switch_3_down) {mode = 2;break;}                                     //Select timer or clock
     if(switch_1_down) {mode = 1;break;}}
@@ -129,61 +115,36 @@ clock_time_secs=0;
 old_mode = 0;
 payload=2;}
 
-/**********************************Brown out recovery mode************************************/
-
-if(MCUSR & (1 << BORF)){
-MCUSR &= (~(1 << BORF));                                                        //Detect presence of brownout flag and reset it
-setup_UNO;
-
-mode = 'G';                                                                     //Set new mode to 'G'
-old_mode = eeprom_read_byte((uint8_t*)15);                                      //Obtain "old_mode" from EEPROM
-sec_counter=eeprom_read_byte((uint8_t*)(10));                                   //Obtain "sec_counter" from EEPROM    
-for(int m = 0; m<3; m++){
-sec_counter = (sec_counter<< 8) + eeprom_read_byte((uint8_t*)(9-m));}
-
-clock_time_secs=eeprom_read_byte((uint8_t*)(14));                                //Obtain "clock_time_secs" from EEPROM
-for(int m = 0; m<3; m++){
-clock_time_secs = (clock_time_secs<< 8) + eeprom_read_byte((uint8_t*)(13-m));}
-    
-    sec_counter +=1;                                                            //Fudge factor??
-    clock_resume_time = sec_counter;
-    sec_counter_V = sec_counter;                                                //Volatile version of "sec_counter"
-    ms_counter=0;                                                               //mSecs are not restored
-    clock_time_long = clock_time_secs * 100;
-    setup_64ms_WDT_with_interrupt;                                              //Re-establish WDT
-    I2C_initiate_10mS_ref(); sei();}                                            //Reinitialise 10mS tick
-    
-    
+ 
 
 /*****************WDT revovery mode (usually caused by failure of the I2C)**********************/
-
-if(MCUSR & (1 << WDRF)){                                                        //Detect watchdog timeout         
+if(!(Char_from_EEPROM(0x3F1))){
+clear_Arduino_WDT_flag;
+      
 setup_UNO;                                                                        //This macro clears the WD flag
-if((switch_1_up) && (switch_2_up))                                              //Normal WDTout (i.e. not user induced)
-{eeprom_write_byte((uint8_t*)(16),(eeprom_read_byte((uint8_t*)(16)) + 1));}     //Increment contents of EEPROM address 16
 
-sec_counter=eeprom_read_byte((uint8_t*)(10));                                   //Read saved value of sec_counter from EEPROM   
+sec_counter=eeprom_read_byte((uint8_t*)(10));                                     //Read saved value of sec_counter from EEPROM   
 for(int m = 0; m<3; m++){
 sec_counter = (sec_counter<< 8)
 + eeprom_read_byte((uint8_t*)(9-m));}       
 
-if((switch_1_down) && (switch_2_down)){                                       //User induced watch dog timeout:
-while((switch_1_down) || (switch_2_down)){                                    //Use sw_1 and sw_3 to adjust time
+if((switch_1_down) && (switch_2_down)){                                            //User induced watch dog timeout:
+while((switch_1_down) || (switch_2_down)){                                        //Use sw_1 and sw_3 to adjust time
 if((switch_1_up) && (switch_2_down)){sec_counter += 1;}
 if((switch_2_up) && (switch_1_down)){sec_counter -= 1;}
 Timer_T0_10mS_delay_x_m(10);
 Calculate_time();
-digits[0]='0'; digits[1] = '0';                                                 //Sets mS*10 to zero  masks mS*10     
-I2C_Tx_8_byte_array(digits);}}                                                  //Displays time as adjusted by user
+digits[0]='0'; digits[1] = '0';                                                   //Sets mS*10 to zero  masks mS*10     
+I2C_Tx_8_byte_array(digits);}}                                                    //Displays time as adjusted by user
 
-mode = eeprom_read_byte((uint8_t*)15);                                          //Obtain "mode" and "clock_time_secs" from EEPROM
+mode = eeprom_read_byte((uint8_t*)15);                                            //Obtain "mode" and "clock_time_secs" from EEPROM
 clock_time_secs=eeprom_read_byte((uint8_t*)(14));   
 for(int m = 0; m<3; m++){
 clock_time_secs = (clock_time_secs<< 8) + eeprom_read_byte((uint8_t*)(13-m));}
     
-    sec_counter +=1;                                                            //Fudge factor??
+    sec_counter +=1;                                                             //Fudge factor??
     clock_resume_time = sec_counter;
-    sec_counter_V = sec_counter;                                                //Volatile version of "sec_counter"
+    sec_counter_V = sec_counter;                                                 //Volatile version of "sec_counter"
     ms_counter=0;                                                               //mSecs are not restored
     clock_time_long = clock_time_secs * 100;
     Calculate_time();
@@ -193,15 +154,11 @@ clock_time_secs = (clock_time_secs<< 8) + eeprom_read_byte((uint8_t*)(13-m));}
 
 
 /**************************Normal program continues********************************/
-
 setup_and_enable_PCI;
 disable_pci_on_sw2;
 disable_pci_on_sw3;
 display_clear = 0;
-  
-UCSR0B |= (1 << RXCIE0);                                                        //Used to test operation of WDT only
 
- 
 while(1){                                                                       //Main loop: Continuously cycles through this loop (every 188uS??).  
 
 switch(mode){
@@ -210,11 +167,14 @@ case 1: set_time();                                                             
 mode = 'A';break;   
 case 2: sec_counter = 0;                                                        //SW mode: start at time zero                             
     mode = 'A'; 
+    eeprom_write_byte((uint8_t*)(0x02),0);                                      //set clock mode
+    for(int m = 0; m<=3; m++)                                                   //Clear EEPROM sec_counter value
+    {eeprom_write_byte((uint8_t*)(m+3),0);}
     break;
 case 'A': 
   ms_counter = 0;
   sec_counter_V = sec_counter;                                                  //Initialise sec_counter_V
-  Calculate_time();Time_on_screen;                                              //Converts time in seconds to string (Hr,Min and Sec)
+  Calculate_time();                                                             //Converts time in seconds to string (Hr,Min and Sec)
   digits[0]='0'; digits[1] = '0';                                               //Sets mS*10 to zero  masks mS*10     
   I2C_Tx_8_byte_array(digits);                                                  //Displays time 
   clock_resume_time = sec_counter;
@@ -258,39 +218,37 @@ case 'C':
 payload = 0; TWI_flag = 0; 
 Update_sec_counter; break;                                                     //Stop watch/clock display paused: Tick continues
 
-case 'G': payload = 0; TWI_flag = 0; Update_sec_counter; 
+case 'G': 
+payload = 0; TWI_flag = 0; Update_sec_counter; 
 if (!(display_clear)) clear_display();break;                                    //blank display
 
-case 'D': TWI_flag = 0;
-restore_display();  mode = old_mode;                                            //Stop watch/clock display re-activated
+case 'D': 
+TWI_flag = 0;
+restore_display();  mode = old_mode;                                           //Stop watch/clock display re-activated
 break;}
+
 Timer_T2_sub(T2_delay_2ms);
 wdr();}}                                                                        //reset the watchdog
 
 
-
 /*****************************************************************************************************************/
-
 void Timer(){                                                                   //Calls "update_7_seg_display", to close one I2C transaction and sets "payload" to initiate the next one    
   digits[1] = ms_counter/10 + '0';                                              //Calculate mS display MSB
   digits[0] = ms_counter%10 + '0';                                              //Calculate mS display LSB
   if (!((digits[0] == '0')&&(digits[1] == '0')))                                //For mS tick 0 to 99 only update mS display                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-  {ms_on_screen_update; update_7_seg_display();}                                //Update mS display
+  {update_7_seg_display();}                                                     //Update mS display
   if(!(ms_counter%100)){                                                        //When 1 second tick occurs
   Calculate_time();                                                             //Calculate time: Hr:Min:Sec
-  Update_time_on_screen;                                                        //Update screen
-  update_7_seg_display();}                                                       //Update display and complete the current I2C transaction
+  update_7_seg_display();}                                                      //Update display and complete the current I2C transaction
   if(ms_counter == 99)payload=8; else payload=2;}                               //Set payload for next TWI_interrupt 8 for 1sec tick, 2 for 10mS tick
 
 
-
 /*****************************************************************************************************************/
-
 ISR(TWI_vect){                                                                  //Detects 10mS interrupt. Initiates I2C_transaction and responds by sending payload size
-char Null_byte;
+unsigned char Null_byte;
 TWI_flag=1;                                                                     //Informs main loop that a 10mS tick has occurred
 ms_counter = (ms_counter+1)%100;                                                //mS counter continuously cycles through 0 to 100
-if(!(ms_counter)) {sec_counter_V++;                                            //Volatile version of "sec_counter" increments every second
+if(!(ms_counter)) {sec_counter_V++;                                             //Volatile version of "sec_counter" increments every second
 if(sec_counter_V == 86400)sec_counter_V = 0;                                    //Roll-over for 24 hour clock
 sec_counter_save=1;}                                                            //Enables "sec_counter" to be updated from "sec_counter_V"
 Null_byte =  TWDR;                                                              //Detect slave address + slave transmit data command
@@ -301,11 +259,9 @@ if (!(payload))
 TWCR = (1 << TWINT) | (1 << TWEA) | (1 << TWEN) | (1 << TWIE);}                 //No payload? Prepare for next 10ms interrupt
 
 
-
 /*****************************************************************************************************************/
-
 void update_7_seg_display(void){
-char Null_byte;
+unsigned char Null_byte;
 cli();                                                                        //Pause twi interrupt
 hold_PCI_on_sw1_and_sw2;
 {digits[0] = digits[1]; digits[1] = 0;}                                       //Optional: masks 10mS digit
@@ -320,11 +276,9 @@ while (!(TWCR & (1 << TWINT)));}                                              //
 TWCR = (1 << TWINT) | (1 << TWEA) | (1 << TWEN) | (1 << TWIE);                //Prepare for next 10ms interrupt
 restore_PCI_on_sw1_and_sw2;
 sei();}                                                                       //re-enable twi interrupt
-    
 
 
 /*****************************************************************************************************************/
-
 void Calculate_time(void){
 Hours = sec_counter/3600;                                                   //Obtain hours 0 to 23
 Minutes = (sec_counter%3600)/60;                                            //Obtain minutes
@@ -335,16 +289,16 @@ timer_utoa(Seconds); SecsH = charH; SecsL = charL; }                        //Co
 
 
 /*****************************************************************************************************************/
-
 void set_time(void){
 unsigned int Two_sec_counter;                                               //Required because of difficulties combining long and char variables            
-
 unsigned char clock_mode;
+
 clock_mode = eeprom_read_byte((uint8_t*)0x02);                              //Read mode. Default value is 255
 switch(clock_mode){
 
 case 255:                                                                   //Default mode: User enters time
-String_to_PC("\r\nEnter start time Hours, Minutes and Seconds (24 hour clock, no spaces)\r\n");
+String_to_PC("\r\nEnter start time Hours, Minutes and \
+Seconds (24 hour clock, no spaces)\r\n");
 while(isCharavailable(50) == 0){String_to_PC("T?  ");}    
     HoursH = receiveChar();     
     while(isCharavailable(5) == 0); HoursL = receiveChar();
@@ -360,10 +314,13 @@ while(isCharavailable(50) == 0){String_to_PC("T?  ");}
     if (((SecsH-'0') * 10 + SecsL-'0')%2)sec_counter++;
     
     
-    for(int m = 0; m<=3; m++){eeprom_write_byte((uint8_t*)(m+3),sec_counter >> (m*8));
+    for(int m = 0; m<=3; m++)
+    {eeprom_write_byte((uint8_t*)(m+3),sec_counter >> (m*8));
     Timer_T0_sub(T0_delay_5ms);}            
     eeprom_write_byte((uint8_t*)(0x02),0);Timer_T0_sub(T0_delay_5ms);   
+    //eeprom_write_byte((uint8_t*)(19), 0);                                     //Ensures that User_prompt is skippped when device is switched to 5V supply
     break;
+
 case 0: 
     sec_counter=eeprom_read_byte((uint8_t*)(6));                              //Read start time and place in sec_counter
     for(int m = 0; m<3; m++){
@@ -374,9 +331,7 @@ wdt_enable(WDTO_30MS);
 while(1);break; }}                                                            //Corrupt clock_mode variable: set to default value and restart
 
 
-
 /*****************************************************************************************************************/
-
 void timer_utoa(char n){                                                       //converts an unsigned number to a string of digits
 if (n>=10)
 {charL = n%10;
@@ -387,18 +342,11 @@ else
 {charH = '0'; charL = n + '0';}}
 
 
-
 /*****************************************************************************************************************/
-
 ISR(PCINT2_vect) {                                                            //PORTB switch_1 interrupts
-if(switch_1_up)return;                                                        //Ignore interrupt on switch release
-if(!(sw_de_bounce ())) return;                                                //Close ISR down if backup is in progress
-if(switch_1_down) {                                                           //Switch 1 used when user defined start time is required
 
-if(switch_2_down){                                                            //switch_3 does not generate an interrupt
-if(mode != 'B')return;
-else { 
-payload = 8;sei(); while(1);}}                                                //User initiated WDTout used to adjust time 
+if(switch_1_up)return;                                                        //Ignore interrupt on switch release
+if(switch_2_up){                                                              //User triggered WDTout to adjust clock
 
 switch(mode){
 case 0: mode = 1; break;                                                      //Enter the start timer
@@ -406,12 +354,16 @@ case 'H':
 case 'F':
 case 'B':  mode = 'C'; break;                                                 //Mode B clock is running Mode C Display paused
 case 'C':  mode = 'G'; break;                                                 //Mode G clear display
-case 'G':  mode = 'D';break;}}}                                               //Restore display
+case 'G':  mode = 'D';break;}}
 
+else
+
+if(mode != 'B')return;
+else { 
+payload = 8;sei(); while(1);}}
 
 
 /*****************************************************************************************************************/
-
 long clockTOstop_watch(void){                                                  //Saves time before selecting stop watch display (i.e. resetting time to zero)
 long clock_time_secs_L;
 clock_time_long = (sec_counter * 100) + ms_counter;                            //Current time "secs*10 + ms" saved in global variable clock_time.
@@ -423,19 +375,16 @@ payload = 8;                                                                    
 while(!(ms_counter));                                                           //Wait for next interrupt ms_counter increments from 0 to 1
 TWI_flag = 0;                                                                   //Clear TWI_flag
 for(int m = 0; m<=7; m++)digits[m] = '0';                                        //Clears all digits
-Update_time_on_screen; ms_on_screen_update;                                      //Update screen
 update_7_seg_display();                                                         //Runs "update_7_seg_display()" to complete I2C transaction
 payload=2;                                                                      //Payload of 2 required for next update
 cli();sec_counter_V = 0;sei();                                                  //Update volatile version of the sec_counter and return to "main loop"
 return clock_time_secs_L;}
 
 
-
 /*****************************************************************************************************************/
-
 long restore_Clock(void){                                                       //Restores time by adding "clock_time" to the current SW time
 long time, clock_restore_time;
-char x;
+unsigned char x;
 time = (sec_counter * 100) + ms_counter + clock_time_long;                      //Add saved "clock_time" to SW time to get current value of time      
 sec_counter = time/100;                                                         //Calculate new value of "sec_counter" and "ms_counter"
 ms_counter = time%100 - 2;                                                      //2mS fudge factor required for mseconds
@@ -446,23 +395,19 @@ clock_restore_time = sec_counter;                                               
 Calculate_time();                                                               //Calculate time Hr:Min:sec
 digits[1] = ms_counter/10 + '0';                                                //Calculate mS display MSB
 digits[0] = ms_counter%10 + '0';                                                //Calculate mS display LSB
-Update_time_on_screen; ms_on_screen_update;                                     //Update stop watch screen display
 payload = 8;                                                                    //Sets the payload to 8 ahead of next I2C transaction (update full disdplay)
 while(ms_counter==x);                                                           //Wait for next interrupt (ms_counter increments from x to x+1)
 TWI_flag = 0;                                                                   //Set TWI_flag to zero
-Update_time_on_screen; ms_on_screen_update;                                     //Full screen update
 update_7_seg_display();                                                         //Full display update (completes the current I2C transaction)
 if(ms_counter == 99)payload=8; else payload=2;                                  //Enables contiguous 8 digit updates when necessary
 cli();sec_counter_V = sec_counter;sei();                                        //Update volatile version of second_counter
 newline();return clock_restore_time;}                                           //Return "clock_restore_time" to "main loop"
 
 
-
 /*****************************************************************************************************************/
-
 long restore_stop_watch(){                                                      //Restores SW time by subtracting the current time from the value stored in "clock_time"
 unsigned long time, SW_restore_time;
-char x;
+unsigned char x;
 time = 8640000 + (sec_counter * 100) + ms_counter - clock_time_long;            //Computes the updated value of SW time
 if (time >= 8640000) time -= 8640000;                                           //Compensate for 24 Hr roll-over
 sec_counter = time/100;                                                         //Calculate new value of "sec_counter" and "ms_counter"
@@ -473,37 +418,31 @@ SW_restore_time = sec_counter;                                                  
 Calculate_time();                                                               //Calculate time Hr:Min:sec
 digits[1] = ms_counter/10 + '0';                                                //Calculate mS display MSB
 digits[0] = ms_counter%10 + '0';                                                //Calculate mS display LSB
-Update_time_on_screen; ms_on_screen_update;                                     //Update PC screen          
 payload = 8;                                                                    //Sets the payload to 8 ahead of next I2C transaction (update full disdplay)
 while(ms_counter==x);                                                           //Wait for next interrupt (ms_counter increments from x to x+1)
 TWI_flag = 0;                                                                   //Clear TWI_flag
-Update_time_on_screen; ms_on_screen_update;                                     //Full screen update
 update_7_seg_display();                                                         //Full display update (completes the current I2C transaction)
 if(ms_counter == 99)payload=8; else payload=2;                                  //Enables contiguous 8 digit updates when necessary
 cli();sec_counter_V = sec_counter;  sei();                                      //Update volatile version of the sec_counter
 return SW_restore_time;}                                                        //Return "SW_restore_time" to "main loop"
 
 
-
 /*****************************************************************************************************************/
-
 void restore_display(void){                                                     //Re-activate Stop watch/clock display
 int x;
 {Calculate_time();                                                              //calculate time in Hours, mins and secs 
-Update_time_on_screen; ms_on_screen_update;                                     //Screen update
 x = ms_counter;                                                                 //Prepare to wait for next interupt
 payload = 8;                                                                    //Full display to be updated at next I2C transaction
 while(ms_counter==x);                                                           //Wait for next interrupt 
 update_7_seg_display();                                                         //Update display: I2C expects a transfer of 8 bytes 
 if(ms_counter == 99)payload=8; else payload=2;                                  //Set payload for next interrupt
 TWI_flag = 0;                                                                   //Clear TWI flag
-display_clear = 0;}}                                                            //Resets global variable "display_clear"
+display_clear = 0; }}                                                             //Resets global variable "display_clear"
 
 
 /*****************************************************************************************************************/
-
 void clear_display(void){                                                       //Blanks the display
-char x;
+unsigned char x;
 display_clear = 1;                                                              //sets global variable "display_clear"                
 for(int m = 0; m<=7; m++)digits[m]=0;                                           //Clears all digits
 x=ms_counter;                                                                   //records current value of "ms_counter"
@@ -515,79 +454,16 @@ update_7_seg_display();}                                                        
 
 
 /*****************************************************************************************************************/
-
-char sw_de_bounce (void){
-if (!(T1_OVF_FLAG)){
-TIMSK1 |= (1 << TOIE1);                                                         //enable T1 interrupt
-T1_OVF_FLAG = 1;                                                                //Set T1_OVF_FLAG
-Timer_T1_sub_with_interrupt(1,0);                                               //T1 runs continuously at 8ms/rev  (8Mhz clock counting to 0xFFFF)
-return 1;}
-else return 0;}
-
-
-
-/*****************************************************************************************************************/
-
-ISR(TIMER1_OVF_vect){                                                           //T1 does 50 revs before enabling repeated use of sw1
-T1_OVF_counter++;                                                               //T1 cannot use the pre-scaler because it is shared with T0               
-if (T1_OVF_counter == 50){
-T1_OVF_FLAG = 0;                                                                //Set T1_OVF_FLAG = 0;
-TIMSK1 &= (~(1 << TOIE1));                                                      //Disable further interrupts
-T1_OVF_counter = 0;                                                             //reset the counter
-TCCR1B = 0;}}                                                                   //Stop T1
-
-
-
-/*****************************************************************************************************************/
-
 ISR(TIMER0_OVF_vect){
 T0_OVF_FLAG = 2;
 TCCR0B = 0;
 TIMSK0 &= (~(1 << TOIE0));}
 
 
-
 /*****************************************************************************************************************/
-
-ISR(USART_RX_vect){receiveChar(); payload = 8;sei(); while(1);}
-
-
-/*****************************************************************************************************************/
-
-void print_out_bkp(void){
-long sec_counter_test=0; char test_mode;
-newline();Char_to_PC('\t');
-
-sec_counter_test=eeprom_read_byte((uint8_t*)(10));                             //Read backup start time and place in sec_counter
-    for(int m = 0; m<3; m++){
-    sec_counter_test = (sec_counter_test<< 8) + eeprom_read_byte((uint8_t*)(9-m));} 
-    Char_to_PC((sec_counter_test/3600/10) + '0');
-Char_to_PC(((sec_counter_test/3600)%10) + '0'); Char_to_PC(' ');
-Char_to_PC((((sec_counter_test%3600)/60)/10) + '0');
-Char_to_PC((((sec_counter_test%3600)/60)%10) + '0'); Char_to_PC(' ');
-Char_to_PC((((sec_counter_test%3600)%60)/10) + '0');
-Char_to_PC((((sec_counter_test%3600)%60)%10) + '0');Char_to_PC('\t');//break;
-
-sec_counter_test=eeprom_read_byte((uint8_t*)(14));                              //Read backup start time and place in sec_counter
-    for(int m = 0; m<3; m++){
-    sec_counter_test = (sec_counter_test<< 8) + eeprom_read_byte((uint8_t*)(13-m));}
-Char_to_PC((sec_counter_test/3600/10) + '0');
-Char_to_PC(((sec_counter_test/3600)%10) + '0'); Char_to_PC(' ');
-Char_to_PC((((sec_counter_test%3600)/60)/10) + '0');
-Char_to_PC((((sec_counter_test%3600)/60)%10) + '0'); Char_to_PC(' ');
-Char_to_PC((((sec_counter_test%3600)%60)/10) + '0');
-Char_to_PC((((sec_counter_test%3600)%60)%10) + '0');Char_to_PC('\t'); //break;
-
-test_mode = eeprom_read_byte((uint8_t*)15);
-Char_to_PC(test_mode);newline();}
-
-
-
-/*****************************************************************************************************************/
-
-ISR (WDT_vect){
-
-for(int m = 0; m<=3; m++)
+ISR (WDT_vect){                                                                //the clock often crashes when the display 
+set_Arduino_WDTout;                                                            //is being switch between stationary and blank
+for(int m = 0; m<=3; m++)                                                      //WDTouts are also used to adjust the clock
 {eeprom_write_byte(((uint8_t*)(7+m)), (sec_counter >> (m*8)) );}  
 
 switch (mode){                                                                  //Save mode
@@ -595,9 +471,8 @@ case 'B':
 case 'F':
 case 'H':
 eeprom_write_byte((uint8_t*)(15),mode); 
+case 'C':  case 'G': case 'D': eeprom_write_byte((uint8_t*)(15),old_mode);
 default: break;}
 
 for(int m = 0; m<=3; m++)
-{eeprom_write_byte(((uint8_t*)(11+m)), (clock_time_secs >> (m*8)) );}
-
-print_out_bkp();}
+{eeprom_write_byte(((uint8_t*)(11+m)), (clock_time_secs >> (m*8)) );}}
