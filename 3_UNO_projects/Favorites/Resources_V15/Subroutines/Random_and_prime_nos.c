@@ -3,7 +3,7 @@ char PRN_8bit_GEN(void);
 unsigned int PRN_16bit_GEN(unsigned int);
 void I2C_Tx_snowstorm_display(void);
 
-char PRN_8bit_GEN_UNO(void);
+unsigned char PRN_8bit_GEN_UNO(void);
 unsigned int PRN_16bit_GEN_UNO(unsigned int);
 void I2C_Tx_snowstorm_display_UNO(void);
 
@@ -57,9 +57,9 @@ Timer_T1_sub(T1_delay_100ms);}}
 
 
 /*****************************************************************/
-char PRN_8bit_GEN_UNO(void){
+unsigned char PRN_8bit_GEN_UNO(void){
 unsigned int bit;
-char lfsr;
+unsigned char lfsr;
 
 lfsr = eeprom_read_byte((uint8_t*)(0x3F3));
 bit = (( lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 4)) & 1;
