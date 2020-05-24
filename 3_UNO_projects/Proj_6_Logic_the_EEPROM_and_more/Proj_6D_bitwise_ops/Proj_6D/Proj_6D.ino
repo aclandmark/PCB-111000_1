@@ -26,27 +26,27 @@ Bottom row gives the result.*/
 char Op(char, char);
 
 char digits[8];
-char BWOp, comp;                                  //bit wise operation and complement (i.e. swap ones and zeros)
+char BWOp, comp;                                                                //bit wise operation and complement (i.e. swap ones and zeros)
 
 int main (void){
 char User_response;
 
-setup_HW;
+setup_UNO;
 User_prompt;
 
 String_to_PC("Select OP:  |   ^   &   ~|  ~^  or  ~&");
 BWOp = waitforkeypress();
-if (BWOp == '~') {comp = 1; BWOp = waitforkeypress();}else comp = 0;        //detect complement operator
+if (BWOp == '~') {comp = 1; BWOp = waitforkeypress();}else comp = 0;            //detect complement operator
 if ((BWOp != '|') && (BWOp != '^') && (BWOp != '&'))
-{wdt_enable(WDTO_30MS); while(1);}                          //reset if duff char was sent 
+{wdt_enable(WDTO_30MS); while(1);}                                              //reset if duff char was sent 
 
-if (User_response == 'R'){                              //Operates on user defined data
+if (User_response == 'R'){                                                      //Operates on user defined data
 
 String_to_PC("\r\nSend 2 digits");
-for (int m = 0;  m < 7; m++)digits[m]=0;                      //clear array
-for (int m = 0;  m < 2; m++){digits[m] = waitforkeypress() - '0';}        //Load first 2 locations with user data
-digits[2] =  Op(digits[0] , digits[1]);                     //Put result in third location
-I2C_Tx_BWops(digits);                               //sends full array of 8 char variables
+for (int m = 0;  m < 7; m++)digits[m]=0;                                        //clear array
+for (int m = 0;  m < 2; m++){digits[m] = waitforkeypress() - '0';}              //Load first 2 locations with user data
+digits[2] =  Op(digits[0] , digits[1]);                                         //Put result in third location
+I2C_Tx_BWops(digits);                                                           //sends full array of 8 char variables
 
 String_to_PC("\r\nPress AK to increment digits or x to escape\r\n");
  
@@ -59,10 +59,10 @@ I2C_Tx_BWops(digits);}
 wdt_enable(WDTO_30MS); while(1);}
   
 
-String_to_PC("\r\nUse random numbers: Press AK or x to escape\r\n");        //Operates on random data
+String_to_PC("\r\nUse random numbers: Press AK or x to escape\r\n");          //Operates on random data
 while (waitforkeypress() !='x'){
-digits[0] = PRN_8bit_GEN();
-digits[1] = PRN_8bit_GEN();
+digits[0] = PRN_8bit_GEN_UNO();
+digits[1] = PRN_8bit_GEN_UNO();
 digits[2] =  Op(digits[0] , digits[1]);
 I2C_Tx_BWops(digits);}                  
 wdt_enable(WDTO_30MS); while(1);}
