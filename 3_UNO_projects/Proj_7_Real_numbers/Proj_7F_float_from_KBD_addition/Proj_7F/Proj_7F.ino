@@ -41,12 +41,12 @@ signed char  expnt[3];
 char digits[8];
 char op = '+';
 
-setup_HW; 
-
+setup_UNO; 
+User_prompt;
 while(1){
 
 String_to_PC("Send real number plus cr then + or - followed by second number and cr.\r\n\
-Press sw1 or sw3 before entering next op and subsequent number (or 0 to escape)\r\n");
+Press sw1 or sw2 before entering next op and subsequent number (or 0 to escape)\r\n");
 
 number[0] = fpn_from_KBD(digits, &expnt[0]);
 fpn_to_PC(number[0],expnt[0]);                            
@@ -64,7 +64,7 @@ add_fp_local(number, expnt,  op);
 fpn_to_PC(number[2], expnt[2]);Char_to_PC('\t');
 
 I2C_Tx_float_num(number[2], expnt[2]);
-I2C_Tx_float_display_control();
+I2C_Tx_float_display_control;
 
 newline();
 number[0] = number[2]; expnt[0] = expnt[2];}}}
