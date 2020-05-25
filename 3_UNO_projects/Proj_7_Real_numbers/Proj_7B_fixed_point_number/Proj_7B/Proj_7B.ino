@@ -108,7 +108,8 @@ long number_1, num_1_LHS=0,LHS_of_BP;
 
 int No_dps = 8;
 
-setup_HW;
+setup_UNO;
+User_prompt;
 String_to_PC("Send real number & terminate in cr.\r\n\
 Then type * / ~ a or A to do some arithmetic\r\n\
 x to escape");
@@ -116,55 +117,55 @@ x to escape");
 
 /*******************Convert to subroutine Fixed_pt_number_from_KBD()*******************************************************/
 
-Real_num_string_from_KBD(digits);                   //acquires string and displays it
-if(!(digits[0])){SW_reset;}                   //Ilegal character?
-                                  //Scan the display from the LHS
-{int m=8; while(!(digits[m-1]))m--;               //Stop at the first character
-if (digits[m-1] == '-')sign = '-';                //If it is '-' a negative number is to be entered
-else num_1_LHS = digits[m-1] - '0'; m--;              //Convert the digit to a number
-while (m && (digits[m-1] != '.'))                 //Continue scanning until a '.' is detected or the end of the display is reached
+Real_num_string_from_KBD(digits);                                                         //acquires string and displays it
+if(!(digits[0])){SW_reset;}                                                               //Ilegal character?
+                                                                                          //Scan the display from the LHS
+{int m=8; while(!(digits[m-1]))m--;                                                       //Stop at the first character
+if (digits[m-1] == '-')sign = '-';                                                        //If it is '-' a negative number is to be entered
+else num_1_LHS = digits[m-1] - '0'; m--;                                                  //Convert the digit to a number
+while (m && (digits[m-1] != '.'))                                                         //Continue scanning until a '.' is detected or the end of the display is reached
 {num_1_LHS = 
-(10*num_1_LHS) + digits[m-1] - '0'; m--;}             //Continue converting digits and building up the LHS of number
+(10*num_1_LHS) + digits[m-1] - '0'; m--;}                                                 //Continue converting digits and building up the LHS of number
 if(m)m--; 
-while (m){num_1_RHS =                         //Repeat for the RHS of the number
+while (m){num_1_RHS =                                                                     //Repeat for the RHS of the number
 (10*num_1_RHS) + digits[m-1] - '0'; m--; 
-Denominator *=10;}}                         //Calculate denominator used to convert RHS to decimal
+Denominator *=10;}}                                                                       //Calculate denominator used to convert RHS to decimal
 
-RHS_of_BP = Fraction_to_Binary_Unsigned(num_1_RHS, Denominator);  //Obtain the decimal part of the number     
+RHS_of_BP = Fraction_to_Binary_Unsigned(num_1_RHS, Denominator);                          //Obtain the decimal part of the number     
 number_1 = 
-(num_1_LHS << 16) + (RHS_of_BP>>16);                //Assemble the LHS & RHS parts to form a real number  
+(num_1_LHS << 16) + (RHS_of_BP>>16);                                                      //Assemble the LHS & RHS parts to form a real number  
 
-if(sign == '-') number_1 = ~number_1;               //If the number is negative invert all the bits
+if(sign == '-') number_1 = ~number_1;                                                     //If the number is negative invert all the bits
 
 /****************************************************************************************************************************/
  
-newline(); Binary_to_PC_Local(number_1); Char_to_PC('\t');      //Print the binary number out and do some arithmetic
+newline(); Binary_to_PC_Local(number_1); Char_to_PC('\t');                                //Print the binary number out and do some arithmetic
 
 while(1){
 
 /******************************Convert to subroutine: RealNum_to_PC() ************************************************************/
 if(number_1 < 0){sign = '-'; Char_to_PC('-');
-number_1 = ~number_1;}else sign = '+';                //Always display +ve decimal number plus -ve sign if necessary
+number_1 = ~number_1;}else sign = '+';                                                    //Always display +ve decimal number plus -ve sign if necessary
 
-LHS_of_BP = number_1 >> 16;                     //Isolate the two halves of the number
+LHS_of_BP = number_1 >> 16;                                                               //Isolate the two halves of the number
 RHS_of_BP = (number_1) << 16;
-RHSDP = Binary_points_to_Decimal_Unsigned(RHS_of_BP);       //Convert the binary number on the RHS of the binary point
-                                  //to a decimal number between 0 and 999999999
+RHSDP = Binary_points_to_Decimal_Unsigned(RHS_of_BP);                                     //Convert the binary number on the RHS of the binary point
+                                                                                          //to a decimal number between 0 and 999999999
 if (!(decimalOverflow(10, RHSDP, No_dps)))
-{RHSDP = 0; LHS_of_BP++; }                      //Check for decimal overflow
-Num_to_PC(10, LHS_of_BP); Decimal_to_PC(10, RHSDP, No_dps);   //Send the two halves to the number to the PC.
+{RHSDP = 0; LHS_of_BP++; }                                                                //Check for decimal overflow
+Num_to_PC(10, LHS_of_BP); Decimal_to_PC(10, RHSDP, No_dps);                               //Send the two halves to the number to the PC.
 /****************************************************************************************************************************/
 
 
-if(sign == '-')number_1 = ~number_1;                //Always do arithmetic on the signed number
-I2C_Tx_real_num(number_1);                      //Send the number over the I2C bus to the display
+if(sign == '-')number_1 = ~number_1;                                                      //Always do arithmetic on the signed number
+I2C_Tx_real_num(number_1);                                                                //Send the number over the I2C bus to the display
 if ((keypress=waitforkeypress()) == 'x')
 {newline();break;}
 
 switch(keypress){
 case '*': number_1 = number_1 << 1; break;
 case '/': number_1 = number_1 >> 1; break;
-case '~': number_1 = (number_1 * -1)-1; break;            //error is due to insufficient bits on RHS of binary pt
+case '~': number_1 = (number_1 * -1)-1; break;                                            //error is due to insufficient bits on RHS of binary pt
 case 'a': number_1 = number_1/5 * -2; break;
 case 'A': number_1 = number_1/2 * -5; break;}
 
