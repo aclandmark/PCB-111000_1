@@ -6,7 +6,7 @@
 /*IT INTRODUCES
 
 
-1.  Programming the Atmega 168 EEPROM with text string for use by other programs (known as client programs).
+1.  Programming the Atmega 328 EEPROM with text string for use by other programs (known as client programs).
 
 2.  Project subroutine "Text_to_EEPROM()".
 This saves blocks of text rather than individual characters.
@@ -54,13 +54,14 @@ be restored using "Proj_9B_168_auto_cal".*/
 int main (void){
 
 char text, User_response,message_file;
-int read_address=10, write_address = 10;                //Leave 10 bytes of EEPROM for application use
+int read_address=10, write_address = 10;                                  //Leave 10 bytes of EEPROM for application use
 char  next_char=0;                            
 
-setup_HW;
-String_to_PC("Message_file?  1 or 2");                  //select the required .txt program
-message_file = waitforkeypress();                   //Note attempts to download one and read the other
-if((message_file != '1') && (message_file != '2'))            //will generate meaningless results
+setup_UNO;
+User_prompt;
+String_to_PC("Message_file?  1 or 2");                                    //select the required .txt program
+message_file = waitforkeypress();                                         //Note attempts to download one and read the other
+if((message_file != '1') && (message_file != '2'))                        //will generate meaningless results
 {newline();SW_reset;}
 
 
@@ -87,7 +88,7 @@ if ((User_response == 'r') && (message_file == '2'))
 /********************Proj_6F requests the relevant .txt file****************************/
 
 String_to_PC("Set baud rate to 2.4k then AK\r\n");  
-Timer_T0_10mS_delay_x_m(1);                       //Time to complete mesage transfer
+Timer_T0_10mS_delay_x_m(1);                                                 //Time to complete mesage transfer
 USART_init(1,160);
 waitforkeypress();
 
@@ -101,43 +102,43 @@ default: SW_reset;break;}
 
 /***************Strings in the .txt file are saved to EEPROM**************************/
 
-while(1){next_char = waitforkeypress();               //wait for first character from file
-if ((next_char != '\r') && (next_char != '\n'))           //Ignore leading carriage returns
+while(1){next_char = waitforkeypress();                                       //wait for first character from file
+if ((next_char != '\r') && (next_char != '\n'))                               //Ignore leading carriage returns
 break;}             
-Text_to_EEPROM(&write_address, next_char);                //save first letter to EEPROM
+Text_to_EEPROM(&write_address, next_char);                                    //save first letter to EEPROM
 
-while(write_address < 0x1F6)                      //Exits before cal bytes can be overwritten
-  {if(isCharavailable(1))                       //returns 1 if a new letter is available (0 at the end of the file) 
-  {text = receiveChar();                        //Temporary storage
+while(write_address < 0x3F0)                                                  //Exits before cal bytes can be overwritten
+  {if(isCharavailable(1))                                                      //returns 1 if a new letter is available (0 at the end of the file) 
+  {text = receiveChar();                                                       //Temporary storage
 
-  switch (text){                            //Test the new character  
-    case '\r':                            //If it is '\r' and or '\n' 
-    case '\n':                            //ignore it or replace it with with a single '\0'
+  switch (text){                                                               //Test the new character  
+    case '\r':                                                                //If it is '\r' and or '\n' 
+    case '\n':                                                                //ignore it or replace it with with a single '\0'
     if(next_char == '\0')break; 
     else  {next_char = '\0'; 
         Text_to_EEPROM(&write_address, next_char);}break;
-    default :   next_char = text;                   //save the letter
-          Text_to_EEPROM(&write_address, next_char);      //increments the write address
+    default :   next_char = text;                                             //save the letter
+          Text_to_EEPROM(&write_address, next_char);                          //increments the write address
           break;}
 
-  }else break; }                            //End of file reached
+  }else break; }                                                              //End of file reached
 
-if(write_address == 0x1F6)                        //If text file was too long
-{Text_to_EEPROM(&write_address, '\0');                  //Place '\0' in 0x1F6 to terminate the string
-binUnwantedChars_dot();}                        //Send dots to pc to indicate lost characters
+if(write_address == 0x3F0)                                                    //If text file was too long
+{Text_to_EEPROM(&write_address, '\0');                                        //Place '\0' in 0x1F6 to terminate the string
+binUnwantedChars_dot();}                                                      //Send dots to pc to indicate lost characters
 
 
 
 
 /****************Echo text file to screen with the address of each string**********************/
 
-Num_to_PC(16,read_address); Char_to_PC('\t');             //Send address of first line of text
-do{                                   //Read back text one line at a time
-while(1){text = Text_from_EEPROM(&read_address);            //Increments the read address
-if(text)Char_to_PC(text); else break;}                //When '\0' is detected start next line
-newline();Num_to_PC(16,read_address);                   //Send address of next line
+Num_to_PC(16,read_address); Char_to_PC('\t');                                 //Send address of first line of text
+do{                                                                           //Read back text one line at a time
+while(1){text = Text_from_EEPROM(&read_address);                              //Increments the read address
+if(text)Char_to_PC(text); else break;}                                        //When '\0' is detected start next line
+newline();Num_to_PC(16,read_address);                                         //Send address of next line
 Char_to_PC('\t');}
-while(read_address < write_address);                  //Exit when read address equals write address
+while(read_address < write_address);                                          //Exit when read address equals write address
 
 
 String_to_PC("\r\nBAUD RATE 57.6k!!\r\npress any key to continue\r\n");
@@ -154,6 +155,6 @@ SW_reset;}
 void Read_on_chip_EEPROM_local(int EEPROM_address){
 char temp_char;
 while(1){
-temp_char =  eeprom_read_byte((uint8_t*)(EEPROM_address++));      // Read_write_mem('O',(EEPROM_address--),0);
+temp_char =  eeprom_read_byte((uint8_t*)(EEPROM_address++));                   // Read_write_mem('O',(EEPROM_address--),0);
 if (temp_char != '\0') Char_to_PC(temp_char);
 else {newline(); break;}}}
