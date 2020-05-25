@@ -29,7 +29,7 @@ as well as more efficient use of the 32 bits.
   Floating point numbers can easily acquire more than 8 characters. This sends them to the display in a rotating format.
 
 6.  Project subroutine "I2C_Tx_float_display_control()".
-This enables users to pause the display using sw2.*/
+This enables users to pause the display using sw3.*/
 
 
 
@@ -48,17 +48,17 @@ long number_1, number_2, number_3, Ans_LHS;
 signed char  expnt_1, expnt_2, expnt_3;
 char digits[8];
 
-setup_HW; 
-
+setup_UNO; 
+User_prompt;
 while(1){
 
 String_to_PC("Send real number plus cr twice.\r\n\
-Press sw2 to pause display and sw1 or 3 to enter new number\r\n\
+Press sw3 to pause display and sw1 or 2 to enter new number\r\n\
 or zero to exit\r\n");
 
 number_1 = fpn_from_KBD_local(digits, &expnt_1);
-fpn_to_PC_Local(number_1,expnt_1);                      //fpn format is +/-0._ _ _ _.... +/-E_ _
-                                      //All numbers have 32 bits on the RHS of the decimal point
+fpn_to_PC_Local(number_1,expnt_1);                                                      //fpn format is +/-0._ _ _ _.... +/-E_ _
+                                                                                        //All numbers have 32 bits on the RHS of the decimal point
 while(1){
 Char_to_PC(' '); String_to_PC ("/ ");
 number_2 = fpn_from_KBD_local(digits, &expnt_2);
@@ -67,15 +67,15 @@ fpn_to_PC_Local(number_2,expnt_2); Char_to_PC(' '); String_to_PC ("= ");
 
 Ans_LHS = number_1/number_2; expnt_3 = expnt_1 - expnt_2;
 
-if(Ans_LHS != 0)                              //Maintain fpn format (i.e. answer must be +/-0._ _ _ +/-E_ _
+if(Ans_LHS != 0)                                                                      //Maintain fpn format (i.e. answer must be +/-0._ _ _ +/-E_ _
 {number_3 = Fraction_to_Binary_Signed(((number_1/10)%number_2), number_2);
-expnt_3++;}                                 //"Fraction_to_Binary" subroutines ignore the binary point
-else                                    //This is equivalent to multiplying both numerator and denominator by 10 exp 9                          
+expnt_3++;}                                                                           //"Fraction_to_Binary" subroutines ignore the binary point
+else                                                                                  //This is equivalent to multiplying both numerator and denominator by 10 exp 9                          
 number_3 = Fraction_to_Binary_Signed((number_1%number_2), number_2);
 
-fpn_to_PC_Local(number_3, expnt_3);Char_to_PC('\t');            //sendBinary(number_3);
+fpn_to_PC_Local(number_3, expnt_3);Char_to_PC('\t');                                  //sendBinary(number_3);
 I2C_Tx_float_num(number_3, expnt_3);
-I2C_Tx_float_display_control();
+I2C_Tx_float_display_control;
 
 
 
@@ -92,39 +92,39 @@ long RHS_of_BP;
 
 char sign = '+';
 *expnt = 0;
-Real_num_string_from_KBD(digits); if(!(digits[0])){return 0;}       //Ilegal character?
-                                      //Scan the display from the LHS
-{int m=8; while(!(digits[m-1]))m--;                   //Stop at the first character
-if (digits[m-1] == '-')sign = '-';                    //If it is '-' a negative number 
-else {num_1 = digits[m-1] - '0';                      //is to be entered
+Real_num_string_from_KBD(digits); if(!(digits[0])){return 0;}                     //Ilegal character?
+                                                                                  //Scan the display from the LHS
+{int m=8; while(!(digits[m-1]))m--;                                               //Stop at the first character
+if (digits[m-1] == '-')sign = '-';                                                //If it is '-' a negative number 
+else {num_1 = digits[m-1] - '0';                                                  //is to be entered
 if(num_1){Denominator *=10;(*expnt)++;}}m--;  
-while (m && (digits[m-1] != '.'))                     //Continue scanning until a '.' is detected 
-{num_1 =                                  //or the end of the display is reached
+while (m && (digits[m-1] != '.'))                                                 //Continue scanning until a '.' is detected 
+{num_1 =                                                                          //or the end of the display is reached
 (10*num_1) + digits[m-1] - '0'; 
-Denominator *=10;(*expnt)++; m--;}                      //Continue converting digits and
-                                      //building up the LHS of number
+Denominator *=10;(*expnt)++; m--;}                                                //Continue converting digits and
+                                                                                  //building up the LHS of number
 if(m)m--; 
-while (m){num_1 =                               //Repeat for the RHS of the number
+while (m){num_1 =                                                                 //Repeat for the RHS of the number
 (10*num_1) + digits[m-1] - '0'; m--; 
-if(num_1)Denominator *=10; if(!(num_1))(*expnt)--;  }         //Calculate denominator used to convert RHS to decimal
+if(num_1)Denominator *=10; if(!(num_1))(*expnt)--;  }                             //Calculate denominator used to convert RHS to decimal
     
 while(Denominator/num_1 > 10)
-{Denominator /= 10; (*expnt)--;}}                     //Ensures -0.05 ends up as -0.5E-1 and not -0.05E0
+{Denominator /= 10; (*expnt)--;}}                                                 //Ensures -0.05 ends up as -0.5E-1 and not -0.05E0
 
 
-if(sign == '-') num_1 = -num_1;                       //Standard negation: complement and add 1
-RHS_of_BP = Fraction_to_Binary_Signed(num_1, Denominator);          //Obtain the decimal part of the number     
+if(sign == '-') num_1 = -num_1;                                                   //Standard negation: complement and add 1
+RHS_of_BP = Fraction_to_Binary_Signed(num_1, Denominator);                        //Obtain the decimal part of the number     
 return RHS_of_BP;}
 
 
 
 /***********************************************************************************************************************/
 
-void fpn_to_PC_Local(long number, signed char expnt){           //Receives fpn as +/-0._ _ _ _ .... 
+void fpn_to_PC_Local(long number, signed char expnt){                           //Receives fpn as +/-0._ _ _ _ .... 
 long  RHSDP;
-char No_dps = 7;                              //with a decimal exponent
-                                      //Convert the RHS of the binary point
-RHSDP = Binary_points_to_Decimal_Signed(number);              //to a decimal number
+char No_dps = 7;                                                                //with a decimal exponent
+                                                                                //Convert the RHS of the binary point
+RHSDP = Binary_points_to_Decimal_Signed(number);                                //to a decimal number
 if(number < 0){String_to_PC("-0"); RHSDP = ~RHSDP;}
 else Char_to_PC('0'); 
 if (!(decimalOverflow(10, RHSDP, No_dps))){RHSDP = 0;
