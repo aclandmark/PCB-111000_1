@@ -120,7 +120,7 @@ PCICR &= (~((1 << PCIE0) | (1 << PCIE2)));
 #define I2C_Tx_float_display_control \
 {PCMSK0_backup= PCMSK0;\
 PCMSK2_backup= PCMSK2;\
-float_display_mode = '0'\
+float_display_mode = '0';\
 if (PCIenabled){disable_pci_on_sw2;disable_pci_on_sw1_and_sw3;}\
 while(1){\
 if(switch_2_down)float_display_mode = '1'; else float_display_mode = '0';\
