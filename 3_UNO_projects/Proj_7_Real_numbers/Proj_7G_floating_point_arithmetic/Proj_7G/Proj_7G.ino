@@ -22,7 +22,8 @@ long number[3];
 signed char  expnt[3];    
 
 
-setup_HW;
+setup_UNO;
+User_prompt;
 String_to_PC("\r\nSend real numbers and op (terminate numbers in cr)"); 
 String_to_PC("\r\nPress sw2 to pause display.");  
 String_to_PC("\r\nPress sw1 or 3 then new op and new number");
@@ -41,7 +42,7 @@ if(op == 'y')continue;
 if(op == 'x')break;
 Char_to_PC(op); Char_to_PC('\t');
 
-number[1] = fpn_from_KBD(digits,&expnt[1]);     //Print the number out and do some arithmetic
+number[1] = fpn_from_KBD(digits,&expnt[1]);                     //Print the number out and do some arithmetic
 fpn_to_PC(number[1],expnt[1]); 
 switch(op){
 case '+': add_fp(number,  expnt, '+'); break;
@@ -52,7 +53,7 @@ case '/': fpn_divide(number,  expnt); break;}
 String_to_PC("\t=");fpn_to_PC(number[2],expnt[2]);  
 
 I2C_Tx_float_num(number[2],expnt[2]);
-I2C_Tx_float_display_control();             //DISSABLE PCI before calling
+I2C_Tx_float_display_control;             
 
 number[0] = number[2];
 expnt[0] = expnt[2];
