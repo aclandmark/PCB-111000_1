@@ -53,42 +53,43 @@ long number_1, number_2;
 unsigned long RHS_of_BP;
 int No_dps = 3;
 
-setup_HW;
+setup_UNO;
+User_prompt;
 String_to_PC("Send numbers and op (terminate numbers in cr)\r\n");
 
-number_1 = Fixed_pt_number_from_KBD(digits);                //Subroutine developed in proj_8B
-RealNum_to_PC(number_1, 4);                           //Subroutine developed in proj_8B
+number_1 = Fixed_pt_number_from_KBD(digits);                                            //Subroutine developed in proj_8B
+RealNum_to_PC(number_1, 4);                                                             //Subroutine developed in proj_8B
  
-while(1){                                 //infinite loop
+while(1){                                                                               //infinite loop
 
-op = waitforkeypress();                           //enter arithmetical op
+op = waitforkeypress();                                                                 //enter arithmetical op
 switch(op){
 case '+': case '-': case '*':  
 case '/': case 'x':break;
 default: op = 'y'; Char_to_PC('!'); break;}
-if(op == 'y')continue;                            //branch straight back to start of the infinite loop
-if(op == 'x')break;                             //escape from the infinite loop
+if(op == 'y')continue;                                                                  //branch straight back to start of the infinite loop
+if(op == 'x')break;                                                                     //escape from the infinite loop
 Char_to_PC(op); Char_to_PC('\t');
 
-number_2 = Fixed_pt_number_from_KBD(digits);                //Get second number from KBD
-RealNum_to_PC(number_2, 4);                         //Echo it to PC
+number_2 = Fixed_pt_number_from_KBD(digits);                                            //Get second number from KBD
+RealNum_to_PC(number_2, 4);                                                             //Echo it to PC
 switch(op){
 case '+': number_1 += number_2; break;
 case '-': number_1 -= number_2; break;
-case '*': number_1 = (number_1 >> 8) * (number_2 >> 8); break;        //>>8 to make allowance for overflow
+case '*': number_1 = (number_1 >> 8) * (number_2 >> 8); break;                         //>>8 to make allowance for overflow
 case '/':   
-RHS_of_BP = Fraction_to_Binary_Signed((number_1)%(number_2), number_2); //Determine number on RHS of binary point
-if((RHS_of_BP >> 16) & (1<<15)) decimal_sign = '-';             //Test bit 31 which is the decimal sign bit
-else decimal_sign = '+';                          //and record the sign
+RHS_of_BP = Fraction_to_Binary_Signed((number_1)%(number_2), number_2);                //Determine number on RHS of binary point
+if((RHS_of_BP >> 16) & (1<<15)) decimal_sign = '-';                                   //Test bit 31 which is the decimal sign bit
+else decimal_sign = '+';                                                              //and record the sign
 
-RHS_of_BP = RHS_of_BP << 1;                         //remove the decimal sign bit
-number_1 /= number_2;                           //determine LHS of binary point
+RHS_of_BP = RHS_of_BP << 1;                                                           //remove the decimal sign bit
+number_1 /= number_2;                                                                 //determine LHS of binary point
 
-if(decimal_sign == '-')number_1--;                      //Compiler added 1 to form a negative number; this must be removed
-number_1 = (number_1 << 16) + (RHS_of_BP>>16);                //Re-assemble number_1 so that binary point is between bits 15 and 16
+if(decimal_sign == '-')number_1--;                                                    //Compiler added 1 to form a negative number; this must be removed
+number_1 = (number_1 << 16) + (RHS_of_BP>>16);                                        //Re-assemble number_1 so that binary point is between bits 15 and 16
 
 break;}
 
-String_to_PC("\t=");RealNum_to_PC(number_1, No_dps);              //Send the real number to the PC
-I2C_Tx_real_num(number_1);                          //and over the I2C bus to the display
+String_to_PC("\t=");RealNum_to_PC(number_1, No_dps);                                 //Send the real number to the PC
+I2C_Tx_real_num(number_1);                                                            //and over the I2C bus to the display
 }SW_reset;}
