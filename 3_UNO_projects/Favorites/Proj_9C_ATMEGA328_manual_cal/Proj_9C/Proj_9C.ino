@@ -23,6 +23,12 @@ of the mini-OS following a POR.
 
 
 
+
+
+char Decimal_from_KBD(void);
+
+
+
 #include "Proj_9C_header_file.h"
 
 
@@ -40,15 +46,15 @@ setup_UNO;
 
 User_prompt;
 
-String_to_PC("\r\nSingle click of reset switch required post programming\r\n\
+String_to_PC("\r\nSingle click of pcb_A reset switch sometimes required.\r\n\
 Power on reset required to recalibrate device\r\n");
 
 
 String_to_PC("\r\nATMEGA 328 manual calibration (please wait 10 seconds)\r\n\
 Cal factor user value   \t");
 
-
-I2C_Tx(1, 'N', &cal_mode);                                      //Initiate Atmega 328 calibration mode
+I2C_Tx_initiate_mode('N');
+//I2C_Tx(1, 'N', &cal_mode);                                      //Initiate Atmega 328 calibration mode
 waiting_for_I2C_master;                                         //Atmega 328 accepts request to calibrate             
 OSCCAL_DV = receive_byte_with_Ack();                            //Receive 328 OSCCAL_default Value
 osccal_MIN = receive_byte_with_Ack();                           //Working value + 20  
@@ -88,7 +94,7 @@ waiting_for_I2C_master;                                         //Send OSCCAL_Us
 send_byte_with_Nack(New_UC_value);                              //mini-OS will test that User cal is suitable
 clear_I2C_interrupt;
 
-/**************************************/
+//**************************************
 waiting_for_I2C_master;
 Test_res =  receive_byte_with_Ack();
 
@@ -109,5 +115,5 @@ Num_to_PC(16, New_UC_value); String_to_PC("   \t");
 New_UC_value = receive_byte_with_Nack();
 clear_I2C_interrupt;
 Num_to_PC(16, New_UC_value); newline();}
-String_to_PC("AK to repeat\r\n");
-waitforkeypress();SW_reset;}
+//String_to_PC("AK to repeat\r\n");
+SW_reset;}
