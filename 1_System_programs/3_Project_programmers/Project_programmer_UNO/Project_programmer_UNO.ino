@@ -43,8 +43,6 @@ has been introduced to ensure that null characters received during a text file d
 */
 
 
-
-
 #include "Project_programmer_UNO.h"
 
 
@@ -55,7 +53,6 @@ unsigned int target_type = 0,  target_type_M;				        //Device signature byte
 
 unsigned char  op_code;
 unsigned char keypress;
-
 
 
 CLKPR = (1 << CLKPCE);
@@ -71,7 +68,6 @@ while(1){
 do{sendString("s  ");} 
 while((isCharavailable(255) == 0));							              //User prompt 
 if(receiveChar() == 's')break;}
-
 
 Atmel_powerup_and_target_detect;   							              //Leave target in programming mode 													    
 
@@ -163,15 +159,16 @@ sendHex(10,prog_counter); sendString(" in:  ");
 sendHex(10,read_ops); sendString(" out\r\n");
 
 
-UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));				
+UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));		                      //Dissable UART		
 if(pcb_type == 1)	
 Read_write_mem('I', 0x3FC,0x80);
 if(pcb_type == 2)												                            //PCB_A
 {Read_write_mem('I', 0x3F9, 0);								                      //Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
-Read_write_mem('I', 0x3F4, 0);}							                        //Read by Led driver (1_UNO_CC_OS). Resets UNO immediately after PCB_A has
-Reset_H;													                                  //(i.e. this program when running on the UNO device) can be removed.
-while(1);
+Read_write_mem('I', 0x3F4, 0);}                                     //Read by mini-OS. Resets UNO immediately after PCB_A has been programmed
+Reset_H;                                                            //(i.e. this program when running on the UNO device can be removed.                  					                        
+while(1);													                                  
 return 1;}
+
 
 
 
