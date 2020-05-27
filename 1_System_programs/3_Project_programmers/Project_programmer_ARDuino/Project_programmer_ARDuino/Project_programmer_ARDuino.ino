@@ -41,32 +41,7 @@ of this projects is therefore very slightly diffent from the eqivalent file used
 has been introduced to ensure that null characters received during a text file download are ignored.
 
 */
-unsigned char receive_byte_with_Ack(void);
-unsigned char receive_byte_with_Nack(void);
-/*****************************************************************************/
 
-#define waiting_for_I2C_master \
-TWCR = (1 << TWEA) | (1 << TWEN);\
-while (!(TWCR & (1 << TWINT)));\
-TWDR;
-
-
-#define Initialise_I2C_master_write \
-  while(1){\
-  TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);\
-  while (!(TWCR & (1 << TWINT)));\
-  TWDR = 0x02;\
-  TWCR = (1 << TWINT) | (1 << TWEN);\
-  while (!(TWCR & (1 << TWINT)));\
-  if (TWSR == 0x18)break; } 
-
-
-/*****************************************************************************/
-#define clear_I2C_interrupt \
-TWCR = (1 << TWINT);
-
-#define set_up_I2C \
-TWAR = 0x02;
 
 #include "Project_programmer_UNO.h"
 
@@ -170,7 +145,7 @@ Verify_Flash();
 sendString (Version);
 sendString("Programming PCB_A");
 sendString("\r\nConfig bytes: Fuses extended, \
-high, low and lock\r\n");                 //Print out fuse bytes, cal byte and file sizes
+high, low and lock\r\n");                                           //Print out fuse bytes, cal byte and file sizes
 sendHex(16, Atmel_config(read_extended_fuse_bits_h, 0));
 sendHex(16, Atmel_config(read_fuse_bits_H_h,0));  
 sendHex(16, Atmel_config(read_fuse_bits_h, 0));
@@ -184,23 +159,18 @@ sendHex(10,prog_counter); sendString(" in:  ");
 sendHex(10,read_ops); sendString(" out\r\n");
 
 
-//UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                          //Dissable UART   
+//UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                        //Dissable UART   
 if(pcb_type == 1) 
 Read_write_mem('I', 0x3FC,0x80);
 if(pcb_type == 2)                                                   //PCB_A
 {Read_write_mem('I', 0x3F9, 0);                                     //Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
-//Read_write_mem('I', 0x3F4, 0);
-}                                     //Read by Led driver (1_UNO_CC_OS). Resets UNO immediately after PCB_A has
-
-
-Read_write_mem('I', 0x3F9, 0);/////////////////
-Reset_H;                                                            //(i.e. this program when running on the UNO device) can be removed.
+Read_write_mem('I', 0x3F1, 0);										//Triggers PCB_A autocal.
+}
+Reset_H;                                                            //Set target device running          
 
 
 
-/**********************************/
-
-sendString("test");
+/*************Auto cal mini-OS device*********************/
 set_up_I2C;
 waiting_for_I2C_master;  
 OSCCAL_mini_OS = receive_byte_with_Ack();
@@ -208,22 +178,10 @@ error_mag = receive_byte_with_Ack() << 8;
 error_mag += receive_byte_with_Nack();
 clear_I2C_interrupt;
 sendString("\r\nmini_OS OSCCAL user value   "); sendHex(10,OSCCAL_mini_OS);
-
 sendString("calibration error  "); sendHex(10,error_mag);
-
-
 /*********************************/
-
-
-
-
-
 while(1);
 return 1;}
-
-
-
-
 
 
 /***************************************************************************************************************************************************/
@@ -427,15 +385,17 @@ newline();newline(); }
 /***********************************************************/
 unsigned char receive_byte_with_Ack(void){
 char byte;
-TWCR = (1 << TWEA) | (1 << TWEN) | (1 << TWINT);    //Set Ack enable and clear interrupt
-while (!(TWCR & (1 << TWINT)));           //Wait for interrupt
+TWCR = (1 << TWEA) | (1 << TWEN) | (1 << TWINT);          //Set Ack enable and clear interrupt
+while (!(TWCR & (1 << TWINT)));                           //Wait for interrupt
 byte = TWDR;
 return byte;}
+
+
 
 /***********************************************************/
 unsigned char receive_byte_with_Nack(void){
 char byte;
-TWCR = (1 << TWEN) | (1 << TWINT);    //Set Ack enable and clear interrupt
-while (!(TWCR & (1 << TWINT)));           //Wait for interrupt
+TWCR = (1 << TWEN) | (1 << TWINT);                        //Set Ack enable and clear interrupt
+while (!(TWCR & (1 << TWINT)));                           //Wait for interrupt
 byte = TWDR;
 return byte;}
