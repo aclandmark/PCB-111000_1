@@ -13,11 +13,16 @@ void I2C_initiate_10mS_ref(void);
 void I2C_Tx_display(void);
 void I2C_Tx_LED_dimmer(void);
 void I2C_Tx_LED_dimmer_UNO(void);
+void Cal_UNO_pcb_A(void);
 
+char receiveChar(void);
+char isCharavailable(char);
 char waitforkeypress(void);
 void String_to_PC(const char*);
+void Num_to_PC(char, long);
 void newline(void);
 
+void I2C_Tx_initiate_mode(char);
 void I2C_Tx(char, char, char*);
 void send_byte_with_Ack(char);
 void send_byte_with_Nack(char);
@@ -142,6 +147,24 @@ if(!(Dimmer_control))continue;
 I2C_Tx(1, 'Q', &Dimmer_control);
 I2C_Tx_2_integers(Port_1, ~Port_1);
 Timer_T0_10mS_delay_x_m(50);}}
+
+
+void Cal_UNO_pcb_A(void)
+{unsigned char OSCCAL_mini_OS;
+int error_mag;
+
+User_prompt;
+I2C_Tx_initiate_mode('R');
+String_to_PC("\r\nPCB_A (mini_OS) device calibrating");
+waiting_for_I2C_master;  
+OSCCAL_mini_OS = receive_byte_with_Ack();
+error_mag = receive_byte_with_Ack() << 8;
+error_mag += receive_byte_with_Nack();
+clear_I2C_interrupt;
+String_to_PC("\r\nOSCCAL user value   "); Num_to_PC(10,OSCCAL_mini_OS);
+String_to_PC("\r\ncalibration error  "); Num_to_PC(10,error_mag);
+if (error_mag < 750) String_to_PC("  OK\r\n");
+}
 
 
 
