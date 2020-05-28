@@ -165,6 +165,7 @@ Read_write_mem('I', 0x3FC,0x80);
 if(pcb_type == 2)                                                   //PCB_A
 {Read_write_mem('I', 0x3F9, 0);                                     //Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
 Read_write_mem('I', 0x3F1, 0);										//Triggers PCB_A autocal.
+//Read_write_mem('I', 0x3F4, 0);
 }
 Reset_H;                                                            //Set target device running          
 
