@@ -134,11 +134,13 @@ set_up_switched_inputs;\
 Unused_I_O;\
 Timer_T0_10mS_delay_x_m(5);\
 USART_init(0,16);\
-if ((PINB & 0x04)^0x04)\
+if (((PINB & 0x04)^0x04) && \
+((PIND & 0x04)^0x04))\
 I2C_Tx_LED_dimmer_UNO();\
 \
-\
-if((PIND & 0x04)^0x04)Cal_UNO_pcb_A();
+if(((PIND & 0x04)^0x04) && \
+((PIND & 0x80)^0x80))\
+Cal_UNO_pcb_A();
 
 
 /************************************/
