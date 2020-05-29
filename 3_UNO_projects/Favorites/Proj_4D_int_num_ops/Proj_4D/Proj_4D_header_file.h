@@ -44,7 +44,7 @@ press sw3 for next number (only one digit is allowed)\r\n"
 #define message_3 \
 "release sw3 and root or power will be calculated\r\n\
 pulse sw3 to repeat calculation\r\n\
-hold sw1 or sw2 down while pulsing sw2 then press it again to reset the device\r\n"
+hold sw1 or sw2 down while pulsing sw3 then press it again to reset the device\r\n"
 
 
 #define User_instructions \
