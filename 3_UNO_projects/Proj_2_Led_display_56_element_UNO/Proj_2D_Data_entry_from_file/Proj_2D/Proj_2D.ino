@@ -56,7 +56,7 @@ delays.
 
 Note: 
   A sample file is provided.
-  Switch location on PCB SW3 - SW2 - SW1*/
+  Switch location on PCB SW1 - SW2 - SW3*/
   
 
 
