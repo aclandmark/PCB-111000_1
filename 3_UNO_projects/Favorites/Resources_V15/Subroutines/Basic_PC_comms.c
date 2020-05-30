@@ -40,11 +40,17 @@ char receiveChar(void)
 
 
 /*********************************************************************/
-char isCharavailable (char m){int n = 0;
+/*char isCharavailable (char m){int n = 0;
 while (!(UCSR0A & (1 << RXC0))){n++;
-if (n>8000) {m--;n = 0;}if (m == 0)return 0;}
-return 1;}
+if (n>8000) {m--;n = 0;}
+if (m == 0)return 0;}
+return 1;}*/
 
+char isCharavailable(char m){int n = 0;								//Similar to waitforkeypress() but enables use of the watch dog timer
+while (!(UCSR0A & (1 << RXC0))){n++;                        		//Increments "n" from zero to 8000
+if (n>8000) {m--;n = 0;wdr();}										//Checks the receiver at each increment
+if (m == 0)return 0;}         										//Returns a 1 as soon as a character is received
+return 1;}                                                  		//If no character is sent it pauses a while (10m mS) and returns zero																	
 
 
 /*********************************************************************/
