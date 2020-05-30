@@ -30,6 +30,7 @@ the user projects.  The PIC only offered the slave implementation of the I2C bus
 0x3F3	8 bit PRN gen EEP subroutines
 
 
+
 ***********************/
 
 # include "I2C_V18_Header_file_CA.h"
@@ -79,12 +80,8 @@ initialise_IO;										//Ensures that all IO is initially set to WPU
 
 if(!(eeprom_read_byte((uint8_t*)0x3F4)))			//If PCB_A has just been programmed with I2C_V16_CC using the project programmer 
 {eeprom_write_byte((uint8_t*)0x3F4, 0xFF);			//the UNO device is automatically reset so the the project programer can be removed
-
 //PORTB |= (1 << PB1);								//Set UNO signalling line high (WPU)
 //DDRB &= (~(1 << DDB1));							//Note: Theses are default states for the CC display driver
-
-
-
 PORTC &=(~(1 << DDC3));							//PDC3 is the output used to reset the UNO device
 DDRC |= (1 << DDC3);								//Put UNO in reset for 10mS
 Timer_T1_sub(T1_delay_10ms);						//After its release from reset the UNO selects its boot loader
