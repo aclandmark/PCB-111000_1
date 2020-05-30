@@ -57,40 +57,40 @@ should be declared as volatile if problems occur.*/
 
 
 
-volatile char T1_OVF;             //T1_OVF is set to 1 by TIMER 1 ISR or alternatively by a keypress ISR
-unsigned int PORT_1,PORT_2,n, n_max;      //"n" records the increment number and "n_max" records the value at which it is reset to 0    
-char switch_press, p;             //"switch_press" is used to remember which switches have most recently been pressed
-                        //here it can vary between 1 and 5 resulting in 5 different displays
+volatile char T1_OVF;                                                                                   //T1_OVF is set to 1 by TIMER 1 ISR or alternatively by a keypress ISR
+unsigned int PORT_1,PORT_2,n, n_max;                                                                    //"n" records the increment number and "n_max" records the value at which it is reset to 0    
+char switch_press, p;                                                                                   //"switch_press" is used to remember which switches have most recently been pressed
+                                                                                                        //here it can vary between 1 and 5 resulting in 5 different displays
 int main (void){
 
 setup_UNO;
 
-setup_and_enable_PCI;             //All three user switched generate PCI
-UCSR0B |= (1 << RXCIE0);            //Set up key press interrupt to trace logic more easily
+setup_and_enable_PCI;                                                                                   //All three user switched generate PCI
+UCSR0B |= (1 << RXCIE0);                                                                                //Set up key press interrupt to trace logic more easily
 T1_OVF = 0;
 sei();
 initialise_display();
 
 while(1)                    //Start a continuous loop
-{Inc_Display(switch_press);           //Increment the display depending upon which user switches have been pressed
-while(!(T1_OVF));T1_OVF = 0;}}          //Wait for the timer or keypress interrupt and then reset it. 
+{Inc_Display(switch_press);                                                                               //Increment the display depending upon which user switches have been pressed
+while(!(T1_OVF));T1_OVF = 0;}}                                                                            //Wait for the timer or keypress interrupt and then reset it. 
 
 
 
 /************Interrupt Service routines****************************/
 
 
-ISR(USART_RX_vect){receiveChar();T1_OVF = 1;} //Replace timer ISR with keypress ISR to check operation of logic
+ISR(USART_RX_vect){receiveChar();T1_OVF = 1;}                                                               //Replace timer ISR with keypress ISR to check operation of logic
 
 
 
-ISR(PCINT0_vect) {                //ISR for PCI on sw3
-if(switch_3_up)return;              //No interrupts on switch release
-if(switch_3_down) switch_press = 5;       //Depending on the switch presses initialise the display 
-initialise_display();}              //and then increment it appropriately
+ISR(PCINT0_vect) {                                                                                          //ISR for PCI on sw3
+if(switch_3_up)return;                                                                                      //No interrupts on switch release
+if(switch_3_down) switch_press = 5;                                                                          //Depending on the switch presses initialise the display 
+initialise_display();}                                                                                      //and then increment it appropriately
 
 
-ISR(PCINT2_vect) {                //ISR for PCI on sw_1 and sw_2
+ISR(PCINT2_vect) {                                                                                          //ISR for PCI on sw_1 and sw_2
 if(switch_1_down) {if(switch_press == 5)switch_press = 2; else switch_press = 1; initialise_display();}
 if(switch_2_down) {if(switch_press == 5)switch_press = 4; else switch_press = 3; initialise_display();}}
 
