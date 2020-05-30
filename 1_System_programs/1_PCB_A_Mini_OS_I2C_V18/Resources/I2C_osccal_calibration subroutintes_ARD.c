@@ -67,7 +67,7 @@ TWCR = (1 << TWINT ) | (1 << TWEN ) | (1 << TWSTO );
 	
 /*********************************************/
 Get_ready_to_calibrate;									//Test value of OSCCAL entered by user
-if(OSCCAL_UV == 0xFF)OSCCAL = OSCCAL_WV;				//If 0xFF reinstate working value
+if(OSCCAL_UV == 0xFF)OSCCAL = OSCCAL_DV;				//If 0xFF reinstate working value
 else OSCCAL = OSCCAL_UV;								//OSCCAL test value
 calibrate_without_sign_plus_warm_up_time;								
 close_calibration;
@@ -78,8 +78,8 @@ if(cal_error > 1750)			//5550					//Error resulting from User OSCCAL exceeds 175
 I2C_master_transmit(cal_error >> 8);						
 I2C_master_transmit(cal_error);
 TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
-eeprom_write_byte((uint8_t*)0x3FE, 0xFF); 				//Reset OSCCAL values storred in EEPROM
-eeprom_write_byte((uint8_t*)0x3FF, 0xFF);
+//eeprom_write_byte((uint8_t*)0x3FE, 0xFF); 				//Reset OSCCAL values storred in EEPROM
+//eeprom_write_byte((uint8_t*)0x3FF, 0xFF);
 OSCCAL = OSCCAL_WV;										//Reinstate default value
 return;}			
 	
@@ -88,9 +88,9 @@ else{I2C_master_transmit('Y');							//Error resulting from User OSCCAL is less 
 	
 eeprom_write_byte((uint8_t*)0x3FE, OSCCAL_UV); 		//save user OSCCAL to EEPROM
 eeprom_write_byte((uint8_t*)0x3FF, OSCCAL_UV); 
-if(OSCCAL_UV == 0xFF) OSCCAL = OSCCAL_WV;				//Reinstate working value
-else {OSCCAL = OSCCAL_UV;
-OSCCAL_WV = OSCCAL;}	
+if(OSCCAL_UV == 0xFF) OSCCAL = OSCCAL_DV;				//Reinstate working value
+else OSCCAL = OSCCAL_UV;
+OSCCAL_WV = OSCCAL;	
 	
 TWDR = eeprom_read_byte((uint8_t*)0x3FE);				//Echo values saved to EEPROM to user
 TWCR = (1 << TWINT) | (1 << TWEN);
@@ -192,12 +192,13 @@ return error/Num_2;}
 /*****************************************************************************************************/
 void Cal_at_Power_on_Reset (void){
 char counter_1, counter_2;		
-char OSCCAL_WV, OSCCAL_mem = 0;
+char OSCCAL_mem = 0;				//OSCCAL_WV, 
 long  error_mag; 
 int limit;
 
 TIMSK0 &= (!(1 << TOIE0));
-
+clear_digits;
+clear_display;
 ONE; digit_0;												//Initialise display
 
 Timer_T1_sub(T1_delay_1sec);								//Crystal warm up time
