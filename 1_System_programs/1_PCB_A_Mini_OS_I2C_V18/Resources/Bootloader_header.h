@@ -162,12 +162,12 @@ WDTCSR = 0;
 #define initialise_IO;\
 MCUCR &= (~(1 << PUD));\
 DDRB = 0;\
-DDRC = 0;\
+DDRC = 0x08;\
 DDRD = 0;\
 PORTB = 0xFF;\
 PORTC = 0xFF;\
 PORTD = 0xFF;\
-PORTC &= (~(1 << PC3));								//WPU causes contention issues with UNO??
+//PORTC &= (~(1 << PC3));								//WPU causes contention issues with UNO??
 
 
 #define initialise_leds;\
