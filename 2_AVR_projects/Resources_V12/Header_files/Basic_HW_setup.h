@@ -74,7 +74,7 @@ if ((eeprom_read_byte((uint8_t*)0x3F4) & 0x40)){\
 eeprom_write_byte((uint8_t*)0x3F4,\
 (eeprom_read_byte((uint8_t*)0x3F4) | 0x80));\
 \
-asm("jmp 0x6C60");}
+asm("jmp 0x6C60");}		////6C30????????????????
 
 
 /*****************************************************************************/
