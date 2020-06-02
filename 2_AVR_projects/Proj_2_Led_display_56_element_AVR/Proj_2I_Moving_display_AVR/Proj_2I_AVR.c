@@ -22,7 +22,7 @@ int main (void){
 char counter=0;         
 char digit_array[17];                                               //Large array used to hold digits as they are rotated
                                                                     //(ie the addresses defined by "zero", "one", "two" etc....) 
-setup_HW;
+setup_UNO_extra;
 User_prompt;                                                        //Press R or r to exit (pauses program execution while user launches a terminal program)
 for(int m = 0; m < 17; m++)digit_array[m] = 0;                      //Clear the array
 String_to_PC("Send digits? -x- when complete, AK to rotate");       //User instructions
