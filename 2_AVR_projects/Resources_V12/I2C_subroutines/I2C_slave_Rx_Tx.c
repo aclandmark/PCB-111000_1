@@ -1,9 +1,21 @@
+void I2C_Tx_initiate_mode(char);
 void I2C_Tx(char, char, char*);
 void send_byte_with_Ack(char);
 void send_byte_with_Nack(char);
 char receive_byte_with_Ack(void);
 char receive_byte_with_Nack(void);
 void I2C_Rx_RN(unsigned long *, signed char *);		//Real numbers only
+
+
+
+void I2C_Tx_initiate_mode(char mode){
+char num_bytes = 0;
+waiting_for_I2C_master;		
+send_byte_with_Ack(num_bytes);
+send_byte_with_Nack(mode);
+TWCR = (1 << TWINT);}
+
+
 
 
 /***********************************************************/
