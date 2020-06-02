@@ -1,0 +1,28 @@
+
+
+***********************************************************
+Proj_3A_transmit_chars
+
+SENDS CHARACTERS TO THE PC SCREEN
+
+
+IT INTRODUCES:
+
+
+1.  The askii code in which numbers are used to represent symbols. By incrementing the number from 32 to 126 most of the typewriter symbols from space to ~ are covered.
+
+2.  Project subroutine "Char_to_PC()".	This is used to send a number of <=255 to the PC which can then be displayed as a character.
+
+3.  Subroutine "Num_to_PC_local()".	This converts a 3 digit number to symbols and sends them to the PC screen using Char_to_PC().
+
+Note:
+The PC treats all data sent by "Char_to_PC()" as symbols.
+If it receives the number 65 then the symbol A is displayed.
+If we want to display the number 65 we must fist convert it to two symbols '6' and '5' and then send them separately as 54 and 53.
+
+
+Subroutine Char_to_PC() talks directly to the USART HW.
+UCSR0A is the USART control and status register A
+UDRE0 is the "USART Data Register Empty" bit.  
+It is set to 1 when the USART is ready to accept more data. 
+UDR0 is the I/O Data Register 
