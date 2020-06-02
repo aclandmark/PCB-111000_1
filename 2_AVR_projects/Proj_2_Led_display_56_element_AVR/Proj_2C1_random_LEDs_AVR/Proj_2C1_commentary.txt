@@ -1,0 +1,18 @@
+***************************************************
+
+A NEW PATTERN GENERATOR THAT USES ALL THE LEDS 
+
+
+
+IT INTRODUCES
+
+The project I2C subroutines "I2C_Tx_any_segment(segment, digit_num)" and "I2C_Tx_any_segment_clear_all()"
+
+Note: 
+1.	The segments are labelled "a" to "g" and "segment - 'a'" takes on the values 0 to 6
+Digits are labelled 0 to 7 and writing to a led toggles it on or off.
+
+2.	Logic required to backup the display may looks a bit tricky and require paper and pencil to get it.
+
+
+
