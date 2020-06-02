@@ -164,8 +164,8 @@ if(pcb_type == 1)
 Read_write_mem('I', 0x3FC,0x80);
 if(pcb_type == 2)                                                   //PCB_A
 {Read_write_mem('I', 0x3F9, 0);                                     //Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
-Read_write_mem('I', 0x3F1, 0);										//Triggers PCB_A autocal.
-//Read_write_mem('I', 0x3F4, 0);
+Read_write_mem('I', 0x3F1, 0);										                  //Triggers PCB_A autocal.
+Read_write_mem('I', 0x3F4, 0);
 }
 Reset_H;                                                            //Set target device running          
 
@@ -181,6 +181,8 @@ clear_I2C_interrupt;
 sendString("\r\nmini_OS OSCCAL user value   "); sendHex(10,OSCCAL_mini_OS);
 sendString("calibration error  "); sendHex(10,error_mag);
 /*********************************/
+
+UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                        //Dissable UART
 while(1);
 return 1;}
 
