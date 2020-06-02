@@ -13,7 +13,7 @@ ATMEGA 168 EEPROM reservations
 
 
 int Mux_cntl_2;
-//int test;
+char MCUSR_copy;
 char watch_dog_reset = 0;
 char User_response;
 
@@ -159,7 +159,13 @@ eeprom_write_byte((uint8_t*)0x3F4,0);}\
 \
 User_app_commentary_mode;\
 \
-I2C_Tx_LED_dimmer();
+if (((PINB & 0x04)^0x04) && \
+((PIND & 0x04)^0x04))\
+I2C_Tx_LED_dimmer_UNO();\
+\
+if(((PIND & 0x04)^0x04) && \
+((PIND & 0x80)^0x80))\
+Cal_UNO_pcb_A();
 
 
 /************************************/
@@ -175,7 +181,7 @@ if ((eeprom_read_byte((uint8_t*)0x3F4) & 0x40)){\
 eeprom_write_byte((uint8_t*)0x3F4,\
 (eeprom_read_byte((uint8_t*)0x3F4) | 0x80));\
 \
-asm("jmp 0x6C60");}
+asm("jmp 0x6C30");}		//was 0x6C60
 
 
 
