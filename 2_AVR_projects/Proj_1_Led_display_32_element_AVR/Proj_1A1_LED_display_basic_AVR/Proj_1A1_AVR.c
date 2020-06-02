@@ -9,10 +9,10 @@ int main (void){								//The "main" routine lies between a pair of {} brackets.
 unsigned long PORT_1, PORT_2;
  
 
-CLKPR = (1 << CLKPCE);
-CLKPR = (1 << CLKPS0);
+//CLKPR = (1 << CLKPCE);
+//CLKPR = (1 << CLKPS0);
 
-setup_HW;					
+setup_UNO_extra;					
 
 while(1)
 {PORT_1=1; PORT_2 = 0x80000000;
