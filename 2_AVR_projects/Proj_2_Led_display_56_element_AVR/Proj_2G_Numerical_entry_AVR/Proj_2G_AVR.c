@@ -18,7 +18,7 @@ int main (void){
 char   digit;
 int digit_num=0;                          //defines number of next digit on the display           
 const char* string_ptr = 0;              //pointer: will be loaded with the address of an array 
-setup_HW;                                 //(i.e. the address of the first segment in array "zero" or "one" or "two" etc....) 
+setup_UNO_extra;                                 //(i.e. the address of the first segment in array "zero" or "one" or "two" etc....) 
 User_prompt;                              //Press R or r to exit (pauses program execution while user launches a terminal program)
 String_to_PC("Send digits?");
 while(1){                               //Infinite loop
