@@ -145,6 +145,8 @@ Cal_UNO_pcb_A();
 
 /************************************/
 #define setup_UNO_extra \
+CLKPR = (1 << CLKPCE);\
+CLKPR = (1 << CLKPS0);\
 setup_watchdog;\
 set_up_I2C;\
 ADMUX |= (1 << REFS0);\
