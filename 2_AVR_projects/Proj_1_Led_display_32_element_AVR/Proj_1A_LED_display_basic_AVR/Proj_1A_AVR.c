@@ -14,7 +14,7 @@ Basic LED display********************************************/
 
 unsigned int PORT_1=1;                    //PORT_1 is an address in data memory initially set to 1 (binary 0000000000000001)
                                           //Note: that PORT_1 holds 16 bits (binary digits) of data 
-setup_HW;     
+setup_UNO_extra;     
 
   for(int m = 1; m < 17; m++){            //Code between the {} brackets is repeated 16 times             
                                           //as m increments from 1 to 16  (m++ is shorthand for increment m)
