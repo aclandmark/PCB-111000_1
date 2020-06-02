@@ -30,7 +30,7 @@ setup_HW;
                                         //Start of comment section which is ignored by compiler
 int main (void)
 {unsigned int PORT_1;                    //start of main routine           
-setup_HW;
+setup_UNO_extra;
 while(1){                   				      //While loop starts here
   PORT_1=1;                 				      //In the absence of a "SW_reset", "PORT_1" mast be re-initialised every time the loop is repeated
   for(int m = 1; m < 17; m++){        		//for loop starts here
