@@ -10,3 +10,4 @@
 
 void save_display(int);
 int read_display(void);
+void I2C_Tx_local(char, char, char*);
