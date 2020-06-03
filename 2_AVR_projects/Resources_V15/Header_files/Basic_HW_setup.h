@@ -156,7 +156,7 @@ Timer_T0_10mS_delay_x_m(5);\
 USART_init(0,16);\
 \
 MCUSR_copy = eeprom_read_byte((uint8_t*)0x3FC);\
-if (MCUSR_copy & (1 << PORF)){MCUSR_copy = (1 << PORF);\
+if (MCUSR_copy & (1 << PORF)){\
 eeprom_write_byte((uint8_t*)0x3F4,0);}\
 \
 User_app_commentary_mode;\
@@ -168,9 +168,16 @@ I2C_Tx_LED_dimmer_UNO();\
 if(((PIND & 0x04)^0x04) && \
 ((PIND & 0x80)^0x80))\
 Cal_UNO_pcb_A();
+//
+//if (MCUSR_copy & (1 << PORF)){MCUSR_copy = (1 << PORF);\
+
 
 
 /************************************/
+//Test programmmer writes 0x40 to 0x3F4 before quitting 
+//Text verification.c increments 0x3F4 each time a string is printed in commentary mode
+//bit 7 of 0x3F4 tells the bootloader that the WDTout is not due to a user app
+
 #define User_app_commentary_mode \
 \
 if(eeprom_read_byte((uint8_t*)0x3F4) == 0x40){\
