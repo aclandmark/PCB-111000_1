@@ -37,7 +37,7 @@ volatile char Data_Entry_complete;
 int main (void){
 long num;
 
-setup_HW;
+setup_UNO_extra;
 
 String_to_PC("\r\nDATA FROM I/O");
 String_to_PC(message_1);
