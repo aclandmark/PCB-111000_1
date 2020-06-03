@@ -147,7 +147,7 @@ Cal_UNO_pcb_A();
 #define setup_UNO_extra \
 CLKPR = (1 << CLKPCE);\
 CLKPR = (1 << CLKPS0);\
-setup_watchdog;\
+setup_watchdog_UNO_extra;\
 set_up_I2C;\
 ADMUX |= (1 << REFS0);\
 set_up_switched_inputs;\
@@ -191,6 +191,13 @@ asm("jmp 0x6C30");}		//was 0x6C60
 
 
 /*****************************************************************************/
+#define setup_watchdog_UNO_extra \
+if (eeprom_read_byte((uint8_t*)0x3FC) & (1 << WDRF))watch_dog_reset = 1;\
+wdr();\
+WDTCSR |= (1 <<WDCE) | (1<< WDE);\
+WDTCSR = 0;
+
+
 #define setup_watchdog \
 if (MCUSR & (1 << WDRF))watch_dog_reset = 1;\
 wdr();\
