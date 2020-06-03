@@ -20,7 +20,7 @@ unsigned int sec_counter;
 
 int main (void){
 char User_response;
-setup_HW;
+setup_UNO_extra;
 User_prompt;
 
 if(User_response == 'R'){set_time();}
