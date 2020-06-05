@@ -28,7 +28,7 @@
 
   User_prompt;
   
-  if (!(watch_dog_reset))                               //Normal start up i.e. POR or post programming
+  if (!(watch_dog_reset)) ////////////////////////////  //Normal start up i.e. POR or post programming
   String_to_PC(message_1);                              //Send normal start-up message
   else {watch_dog_reset = 0;                            //Start up following SW_reset (reset watch_dog_reset flag)
   newline();String_to_PC(message_2);                    //Send abbreviated message
