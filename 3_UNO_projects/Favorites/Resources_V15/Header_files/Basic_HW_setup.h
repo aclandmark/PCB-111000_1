@@ -147,17 +147,18 @@ Cal_UNO_pcb_A();
 #define setup_UNO_extra \
 CLKPR = (1 << CLKPCE);\
 CLKPR = (1 << CLKPS0);\
+\
+MCUSR_copy = eeprom_read_byte((uint8_t*)0x3FC);\
+if (MCUSR_copy & (1 << PORF)){MCUSR_copy = (1 << PORF);\
+eeprom_write_byte((uint8_t*)0x3F4,0);}\
 setup_watchdog_UNO_extra;\
+\
 set_up_I2C;\
 ADMUX |= (1 << REFS0);\
 set_up_switched_inputs;\
 Unused_I_O;\
 Timer_T0_10mS_delay_x_m(5);\
 USART_init(0,16);\
-\
-MCUSR_copy = eeprom_read_byte((uint8_t*)0x3FC);\
-if (MCUSR_copy & (1 << PORF)){MCUSR_copy = (1 << PORF);\
-eeprom_write_byte((uint8_t*)0x3F4,0);}\
 \
 User_app_commentary_mode;\
 \
@@ -170,7 +171,12 @@ if(((PIND & 0x04)^0x04) && \
 Cal_UNO_pcb_A();
 
 
+
 /************************************/
+//Test programmmer writes 0x40 to 0x3F4 before quitting 
+//Text verification.c increments 0x3F4 each time a string is printed in commentary mode
+//bit 7 of 0x3F4 tells the bootloader that the WDTout is not due to a user app
+
 #define User_app_commentary_mode \
 \
 if(eeprom_read_byte((uint8_t*)0x3F4) == 0x40){\
@@ -192,10 +198,12 @@ asm("jmp 0x6C30");}		//was 0x6C60
 
 /*****************************************************************************/
 #define setup_watchdog_UNO_extra \
-if (eeprom_read_byte((uint8_t*)0x3FC) & (1 << WDRF))watch_dog_reset = 1;\
+if (MCUSR_copy & (1 << WDRF))watch_dog_reset = 1;\
 wdr();\
 WDTCSR |= (1 <<WDCE) | (1<< WDE);\
 WDTCSR = 0;
+
+//if (eeprom_read_byte((uint8_t*)0x3FC) & (1 << WDRF))watch_dog_reset = 1;
 
 
 #define setup_watchdog \
