@@ -8,8 +8,6 @@ ATMEGA 168 EEPROM reservations
 0x1FC/B		Used by PRN_16bit_GEN()
 */
 
-//void I2C_Tx_snowstorm_display(void);
-//void Read_Hello_world_string(void);
 
 
 int Mux_cntl_2;
@@ -189,7 +187,7 @@ if ((eeprom_read_byte((uint8_t*)0x3F4) & 0x40)){\
 eeprom_write_byte((uint8_t*)0x3F4,\
 (eeprom_read_byte((uint8_t*)0x3F4) | 0x80));\
 \
-asm("jmp 0x6C30");}		//was 0x6C60
+asm("jmp 0x6C30");}	
 
 
 
@@ -197,21 +195,21 @@ asm("jmp 0x6C30");}		//was 0x6C60
 
 
 /*****************************************************************************/
-#define setup_watchdog_UNO_extra \
-if (MCUSR_copy & (1 << WDRF))watch_dog_reset = 1;\
-wdr();\
-WDTCSR |= (1 <<WDCE) | (1<< WDE);\
-WDTCSR = 0;
-
-//if (eeprom_read_byte((uint8_t*)0x3FC) & (1 << WDRF))watch_dog_reset = 1;
-
-
 #define setup_watchdog \
 if (MCUSR & (1 << WDRF))watch_dog_reset = 1;\
 wdr();\
 MCUSR &= ~(1<<WDRF);\
 WDTCSR |= (1 <<WDCE) | (1<< WDE);\
 WDTCSR = 0;
+
+
+
+#define setup_watchdog_UNO_extra \
+if (MCUSR_copy & (1 << WDRF))watch_dog_reset = 1;\
+wdr();\
+WDTCSR |= (1 <<WDCE) | (1<< WDE);\
+WDTCSR = 0;
+
 
 #define wdr()  __asm__ __volatile__("wdr")
 
@@ -245,7 +243,8 @@ WDTCSR = (1<< WDE) | (1 << WDIE) |  (1 << WDP1) | (1 << WDP2);
 #define SW_reset_with_interrupt \
 wdr();\
 WDTCSR |= (1 <<WDCE) | (1<< WDE);\
-WDTCSR = (1<< WDE) | (1 << WDIE) |  (1 << WDP0);
+WDTCSR = (1<< WDE) | (1 << WDIE) |  (1 << WDP0);\
+sei(); while(1);
 
 
 #define Arduino_non_WDTout \
