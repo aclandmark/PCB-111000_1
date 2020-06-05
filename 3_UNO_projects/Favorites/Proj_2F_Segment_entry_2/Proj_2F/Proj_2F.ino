@@ -26,11 +26,16 @@
   setup_UNO;
 
 
-  User_prompt;
+  //User_prompt;
   
-  if (!(watch_dog_reset)) ////////////////////////////  //Normal start up i.e. POR or post programming
-  String_to_PC(message_1);                              //Send normal start-up message
-  else {watch_dog_reset = 0;                            //Start up following SW_reset (reset watch_dog_reset flag)
+  //if (!(watch_dog_reset)) ////////////////////////////  //Normal start up i.e. POR or post programming
+  
+  
+  if (Arduino_non_WDTout)
+  {User_prompt;
+   String_to_PC(message_1);}                              //Send normal start-up message
+  
+  else {clear_Arduino_WDT_flag;                            //Start up following SW_reset (reset watch_dog_reset flag)
   newline();String_to_PC(message_2);                    //Send abbreviated message
   I2C_Tx_any_segment('h', 0);}                          //Restore display after SW_reset
 
@@ -56,4 +61,11 @@
   }while(keypress != 'x');                              //Bottom of "do-loop" with exit condition
 
   I2C_Tx_any_segment_clear_all();
-  SW_reset;}                                            //Repeat program
+  SW_reset_with_interrupt;}                                            //Repeat program
+
+
+
+
+
+
+  ISR (WDT_vect){set_Arduino_WDTout; }
