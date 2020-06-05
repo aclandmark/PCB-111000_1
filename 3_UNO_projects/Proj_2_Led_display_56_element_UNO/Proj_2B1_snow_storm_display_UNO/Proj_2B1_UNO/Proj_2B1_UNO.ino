@@ -38,5 +38,6 @@ wdr();}}                                    //Reset the watchdog timer which avo
 
 ISR(PCINT2_vect) 
 {if (switch_2_up)return; 
-else while(1);}                             //If switch_2 is pressed put program execution on hold
+else I2C_Tx_any_segment_clear_all();
+while(1);}                                  //If switch_2 is pressed put program execution on hold
                                             //The watchdog timer will not be reset and will "time out"
