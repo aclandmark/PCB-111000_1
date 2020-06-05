@@ -51,7 +51,8 @@ setup_UNO;
 config_sw1_and_sw2_for_PCI;
 config_sw3_for_PCI;
 
-if(Char_from_EEPROM(0x3F1))                                     //Program start up due to POR or post programming
+                                                                //Program start up due to POR or post programming
+if(Arduino_non_WDTout)                                          //if (Char_from_EEPROM(0x3F1))  
 {User_prompt;
 String_to_PC("Send digits:\r\n\
 Press sw_3 to change display brightness\r\n\
@@ -143,4 +144,4 @@ if(switch_1_down){sei(); while(1); }}                              //Generate WD
 
 /*********************************************************************************************************/
 ISR (WDT_vect){                                         
-Char_to_EEPROM( 0x3F1, 0);}                                  
+set_Arduino_WDTout;}                                                //Char_to_EEPROM( 0x3F1, 0);                                  
