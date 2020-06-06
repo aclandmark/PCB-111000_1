@@ -6,8 +6,12 @@
  
  
  It also introduces two macros
-  config_sw1_and_sw2_for_PCI; (Pin Change Interrupt) used to detect switch presses
-  SW_reset; This triggers a watch dog time out
+  config_sw1_and_sw2_for_PCI; (Pin Change Interrupt) 
+  This is used to detect switch presses
+  
+  SW_reset
+  This pauses program flow for 30mS and then triggers 
+  a watch dog time out which resets the program
 
  Note:
  The logic may look a bit tricky at first, but its not really what's important here.
