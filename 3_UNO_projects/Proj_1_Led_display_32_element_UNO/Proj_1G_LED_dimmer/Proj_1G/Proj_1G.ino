@@ -7,40 +7,43 @@
 /*A TEST ROUTINE FOR THE DISPLAY BRIGHTNESS CONTROL.
 
 
-A repeat of Proj_1A with an Interrupt on key press that toggles the brightness control.
-
-
 
 IT INTRODUCES
 
 
 1.  Project subroutine "I2C_Tx()".
-This transmits data to the Atmega 328 over the I2C bus.  
+This transmits data to the Atmega 328 on pcb_a over the I2C bus.  
 
 2.  Pointers:    
-Look at the ISR: It makes the following subroutine call I2C_Tx(1, 'W', &Dimmer_control); 
+Look at the ISR: It makes the following subroutine call I2C_Tx(1, 'Q', &Dimmer_control_local); 
 
-The "&" before the variable "Dimmer_control" means that the subroutine "I2C_Tx" expects the 
+The "&" before the variable "Dimmer_control_local" means that the subroutine "I2C_Tx" expects the 
 calling routine to provide the data memory location (i.e. its address) and uses and possibly 
 modifies whatever data it finds in that memory location.
 
-In this case Proj_1G defines a memory location and calls it "Dimmer_control". The subroutine 
-call hands the address of "Dimmer_control" to the subroutine rather than the actual value.  
+In this case Proj_1G defines a memory location and calls it "Dimmer_control_Local". The subroutine 
+call hands the address of "Dimmer_control_local" to the subroutine rather than the actual value.  
 
 
 3. Subroutine "void I2C_Tx(char num_bytes, char mode, char* s){}".
 
-This is the subroutine being called by "I2C_Tx(1, 'W', &Dimmer_control);"
-It provides memory locations "num_bytes" and "mode" for the 1 and W.
+This is the subroutine being called by "I2C_Tx(1, 'Q', &Dimmer_control);"
+It provides memory locations "num_bytes" and "mode" for the 1 and Q.
 The "*" signifies that it does not provide memory for variable "s" but expects the 
 calling routine to provide it.
 
 Note: "Q" is the mini-OS mode that toggles the display brightness. 
 The pointer is used because "I2C_Tx()" is also used to send arrays of data (to be considered later).
+
+Brightness is controlled by sending keypress 0, 1, 2 0r 3
+
 */
+
 
 #include "Proj_1G_header_file.h"
 char Dimmer_control_local;
+
+
 
 int main (void){
 
@@ -65,6 +68,7 @@ while(1){
   }}
 
 
+
 ISR(USART_RX_vect){
 Dimmer_control_local = (receiveChar()-'0')%4;
 I2C_Tx_local(1, 'Q', &Dimmer_control_local);}  
@@ -72,7 +76,6 @@ I2C_Tx_local(1, 'Q', &Dimmer_control_local);}
 
 
 /*Local version of subroutine "I2C_Tx()"*/
-
 void I2C_Tx_local(char num_bytes, char mode, char* s){
 waiting_for_I2C_master;                                   //Turn on I2C slave and await call from master
 send_byte_with_Ack(num_bytes);                            //send data byte, request acknowledgement
