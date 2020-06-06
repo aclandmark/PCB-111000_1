@@ -5,13 +5,16 @@
 ******************************************************************************/
 
 
-/*A BETTER WAY OF ENTERING DIGITS 
+/*A SLIGHTLY BETTER WAY OF ENTERING DIGITS 
 
 Each digit is predefined as a string. 
 
 Introduces subroutine "waitforkeypress()" in place of "isCharavailable()"
 "waitforkeypress()" keeps things simple but is not realy a good idea because it puts the program on pause
 until the user makes a keypress.
+Subroutine "isCharavailable()" includes a "wdr()" command so that the watch dog can be used. However this
+improvements adds a little comlexity not really considered necessary here.
+
 
 Having downloaded the program start up a terminal program and pres 'r' at the user prompt
 */
@@ -72,6 +75,10 @@ int main (void){
 waitforkeypress();I2C_Tx_any_segment_clear_all();}}              //clear display and repeat
 
 
+
+
+
+/****************************************************************************************************************/
 void display_num_string (const char* s, int digit_num){         //Subroutine requires a pointer to the string
   int char_ptr=0;                                               //containing segments used to define a digit
   char letter;
