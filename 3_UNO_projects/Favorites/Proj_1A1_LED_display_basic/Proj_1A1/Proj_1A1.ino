@@ -13,12 +13,12 @@ It introduces the following project resources:
       Timer_T1_sub() 
       This pauses program execution
 
-    Macro setup_UNO which initialises
+    The macro "setup_UNO" which initialises
       The watch dog timer
       I2C slave
       Switched inputs
+      Display brightness
       The UART
-      Initialises default programs
       Etc.
     */
 
