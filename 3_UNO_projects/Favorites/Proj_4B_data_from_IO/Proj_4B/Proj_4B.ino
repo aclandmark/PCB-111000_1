@@ -18,7 +18,7 @@ press sw3 before sw1 or 2 to repeat
 enter 0 to reset everything
 
 Note:
-Switch location SW1(PD2) - SW2(PB6) - SW3(PD7)
+Switch location SW1(PD2) - SW2(PD7) - SW3(PB2)
 PD2&7 call ISR(PCINT2_vect)
 PB6 calls ISR(PCINT0_vect)*/
 
