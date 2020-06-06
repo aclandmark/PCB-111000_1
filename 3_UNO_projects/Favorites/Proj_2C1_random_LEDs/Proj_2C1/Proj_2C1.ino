@@ -5,14 +5,18 @@
 The following project resources are introduced:
   I2C_Tx_any_segment(segment, digit_num);                     This illuminates a single segment
   I2C_Tx_any_segment_clear_all();
-  PRN_16bit_GEN (0) Pseudo Random Number Generator            A sequence of numbers is generated each new number dependent on
-                                                              the previous one. As a result of the zero (0)numbers are saved to eeprom.
-                                                              and read from it
-  "receiceChar()"                                             This reads the receive buffer of the UART  (receiver/transmitter module)
+  
+  PRN_16bit_GEN (0) A Pseudo Random Number Generator          A sequence of numbers is generated, each new number dependent on
+                                                              the previous one. As a result of the zero (0)numbers are saved to eeprom
+                                                              and read from it.
+  "receiceChar()"                                             This reads the receive buffer of the UART (receiver/transmitter module)
 
 
 Note:
-The UART receive interrupt is introduced.  Any keypress can be used to pause program flow so triggering a SW_reset.
+"wdt_enable(WDTO_2S)" an AVR macro can trigger a reset after 2 seconds. Hower the command "wdr()" normally resets
+the watch dog timer so preventing the reset.
+The UART receive interrupt is introduced.  Any keypress can be used to pause program flow so triggering a SW_reset because
+command "wdr()" is nolonger executed.
 */
 
 
