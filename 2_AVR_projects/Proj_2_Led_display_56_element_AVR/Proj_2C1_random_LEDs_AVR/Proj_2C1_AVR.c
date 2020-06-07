@@ -47,4 +47,5 @@ display_bkp[segment - 'a'] = display_bkp[segment - 'a'] ^ (1 << digit_num);}
 /*****************************************************************/
 ISR(USART_RX_vect){receiveChar();
 I2C_Tx_any_segment_clear_all();
-sei();while(1);}
+//sei();
+while(1);}
