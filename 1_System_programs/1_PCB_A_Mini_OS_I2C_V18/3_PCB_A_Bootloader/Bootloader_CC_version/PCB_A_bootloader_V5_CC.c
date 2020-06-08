@@ -52,9 +52,9 @@ A double click forces the Hex/text programmer also running on the UNO device to 
 #include <avr/wdt.h>
 #include <avr/eeprom.h>
 
-#include "../../Resources/Bootloader_header.h"
-#include "../../Resources/Bootloader_HW_subs.c"
-#include "../../Resources/Bootloader_SW_subs.c"
+#include "../../Resources_Mini_OS/Bootloader_header.h"
+#include "../../Resources_Mini_OS/Bootloader_HW_subs.c"
+#include "../../Resources_Mini_OS/Bootloader_SW_subs.c"
 
 #define wdr()  __asm__ __volatile__("wdr")
 
