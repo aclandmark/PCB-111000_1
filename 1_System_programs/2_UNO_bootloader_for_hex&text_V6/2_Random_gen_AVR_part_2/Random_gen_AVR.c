@@ -27,7 +27,7 @@ PRN = PRN_16bit_GEN (0);									//Generate a new PRN (0) tells subroutine to us
 I2C_Tx_2_integers(PRN, (PRN<<1));							//Display two "pseudo random numbers"
 Timer_T1_sub(T1_delay_100ms);	
 I2C_Tx_LED_dimmer();
-if((switch_1_down) && (switch_2_down))asm("jmp 0x5C90");}}		
+if((switch_1_down) && (switch_2_down))asm("jmp 0x5C60");}}		
 
 
 /************************************************************************************/
@@ -71,6 +71,27 @@ UCSR0C =  (1 << UCSZ00)| (1 << UCSZ01);}
 
 	
 /************************************************************************************/
+
+void I2C_Tx_LED_dimmer(void){			//I2C_Tx_LED_dimmer_UNO
+char Dimmer_control = 0; 
+unsigned int n = 0, Port_1=0xCCCC;
+
+while((PINB & 0x04)^0x04) 							//while switch_3 down
+{n++; if (n >= 60000)break;}
+
+
+while((PINB & 0x04)^0x04)
+{Dimmer_control = (Dimmer_control + 1)%4;
+if(!(Dimmer_control))continue;
+I2C_Tx(1, 'Q', &Dimmer_control);
+I2C_Tx_2_integers(Port_1, ~Port_1);
+Timer_T1_sub(T1_delay_500ms);}}
+
+
+
+
+
+/*
 void I2C_Tx_LED_dimmer(void){
 char Dimmer_control = 0; 
 int m = 0,n = 0;
@@ -79,5 +100,5 @@ while((PINB & 0x04)^0x04)
 {n++;
 if (n>1200) {m+=1;n = 0;}}
 if (m >= 50){Dimmer_control = 1;
-I2C_Tx(1, 'Q', &Dimmer_control);}}
+I2C_Tx(1, 'Q', &Dimmer_control);}}*/
 
