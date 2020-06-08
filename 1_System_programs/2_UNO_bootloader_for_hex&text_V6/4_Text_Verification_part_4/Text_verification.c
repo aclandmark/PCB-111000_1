@@ -34,39 +34,39 @@ void newline(void);
 
 int main (void){ 
 
-char Num_strings;																	//The number of strings written to flash
+char Num_strings;																		//The number of strings written to flash
 int  start_address; 
-char next_string_no;																//Address in flash of first character in a string,
+char next_string_no;																	//Address in flash of first character in a string,
 
-char_counter = 0;																	//counts the number of characters in the text file (excludes \r & \n)
+char_counter = 0;																		//counts the number of characters in the text file (excludes \r & \n)
 
 newline(); 
-start_address = 0x5C7F;																//start adddress of text
-Num_strings = string_counter(start_address);										//Count the number of strings
+start_address = 0x5BFF;		//0x5C7F;													//start adddress of text
+Num_strings = string_counter(start_address);											//Count the number of strings
 
-if (!(eeprom_read_byte((uint8_t*)0x3F4) & 0x80))
-{eeprom_write_byte((uint8_t*)0x3FC,(eeprom_read_byte((uint8_t*)0x3FC) | 0x80));
+if (!(eeprom_read_byte((uint8_t*)0x3F4) & 0x80))										//strings to be printed out:Development mode
+{eeprom_write_byte((uint8_t*)0x3FC,(eeprom_read_byte((uint8_t*)0x3FC) | 0x80));		//informs bootloader that the next WDTout is not due to a user app.
 
 
-for(int text_num = 1; text_num <= Num_strings; text_num++)
+for(int text_num = 1; text_num <= Num_strings; text_num++)								//Print all strings without reseting device
 {print_string_num(text_num,start_address);
 if(text_num == 1){sendString("\tAK?");}
 sendString("\r\n"); waitforkeypress();
 sendString("\r\n");}}
 
-else
-{next_string_no = (eeprom_read_byte((uint8_t*)0x3F4) & 0x3F);
-print_string_num(next_string_no,start_address);
+else																					//String print out: commentary mode
+{next_string_no = (eeprom_read_byte((uint8_t*)0x3F4) & 0x3F);							//Reset device after printing each string
+print_string_num(next_string_no,start_address);											
 next_string_no += 1;
 if(next_string_no > Num_strings)next_string_no = 1;
-eeprom_write_byte((uint8_t*)0x3F4,	next_string_no | 0x40);
+eeprom_write_byte((uint8_t*)0x3F4,	next_string_no | 0x40);								//Number of next string
 
 
 for(int m = 0; m < 4; m++)sendString("\r\n");
-if (waitforkeypress() == 'X'){eeprom_write_byte((uint8_t*)0x3F4,0);}}
+if (waitforkeypress() == 'X'){eeprom_write_byte((uint8_t*)0x3F4,0);					//Last string printed out, print first one next time
+eeprom_write_byte((uint8_t*)0x3F7,0);}}												//Close commentary with EXTRF
 
-
-wdt_enable(WDTO_15MS);
+wdt_enable(WDTO_15MS);																	//SW_reset after printing each string
 while(1);
 
 return 1;}
@@ -81,15 +81,15 @@ return 1;}
 
 
 /***************************************************************************************************************************************************/
-char string_counter(int start_address){												//Scroll through text section of flash counting the '\0' chars
-char counter = 0, next, previous = 0; 												//untill '\0' '\0' is detected to indicate the end of the
-while(1){																			//last string
+char string_counter(int start_address){													//Scroll through text section of flash counting the '\0' chars
+char counter = 0, next, previous = 0; 													//untill '\0' '\0' is detected to indicate the end of the
+while(1){																				//last string
 
 Prog_mem_address_H = start_address >> 8;
 Prog_mem_address_L = start_address;
-read_flash ();																		//assembly subroutine
-next = Flash_readout;																//result provided by assembly subroutine
-
+read_flash ();																			//assembly subroutine
+next = Flash_readout;																	//result provided by assembly subroutine
+	
 if(next == 0){counter += 1; if (!(previous)) return counter-1;}
 else char_counter += 1;
 
@@ -99,9 +99,9 @@ start_address -= 1;}}
 
 
 /***************************************************************************************************************************************************/
-void print_string_num(int text_num, int start_address){								//scroll through text section of flash counting '\0' chars
-int null_counter = 1; 																//untill the start of the required string
-char next,line_length = 0;															//Print the characters untill '\0' is detected
+void print_string_num(int text_num, int start_address){									//scroll through text section of flash counting '\0' chars
+int null_counter = 1; 																	//untill the start of the required string
+char next,line_length = 0;																//Print the characters untill '\0' is detected
 
 while(1){	
 if(null_counter == text_num)break;
