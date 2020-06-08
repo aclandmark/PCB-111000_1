@@ -10,7 +10,7 @@ Note: The PRN generator uses locations 0x3F5 and 0x3F6 to store the next number
 */
 
 #include "Random_gen_header_file.h"
-#include "../6_Resources/Random_gen_subroutines.c"
+#include "../6_Resources_UNO/Random_gen_subroutines.c"
 
 
 
