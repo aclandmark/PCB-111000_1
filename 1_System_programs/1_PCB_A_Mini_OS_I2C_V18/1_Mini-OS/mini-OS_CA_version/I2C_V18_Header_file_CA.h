@@ -44,21 +44,23 @@ volatile char T1_OVF;
 volatile long error_SUM;
 volatile char MUX_cntl, T0_interupt_cnt;
 
-char OSCCAL_WV;
 char I2C_data[10];
-long cal_error;
-char OSCCAL_DV, OSCCAL_UC;
-
 char  display_backup[9];
 signed char exponent_BKP[2];
 int RN;
-char keypres_counter_old, overflow;
+char keypres_counter_old;
+char overflow;
 
 char Op;
 unsigned long RHSofDP;
 signed char expnt_result;
 char result[4];
-int accumlator, interim_result;
+int accumlator;
+int interim_result;
+
+char OSCCAL_WV;
+char OSCCAL_DV;
+volatile char cal_mode; 			//Defines number of averages used when measuring osccal_error	
 
 char clock_flag;
 char PIC_cmd;
@@ -126,6 +128,8 @@ T0_interupt_cnt = 0;
 #define	digit_2		PORTB |= (1 << PB2);
 #define	digit_1		PORTB |= (1 << PB3);
 #define	digit_0		PORTB |= (1 << PB4);
+#define	toggle_digit_0	PORTB ^= (1 << PB4);
+
 
 #define	digit_7		PORTB |= (1 << PB5);
 #define	digit_6		PORTC |= (1 << PC0);
