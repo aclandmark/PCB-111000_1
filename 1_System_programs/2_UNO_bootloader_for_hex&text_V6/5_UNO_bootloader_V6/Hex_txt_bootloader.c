@@ -117,7 +117,7 @@ default: 													//POR, WDTout, BOR
 		Prog_mem_address_H = 0;
 		Prog_mem_address_L = 0;
 		read_flash ();
-		if (Flash_readout == 0xFF)asm("jmp 0x5E50");
+		if (Flash_readout == 0xFF)asm("jmp 0x5E20");
 		else asm("jmp 0x0000");break;}						//WDT due to user program, POR or BOR,mode r or D which also generate a WDTout
 	
 setup_HW;													//Initialises all IO to week pull up; UART introduces 5mS delay
@@ -144,7 +144,7 @@ switch (receiveChar()){
 case 'r':	Prog_mem_address_H = 0;
 			Prog_mem_address_L = 0;
 			read_flash ();
-			if (Flash_readout == 0xFF)asm("jmp 0x5E50");	//Detect the absense of an User App and run default app.
+			if (Flash_readout == 0xFF)asm("jmp 0x5E20");	//Detect the absense of an User App and run default app.
 			eeprom_write_byte((uint8_t*)0x3F7,0);			//Indicates user program is being launched using a WDTout
 			wdt_enable(WDTO_15MS); 							//Run the user application (WDTout triggers jump to 0x0000)
 			while(1); 
@@ -208,7 +208,7 @@ Timer_T0_sub_with_interrupt(5,0);									//Start Timer0 with interrupt
 UCSR0B |= (1<<RXCIE0); 											//Activate UART interrupt
 sei();																//Set global interrupt
 
-address_in_flash = 0x5C7E;											//First character will be storred at 0x5C7F not 0x5C7E
+address_in_flash = 0x5BFE;//0x5C7E;											//First character will be storred at 0x5BFF not 0x5BFE
 
 while (1){
 while (r_pointer == w_pointer);										//wait for w_pointer to be incremented
@@ -228,7 +228,7 @@ address_in_flash -= 2;												//next address in flash
 store[r_pointer] = 0;												//clear the contents of the location in array store
 inc_r_pointer;														//restore the value of "r_pointer" to that of "w_pointer"
 
-if (!((0x5C7E - address_in_flash)%128)){							//If page buffer is full
+if (!((0x5BFE - address_in_flash)%128)){							//If page buffer is full
 address_in_flash += 2;												//Get the address of the first entry in the page
 Prog_mem_address_H = address_in_flash >> 8;							//Prepare the address for the assembly routines
 Prog_mem_address_L = address_in_flash;
@@ -238,8 +238,8 @@ page_write();														//Assembly routine
 address_in_flash -=2;}												//Restore address_in_flash
 if(!(endoftext)) break;}											//Break when two '\0' chars have been appended to text stored in the array
 
-if((0x5C7E - address_in_flash)%128){/////////						//Write remaining chars in partialy full page buffer
-address_in_flash += (0x5C7E - address_in_flash)%128 - 126;			//Get address of first character in the page
+if((0x5BFE - address_in_flash)%128){/////////						//Write remaining chars in partialy full page buffer
+address_in_flash += (0x5BFE - address_in_flash)%128 - 126;			//Get address of first character in the page
 
 Prog_mem_address_H = address_in_flash >> 8;
 Prog_mem_address_L = address_in_flash;
@@ -248,7 +248,7 @@ Page_erase ();
 page_write();
 }UCSR0B &= (~(1<<RXCIE0));cli();
 clear_read_block();													//Subroutine provided in assembly file  (Not required for mode 't'??)
-eeprom_write_byte((uint8_t*)0x3F4,0x40);								//Reset string pointer
+eeprom_write_byte((uint8_t*)0x3F4,0x40);							//Reset string pointer
 }
 /*********************************************************************************************************/
 void hex_programmer(void){
