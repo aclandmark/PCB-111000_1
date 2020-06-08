@@ -52,7 +52,7 @@ SRC = $(TARGET).c
 # it will preserve the spelling of the filenames, and gcc itself does
 # care about how the name is spelled on its command-line.
 
-ASRC = ../6_Resources\Hex_txt_bootloader.S
+ASRC = ../6_Resources_UNO\Hex_txt_bootloader.S
 
 
 # Optimization level, can be [0, 1, 2, 3, s]. 
