@@ -4,5 +4,5 @@
 #include <avr/wdt.h>
 #include <avr/eeprom.h>
 
-#include "../6_Resources\Text_verification.h"
-#include "../6_Resources\Basic_IO_subroutines.c"
+#include "../6_Resources_UNO\Text_verification.h"
+#include "../6_Resources_UNO\Basic_IO_subroutines.c"
