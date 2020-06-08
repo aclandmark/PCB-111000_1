@@ -117,10 +117,10 @@ PORTD |= (1 << PD7);
 
 
 
-#include "../Resources\FV_HW_subs.c"
+#include "../Resources_Mini_OS\FV_HW_subs.c"
 
-#include "../Resources\FV_Basic_IO_and_Timer_subs.c"
+#include "../Resources_Mini_OS\FV_Basic_IO_and_Timer_subs.c"
 
-#include "../Resources\FV_ASKII_subroutines.c"
+#include "../Resources_Mini_OS\FV_ASKII_subroutines.c"
 
 
