@@ -6,8 +6,7 @@ void initialise_timers_for_cal_error(void);
 void start_timers_for_cal_error(void);
 long compute_error(char, char, char);
 void Minimise_error(int, char*, char*, long*, char*, char);
-//void start_T2_for_ATMEGA_168_cal(char);	
-void Cal_at_Power_on_Reset (void);
+void Auto_cal (void);
 void manual_cal_PCB_A_device(void);
 void cal_plot_328(void);
 void cal_spot_check(void);	
@@ -73,13 +72,11 @@ calibrate_without_sign_plus_warm_up_time;
 close_calibration;
 	
 Initialise_I2C_master_write;							//Report results to user
-if(cal_error > 1750)			//5550					//Error resulting from User OSCCAL exceeds 1750
+if(cal_error > 1750)									//Error resulting from User OSCCAL exceeds 1750
 {I2C_master_transmit('X');								//Reject result
 I2C_master_transmit(cal_error >> 8);						
 I2C_master_transmit(cal_error);
 TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
-//eeprom_write_byte((uint8_t*)0x3FE, 0xFF); 				//Reset OSCCAL values storred in EEPROM
-//eeprom_write_byte((uint8_t*)0x3FF, 0xFF);
 OSCCAL = OSCCAL_WV;										//Reinstate default value
 return;}			
 	
@@ -99,12 +96,12 @@ TWDR = eeprom_read_byte((uint8_t*)0x3FF);
 TWCR = (1 << TWINT) | (1 << TWEN);
 while (!(TWCR & (1 << TWINT)));
 TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);}
-TIMSK0 |= (1 << TOIE0);									//Restore multplexer interrupt
+TIMSK0 |= (1 << TOIE0);								//Restore multplexer interrupt
 }
 
 
 /*******************************************************************************************/
-void cal_plot_328(void){							//Called by Proj_9F (mode M)
+void cal_plot_328(void){								//Called by Proj_9F (mode M)
 long cal_error;
 
 TIMSK0 &= (~(1 << TOIE0));								//display not required
@@ -121,16 +118,16 @@ Initialise_I2C_master_write;
 I2C_master_transmit(cal_error >> 8);
 I2C_master_transmit(cal_error);
 TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);}
-TIMSK0 |= (1 << TOIE0);									//Restore multplexer interrupt
+TIMSK0 |= (1 << TOIE0);								//Restore multplexer interrupt
 }
 
 
 /************************************************************************************/
 void initialise_timers_for_cal_error(void){
-TCNT1=0;TCCR1B = 0;									//Reset and halt T1
-TCCR2B =  0x0;	while(ASSR & (1 << TCR2BUB));		//Halt T2
-TCCR2A = 0; while(ASSR & (1 << TCR2AUB));			//Reset T2 
-TCNT2=0; while(ASSR & (1 << TCN2UB));	}			//Reset TCNT2
+TCNT1=0;TCCR1B = 0;										//Reset and halt T1
+TCCR2B =  0x0;	while(ASSR & (1 << TCR2BUB));			//Halt T2
+TCCR2A = 0; while(ASSR & (1 << TCR2AUB));				//Reset T2 
+TCNT2=0; while(ASSR & (1 << TCN2UB));	}				//Reset TCNT2
 
 
 
@@ -139,21 +136,6 @@ void start_timers_for_cal_error(void)
 {TCCR2B = 1; 	
 while(ASSR & (1 << TCR2BUB));
 TCCR1B = 1;}
-
-
-		
-
-/************************************************************************************/
-/*void start_T2_for_ATMEGA_168_cal(char calibration_mode){					
-TCCR2B =  0x0;	while(ASSR & (1 << TCR2BUB));		//Halt T2
-TCCR2A = 0; while(ASSR & (1 << TCR2AUB));			//Reset T2 
-TCNT2=0; while(ASSR & (1 << TCN2UB));
-if(calibration_mode){
-TIMSK2 |= (1 << TOIE2);							//Set Timer 2: interrupt on overflow
-TCCR2B = 1; 										//Start T2 with a clock of 32.768Hz
-while(ASSR & (1 << TCR2BUB));}
-else{TIMSK2 &= (~(1 << TOIE2));mode = 0;}}*/
-
 
 
 
@@ -169,7 +151,7 @@ if (*counter_2 < 20)*OSCCAL_mem = OSCCAL;else OSCCAL = *OSCCAL_mem;}
 
 
 /************************************************************************************************/		
-long compute_error(char local_error_mode, char local_cal_mode, char sign)						//char OSCCAL_test_value)		
+long compute_error(char local_error_mode, char local_cal_mode, char sign)					
 {long error;
 char Num_1, Num_2;
 	
@@ -190,9 +172,9 @@ return error/Num_2;}
 
 
 /*****************************************************************************************************/
-void Cal_at_Power_on_Reset (void){
+void Auto_cal (void){
 char counter_1, counter_2;		
-char OSCCAL_mem = 0;				//OSCCAL_WV, 
+char OSCCAL_mem = 0;		
 long  error_mag; 
 int limit;
 
@@ -229,15 +211,12 @@ OSCCAL_WV = OSCCAL;
 close_calibration;
 eeprom_write_byte((uint8_t*)0x3FE, OSCCAL_WV); 
 eeprom_write_byte((uint8_t*)0x3FF, OSCCAL_WV);
-	
-//if(eeprom_read_byte((uint8_t*)0x3F1) == 1)
-//{eeprom_write_byte((uint8_t*)0x3F1, 0xFF); 
 
 Initialise_I2C_master_write;
 I2C_master_transmit(OSCCAL);
 I2C_master_transmit(error_mag >> 8);
 I2C_master_transmit(error_mag);
-TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);//}
+TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
 
 clear_digits;
 clear_display;
