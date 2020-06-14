@@ -66,7 +66,6 @@ char target_detected = 0;
 
 if (MCUSR & (1 << PORF))MCUSR = (1 << PORF);			//EXTRA line:  POR is sometimes accompanied by EXTRF and BOR
 
-
 if ((!(MCUSR & (1 << EXTRF)))||\
 (!(eeprom_read_byte((uint8_t*)0x3F9))))				//External programmer sets EEPROM location 0x3F9 to zero 			 
 {eeprom_write_byte((uint8_t*)0x3F9,1);					//FOR POR, BOR or WDTime out or immediately after 
@@ -77,42 +76,31 @@ thirty_msec_delay;										//Pause device so that it can be put into programmin
 set_up_WDT;												//Watch Dog Timer
 cal_device;												//Check for user calibration byte and apply if present
 
-
 if ((eeprom_read_byte((uint8_t*)0x3F9)) == 1)			//First click of pcb reset switch
 {eeprom_write_byte((uint8_t*)0x3F9, 2);				//Update and save Reset status
 MCUSR &= (~(1 << EXTRF));								//Clear external reset flag
 three_hundred_msec_delay;								//Start 300ms double click timer
 eeprom_write_byte((uint8_t*)0x3F9, 1);					//No second reset: Clear Reset status
-//PORTB &= (~(1 << PB2));
-//DDRB |= (1 << DDB2);									//Set UNO signalling line low
 
-PORTB &= (~(1 << PB1));
-DDRB |= (1 << DDB1);									//Set UNO signalling line low
-
-
-Reset_L;												
-DDRC |= (1 << DDC3);									//Generate a 2mS UNO reset pulse on PC3
+UNO_reset_cntrl_low_CA;
+Reset_UNO_low;
 two_msec_delay;						
-Reset_H;												//Release UNO from reset (using WPU)
-DDRC &= (~(1 << DDC3));								//Reset line remains high untill SW_reset takes
+Reset_UNO_high;
 wdt_enable(WDTO_120MS); while(1);}						//effect and control jumps to location zero, use 250ms if cal routine is included
-
-
 
 if ((eeprom_read_byte((uint8_t*)0x3F9)) == 2)			//Second click of pcb reset switch
 {eeprom_write_byte((uint8_t*)0x3F9, 1);				//Clear Reset status
 MCUSR &= (~(1 << EXTRF));								//Clear external reset flag
-//PORTB |= (1 << PB1);									//Set UNO signalling line high (WPU)
-//DDRB &= (~(1 << DDB1));								//Note: Theses are default states for the CA display driver
-Reset_L;
-DDRC |= (1 << DDC3);									//Put UNO in reset for 2mS
+Reset_UNO_low;
 two_msec_delay;											//After its release from reset
-Reset_H;												//the UNO selects its boot loader
-DDRC &= (~(1 << DDC3));								//Leave PC3 as week pull up
+
+Reset_UNO_high;
 USART_Rx_init(0,16);									//Activate UART receiver
 if ((waitforkeypress()) != 'p')						//For keypres h,t or r
 {wdt_enable(WDTO_30MS); while(1);}						//return control to line zero
 else {													//For keypress p: Run pcb_bootloader
+
+Reset_UNO_low;
 
 MCUCR = (1<<IVCE);  									//use interrupt vector table starting at start of boot section
 MCUCR = (1<<IVSEL);
