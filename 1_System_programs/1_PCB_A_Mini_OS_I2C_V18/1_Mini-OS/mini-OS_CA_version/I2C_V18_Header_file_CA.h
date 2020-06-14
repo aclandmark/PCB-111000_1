@@ -1,4 +1,5 @@
 
+
 #include <avr/io.h>
 #include <stdlib.h>
 #include <avr/interrupt.h>
@@ -44,12 +45,14 @@ volatile char T1_OVF;
 volatile long error_SUM;
 volatile char MUX_cntl, T0_interupt_cnt;
 
+
 char I2C_data[10];
 char  display_backup[9];
 signed char exponent_BKP[2];
 int RN;
 char keypres_counter_old;
 char overflow;
+
 
 char Op;
 unsigned long RHSofDP;
@@ -91,8 +94,15 @@ DDRD = 0;\
 PORTB = 0xFF;\
 PORTC = 0xFF;\
 PORTD = 0xFF;\
-PORTC &= (~(1 << PC3));	
 
+
+#define Reset_UNO_low \
+PORTC &= (~(1 << PC3));\
+DDRC |= (1 << DDC3);
+
+#define Reset_UNO_high \
+DDRC &= (~(1 << DDC3));\
+PORTC |= (1 << PC3);
 
 
 #define initialise_Arithmetic_variables; \
@@ -124,6 +134,7 @@ T0_interupt_cnt = 0;
 
 
 
+
 #define	digit_3		PORTB |= (1 << PB0);
 #define	digit_2		PORTB |= (1 << PB2);
 #define	digit_1		PORTB |= (1 << PB3);
@@ -135,8 +146,6 @@ T0_interupt_cnt = 0;
 #define	digit_6		PORTC |= (1 << PC0);
 #define	digit_5		PORTC |= (1 << PC1);
 #define	digit_4		PORTC |= (1 << PC2);
-
-
 
 #define	seg_a 	(1 << PB1)
 #define	seg_b 	(1 << PD2)
@@ -157,7 +166,6 @@ PORTC &= (~((1 << PC0) | (1 << PC1) | (1 << PC2)));
 #define clear_display; PORTB |= (seg_a );\
 PORTD |= (seg_b | seg_c | seg_d | seg_e | seg_f | seg_g);
 
-
 #define clear_display_buffer; for(int m = 0; m<=7; m++)display_buf[m] = 0;
 
 
@@ -177,7 +185,6 @@ PORTD |= (seg_b | seg_c | seg_d | seg_e | seg_f | seg_g);
 #define nine	PORTB &= (~(seg_a)); PORTD &= (~(seg_b | seg_c | seg_f | seg_g));
 #define zero	PORTB &= (~(seg_a)); PORTD &= (~(seg_b | seg_c | seg_d | seg_e | seg_f ));
 #define decimalP	PORTB &= (~(seg_a));	PORTD &= (~(seg_b | seg_e | seg_f | seg_g ));
-
 
 
 #define T0_delay_33ms 5,0
