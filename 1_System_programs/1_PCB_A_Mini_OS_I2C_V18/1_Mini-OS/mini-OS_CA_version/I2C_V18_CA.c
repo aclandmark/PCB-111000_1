@@ -29,6 +29,7 @@ the user projects.  The PIC only offered the slave implementation of the I2C bus
 0x3F4	Reset_status_2: Zero resets UNO immediately after PCB_A has been programmed triggering the h/t/r/D prompt
 0x3F3	8 bit PRN gen EEP subroutines
 
+0x3F1	Carry out autocal post programming
 
 
 ***********************/
@@ -88,7 +89,10 @@ sei();
 if(!(eeprom_read_byte((uint8_t*)0x3F4)))			//If PCB_A has just been programmed with I2C_V16_CC using the project programmer 
 {eeprom_write_byte((uint8_t*)0x3F4, 0xFF);			//the UNO device is automatically reset so the the project programer can be removed
 
-Auto_cal();
+if(!(eeprom_read_byte((uint8_t*)0x3F1)))			//Only auto-cal after programming flash not eeprom
+{eeprom_write_byte((uint8_t*)0x3F1, 0xFF);
+Auto_cal();}
+
 Timer_T1_sub(T1_delay_100ms);						//EXTRA LINE NEEDED to complete USART transmission
 Reset_UNO_low;
 Timer_T1_sub(T1_delay_10ms);						//After its release from reset the UNO selects its boot loader
