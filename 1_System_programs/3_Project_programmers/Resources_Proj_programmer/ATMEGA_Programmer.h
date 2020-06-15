@@ -258,6 +258,8 @@ if(pcb_type == 1)\
 Read_write_mem('I', 0x3FC,0x80);\
 if(pcb_type == 2)\
 {Read_write_mem('I', 0x3F9, 0);\
-Read_write_mem('I', 0x3F4, 0);}\
+Read_write_mem('I', 0x3F4, 0);\
+Read_write_mem('I', 0x3F1, 0xFF);}\
 Reset_H;\
 while(1);
+
