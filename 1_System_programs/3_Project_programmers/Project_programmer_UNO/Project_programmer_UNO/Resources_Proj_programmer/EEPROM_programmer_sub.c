@@ -50,7 +50,7 @@ void Upload_data(int, int);
 void Upload_data_1(int, int);
 void Upload_data_2(int, int);
 char next_char_from_PC(void);
-void Upload_text(int);
+
 
 unsigned char RBL = 255;
 
@@ -145,7 +145,7 @@ if(App_reservation > 0){
 sendString("\r\nApp: Start addr's  ");
 sendHex(16, (EE_top - App_reservation));newline();						//Display first address to be used by the application
 sendString ("X to escape or AOK\r\n");
-if(waitforkeypress() == 'x') 
+if(waitforkeypress() == 'X') 
 {binUnwantedChars();	wdt_enable(WDTO_1S); while(1);}}				//Accidental key press: Press X to start again.
 binUnwantedChars();		
 EE_top = EE_top - App_reservation;										//Variable "EEPROM" stores highest address available for user strings and data. 
@@ -189,7 +189,6 @@ Read_write_mem('I', 0x0, (EEP_pointer >> 8));
 Read_write_mem('I', 0x1, (EEP_pointer & 0x00FF));						//Save address in EEPROM available for first data item
 Read_write_mem('I', 0x2, data_counter);									//Save number of data items (each occupy 16 bits)	
 waitforkeypress();
-//Upload_text(EEP_pointer); 
 Upload_text(EEP_pointer);  
 if (data_counter > 0) Upload_data (EEP_pointer, data_counter);  
 break;  
