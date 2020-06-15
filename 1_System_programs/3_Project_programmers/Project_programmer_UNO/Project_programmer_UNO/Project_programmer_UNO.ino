@@ -55,7 +55,7 @@ unsigned char OSCCAL_mini_OS;
 int error_mag;
 
 CLKPR = (1 << CLKPCE);
-CLKPR = (1 << CLKPS0);
+CLKPR = (1 << CLKPS0);                                      //Convert 16MHx xtal to 8MHx clock
 
 
 setup_328_HW;                                               //see "Resources\ATMEGA_Programmer.h"
@@ -72,8 +72,8 @@ if(receiveChar() == 's')break;}
 Atmel_powerup_and_target_detect;                              //Leave target in programming mode                              
 
 if (Atmel_config(read_fuse_bits_h, 0) == 0xFF) 
-pcb_type = 1;
-else pcb_type = 2;
+pcb_type = 1;                                                 //UNO pcb device
+else pcb_type = 2;                                            //PC_A device
 
 sendString ("\r\n\r\nATMEGA");
 if (pcb_type == 1)sendString (" (UNO)");
@@ -84,9 +84,9 @@ case 3281: sendString ("328"); break;
 case 3282: sendString ("328P");break;
 default: wdt_enable(WDTO_1S); while(1);break;}
 
-PageSZ = 0x40; PAmask = 0x3FC0; FlashSZ=0x4000; 
-EE_top = 0x400-0x03;                                           //Last 3 bytes reserved for cal bytes
-text_start = 0x5;                                             //First 5 bytes reserved for programmmer use
+PageSZ = 0x40; PAmask = 0x3FC0; FlashSZ=0x4000;                 //flash page size, gives address on page, flash size words
+EE_top = 0x400-0x03;                                            //Last 3 bytes reserved for cal bytes
+text_start = 0x5;                                               //First 5 bytes reserved for programmmer use
 
 sendString(" detected\r\nPress -p- or -e- to program flash \
 or EEPROM (or -x- to escape).");
@@ -119,8 +119,6 @@ if ((op_code == 'P') || (op_code == 'p')) break;}
 if (Atmel_config(read_fuse_bits_h, 0) == 0xFF) 
 {sendString("\r\nCannot be used to program UNO flash\r\n");
 Exit_Programmer;}
-
-//sendString ("8MHz internal clock");
 
 sendString("\r\nSend Program file (or x to escape).\r\n");
 
@@ -158,10 +156,8 @@ sendHex(10,cmd_counter); sendString("  d'loaded:  ");
 sendHex(10,prog_counter); sendString(" in:  "); 
 sendHex(10,read_ops); sendString(" out\r\n");
 
-
-//UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                        //Dissable UART   
-if(pcb_type == 1) 
-Read_write_mem('I', 0x3FC,0x80);
+if(pcb_type == 1)                                                   //UNO pcb: Note this version never programs the UNO flash
+Read_write_mem('I', 0x3FC,0x80);                                    //Therefore this line is never executed
 if(pcb_type == 2)                                                   //PCB_A
 {Read_write_mem('I', 0x3F9, 0);                                     //Ensures that PCB_A jumps to mini-os immediately post programming
 Read_write_mem('I', 0x3F1, 0);	                	                  //Only autocal PCB_A after programming flash.
