@@ -245,7 +245,7 @@ int *ptr_file_pointer,\
 char *ptr_DL_flag,\
 int *ptr_array_pointer, unsigned char EEPROM_buffer[]){	
 int UART_counter = 0;
-char text_char, text_char_old, keypress;
+char text_char;	//text_char_old, keypress;
 
 
 //Ignore short preliminary text section until the first -"- is encounter which signals the start of the first string to be saved to EEPROM
