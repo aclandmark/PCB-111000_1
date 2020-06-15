@@ -159,8 +159,11 @@ if(pcb_type == 1)
 Read_write_mem('I', 0x3FC,0x80);
 if(pcb_type == 2)												//PCB_A
 {Read_write_mem('I', 0x3F9, 0);								//Read by PCB_A bootloader:  Indicates that PCB_A has just been programmed
-Read_write_mem('I', 0x3F4, 0);}							//Read by Led driver (1_UNO_CC_OS). Resets UNO immediately after PCB_A has
-Reset_H;													//(i.e. this program when running on the UNO device) can be removed.
+Read_write_mem('I', 0x3F4, 0);									//Read by Led driver (1_UNO_CC_OS). Resets UNO immediately after PCB_A has
+Read_write_mem('I', 0x3F1, 0xFF);}								//(i.e. this program when running on the UNO device) can be removed.
+
+
+Reset_H;													
 while(1);
 return 1;}
 
