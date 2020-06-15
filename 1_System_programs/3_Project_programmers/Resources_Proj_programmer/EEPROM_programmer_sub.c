@@ -50,6 +50,7 @@ void Upload_data(int, int);
 void Upload_data_1(int, int);
 void Upload_data_2(int, int);
 char next_char_from_PC(void);
+void Upload_text(int);
 
 unsigned char RBL = 255;
 
@@ -66,8 +67,8 @@ EEP_pointer = text_start;												//Start saving user strings/data at address
 
 sendString\
 ("\r\nPress -w- or -r- to write to or read from ");
-if (pcb_type == 1)sendString ("the UNO");
-else sendString ("PCB_A");
+if (pcb_type == 1)sendString (" the UNO");
+else sendString (" PCB_A");
 
 
 while(1){sendString("?  ");	
@@ -144,7 +145,7 @@ if(App_reservation > 0){
 sendString("\r\nApp: Start addr's  ");
 sendHex(16, (EE_top - App_reservation));newline();						//Display first address to be used by the application
 sendString ("X to escape or AOK\r\n");
-if(waitforkeypress() == 'X') 
+if(waitforkeypress() == 'x') 
 {binUnwantedChars();	wdt_enable(WDTO_1S); while(1);}}				//Accidental key press: Press X to start again.
 binUnwantedChars();		
 EE_top = EE_top - App_reservation;										//Variable "EEPROM" stores highest address available for user strings and data. 
@@ -188,7 +189,8 @@ Read_write_mem('I', 0x0, (EEP_pointer >> 8));
 Read_write_mem('I', 0x1, (EEP_pointer & 0x00FF));						//Save address in EEPROM available for first data item
 Read_write_mem('I', 0x2, data_counter);									//Save number of data items (each occupy 16 bits)	
 waitforkeypress();
-Upload_text(EEP_pointer);   
+//Upload_text(EEP_pointer); 
+Upload_text(EEP_pointer);  
 if (data_counter > 0) Upload_data (EEP_pointer, data_counter);  
 break;  
 
@@ -213,7 +215,9 @@ else sendString("  Default calibration\r\n");}
 
 else sendString ("\r\nPCB_A programmed\r\n");
 
-Exit_Programmer;}
+Exit_Programmer;
+
+}
 
 
 
@@ -241,7 +245,7 @@ int *ptr_file_pointer,\
 char *ptr_DL_flag,\
 int *ptr_array_pointer, unsigned char EEPROM_buffer[]){	
 int UART_counter = 0;
-char text_char;
+char text_char;	//text_char_old, keypress;
 
 
 //Ignore short preliminary text section until the first -"- is encounter which signals the start of the first string to be saved to EEPROM
@@ -262,7 +266,7 @@ while(!(*ptr_DL_flag))													//EEPROM buffer full? No: Enter loop 1. Yes: 
 {if((text_char = next_char_from_PC()) == '\0')continue; 				//Ignore null chars loop back to top of the while loop
 else UART_counter++; 													//Loop 1: Acquire text characters and increment "UART_counter"
 
-if(text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip loop 2.
+if (text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip loop 2.
 	{if (UART_counter > *ptr_file_pointer)								//Loop 2: Text downloaded for first time? Yes: Enter Loop 3. No: skip loop 3
 		{switch (text_char)												//Loop 3: Detect carraige return and new line:
 			{case '\n':													//combine them if necessary and replace with '\0'
@@ -499,9 +503,6 @@ return askiX4_to_hex_V2 (data_string);}
 
 
 
-
-
-
 /********************************************************************************************************************************************/
 void Upload_text(int EEP_pointer)
 {char string_char;
@@ -605,12 +606,12 @@ sendHex (16, (address_first_data_item));
 
 
 
-
-
-
 /********************************************************************************************************************************************/
 char next_char_from_PC(void){
 unsigned int n = 0;
 while (!(UCSR0A & (1 << RXC0))){n++;
 if (n > 15000) return 0;}													
 return UDR0;}
+
+
+
