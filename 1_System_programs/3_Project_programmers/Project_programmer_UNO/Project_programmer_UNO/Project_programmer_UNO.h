@@ -7,12 +7,12 @@
 
 
 
-#include "Resources\ATMEGA_Programmer.h"
-#include "Resources\ATMEGA_Programmer_HW_subs.c"
-#include "Resources\Basic_IO_and_Timer_subs.c"
-#include "Resources\ASKII_subroutines.c"
-#include "Resources\Flash_Programmer_subs.c"
-#include "Resources\EEPROM_programmer_sub.c"
+#include "Resources_Proj_programmer\ATMEGA_Programmer.h"
+#include "Resources_Proj_programmer\ATMEGA_Programmer_HW_subs.c"
+#include "Resources_Proj_programmer\Basic_IO_and_Timer_subs.c"
+#include "Resources_Proj_programmer\ASKII_subroutines.c"
+#include "Resources_Proj_programmer\Flash_Programmer_subs.c"
+#include "Resources_Proj_programmer\EEPROM_programmer_sub.c"
 
 
 unsigned char receive_byte_with_Ack(void);
