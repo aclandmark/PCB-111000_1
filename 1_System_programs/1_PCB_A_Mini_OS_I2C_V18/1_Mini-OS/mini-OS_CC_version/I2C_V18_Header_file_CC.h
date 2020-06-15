@@ -53,6 +53,7 @@ int RN;
 char keypres_counter_old;
 char overflow;
 
+
 char Op;
 unsigned long RHSofDP;
 signed char expnt_result;
@@ -63,11 +64,6 @@ int interim_result;
 char OSCCAL_WV;
 char OSCCAL_DV;
 volatile char cal_mode; 			//Defines number of averages used when measuring osccal_error	
-
-
-//long cal_error;
-//char OSCCAL_DV, OSCCAL_UC;
-
 
 char clock_flag;
 char PIC_cmd;
@@ -98,8 +94,15 @@ DDRD = 0;\
 PORTB = 0xFF;\
 PORTC = 0xFF;\
 PORTD = 0xFF;\
-PORTC &= (~(1 << PC3));	
 
+
+#define Reset_UNO_low \
+PORTC &= (~(1 << PC3));\
+DDRC |= (1 << DDC3);
+
+#define Reset_UNO_high \
+DDRC &= (~(1 << DDC3));\
+PORTC |= (1 << PC3);
 
 
 #define initialise_Arithmetic_variables; \
