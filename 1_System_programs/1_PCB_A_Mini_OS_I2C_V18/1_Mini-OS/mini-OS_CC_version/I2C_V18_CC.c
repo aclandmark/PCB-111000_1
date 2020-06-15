@@ -71,84 +71,44 @@ external 10mS crystal interrupt).*********/
 
 /***********Brown-out:  This is set (using config bits only) for 2.9V*************/
 
-//if(MCUSR & (1 << BORF)){							//Detect brown-out
-//MCUSR &= (~(1 << BORF));}							//Reset brown-out flag 
 MCUSR &= (~(1 << PORF));
-
-
 
 ADMUX |= (1 << REFS0);								//select internal ADC ref and remove external supply on AREF pin
 setup_watchdog;	
 initialise_IO;										//Ensures that all IO is initially set to WPU
-
-/*
-if(!(eeprom_read_byte((uint8_t*)0x3F4)))			//If PCB_A has just been programmed with I2C_V16_CC using the project programmer 
-{eeprom_write_byte((uint8_t*)0x3F4, 0xFF);			//the UNO device is automatically reset so the the project programer can be removed
-//PORTB |= (1 << PB1);								//Set UNO signalling line high (WPU)
-//DDRB &= (~(1 << DDB1));							//Note: Theses are default states for the CC display driver
-PORTC &=(~(1 << DDC3));							//PDC3 is the output used to reset the UNO device
-DDRC |= (1 << DDC3);								//Put UNO in reset for 10mS
-Timer_T1_sub(T1_delay_10ms);						//After its release from reset the UNO selects its boot loader
-PORTC |=(1 << DDC3);									
-DDRC &= (~(1 << DDC3));
-Timer_T1_sub(T1_delay_125ms);}						//Delay required due to UNO Start Up Time of 65mS
-*/
-
+set_digit_drivers;
+clear_digits;
+clear_display;
 
 TWBR = 32;											//gives 100KHz I2C clock for TWSR 
 ASSR = (1 << AS2); 								//initialise T2 for crystal
 timer_2_counter=0;									//Initialsise timer_2_counter to zero
-
-/*OSCCAL_DV = OSCCAL;									//Save default value of OSCCAL
-cal_PCB_A_328;										//Select User value of OSCCAL if one exists
-if(MCUSR & (1 << PORF))
-{Cal_at_Power_on_Reset();}							//Only run clock calibration test following a POR
-OSCCAL_WV = OSCCAL;	*/								//Save working value of OSCCAL
-
-Initialise_dislay_brightness;
-set_digit_drivers;
-clear_digits;
-clear_display;
-initialise_Arithmetic_variables;
-
-clock_flag=0;
-Ten_mS_tick_counter = 0;
-
-OSCCAL_DV = OSCCAL;									//Save default value of OSCCAL
-cal_PCB_A_328;										//Select User value of OSCCAL if one exists
-
 sei();
-
 
 if(!(eeprom_read_byte((uint8_t*)0x3F4)))			//If PCB_A has just been programmed with I2C_V16_CC using the project programmer 
 {eeprom_write_byte((uint8_t*)0x3F4, 0xFF);			//the UNO device is automatically reset so the the project programer can be removed
 
-
-if(!(eeprom_read_byte((uint8_t*)0x3F1)))
+if(!(eeprom_read_byte((uint8_t*)0x3F1)))			//Only auto-cal after programming flash not eeprom
 {eeprom_write_byte((uint8_t*)0x3F1, 0xFF);
-Cal_at_Power_on_Reset();
-Timer_T1_sub(T1_delay_100ms);}						//EXTRA LINE NEEDED to complete USRT transmission
+Auto_cal();}
 
-//PORTB |= (1 << PB1);								//Set UNO signalling line high (WPU)
-//DDRB &= (~(1 << DDB1));							//Note: Theses are default states for the CC display driver
-PORTC &=(~(1 << DDC3));							//PDC3 is the output used to reset the UNO device
-DDRC |= (1 << DDC3);								//Put UNO in reset for 10mS
+Timer_T1_sub(T1_delay_100ms);						//Time to print out results
+Reset_UNO_low;
 Timer_T1_sub(T1_delay_10ms);						//After its release from reset the UNO selects its boot loader
-PORTC |=(1 << DDC3);									
-DDRC &= (~(1 << DDC3));
-Timer_T1_sub(T1_delay_125ms);}	
+Reset_UNO_high;
+Timer_T1_sub(T1_delay_125ms);}						//Delay required due to UNO Start Up Time of 65mS
 
-
+OSCCAL_DV = OSCCAL;									//Save default value of OSCCAL
+cal_PCB_A_328;										//Select User value of OSCCAL if one exists
 OSCCAL_WV = OSCCAL;
 
-
-
-
-
+Initialise_dislay_brightness;
+initialise_Arithmetic_variables;
+clock_flag=0;
+Ten_mS_tick_counter = 0;
 
 
 /******************************Start multiplexer******************************/		
-//sei();
 T0_interupt_cnt = 0;	
 TIMSK0 |= (1 << TOIE0);										
 switch(eeprom_read_byte((uint8_t*)0x3FB)){
@@ -248,16 +208,16 @@ case 'O': PCB_test; break;							//For manufacturing test: Dissables the multipl
 
 case 'P': I2C_Rx_get_version; break;
 
-case 'Q':  if(I2C_data[0]){I2C_Tx_LED_dimmer;}break;
+case 'Q': if(I2C_data[0]){I2C_Tx_LED_dimmer;}break;
 
-case 'R': Cal_at_Power_on_Reset(); break;	
+case 'R': Auto_cal(); break;	
 
 case 'X': cal_spot_check();break;
 
 
 default: break;}}}
 
-/******************Modes 'R', 'S' and 'T'are reserved***************************/
+/**********Mode'T' is used by Auto_cal()***************************/
 
 	
 	
