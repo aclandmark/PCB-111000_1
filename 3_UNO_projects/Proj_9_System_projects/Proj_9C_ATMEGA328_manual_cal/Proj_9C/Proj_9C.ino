@@ -77,7 +77,7 @@ osccal_MIN++;newline();}
 
 String_to_PC("Enter new user cal value or\r\n\
 enter zero to delete the user cal or\r\n");                        //Request new OSCCAL_User_Value
-String_to_PC("press the reset switch if OK.\r\n");                           //Resets both devices
+String_to_PC("press the reset switch if OK.\r\n");                 //Resets both devices
 
 
 New_UC_value = Decimal_from_KBD_Local();
