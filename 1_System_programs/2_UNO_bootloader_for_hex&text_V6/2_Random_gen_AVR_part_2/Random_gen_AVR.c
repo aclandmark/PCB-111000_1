@@ -27,7 +27,7 @@ PRN = PRN_16bit_GEN (0);									//Generate a new PRN (0) tells subroutine to us
 I2C_Tx_2_integers(PRN, (PRN<<1));							//Display two "pseudo random numbers"
 Timer_T1_sub(T1_delay_100ms);	
 I2C_Tx_LED_dimmer();
-if((switch_1_down) && (switch_2_down))asm("jmp 0x5C60");}}		
+if((switch_1_down) && (switch_2_down))asm("jmp 0x5C10");}}		
 
 
 /************************************************************************************/
