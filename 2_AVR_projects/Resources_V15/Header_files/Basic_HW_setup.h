@@ -177,6 +177,9 @@ Cal_UNO_pcb_A();
 
 #define User_app_commentary_mode \
 \
+if(eeprom_read_byte((uint8_t*)0x3F4) == 0xFF)\
+eeprom_write_byte((uint8_t*)0x3F4,0);\
+\
 if(eeprom_read_byte((uint8_t*)0x3F4) == 0x40){\
 for(int m = 0; m < 10; m++)String_to_PC("\r\n");\
 String_to_PC("Project commentary: Press 'X' to escape or AOK\r\n");\
