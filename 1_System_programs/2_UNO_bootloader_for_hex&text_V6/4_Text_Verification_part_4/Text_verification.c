@@ -52,7 +52,8 @@ for(int text_num = 1; text_num <= Num_strings; text_num++)								//Print all st
 {print_string_num(text_num,start_address);
 if(text_num == 1){sendString("\tAK?");}
 sendString("\r\n"); waitforkeypress();
-sendString("\r\n");}}
+sendString("\r\n");}
+eeprom_write_byte((uint8_t*)0x3F4,0);}
 
 else																					//String print out: commentary mode
 {next_string_no = (eeprom_read_byte((uint8_t*)0x3F4) & 0x3F);							//Reset device after printing each string
