@@ -283,7 +283,7 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 
 #****************bootloader cmds***************/
 
-BOOTSTART = 0x5E20
+BOOTSTART = 0x5DE0
 LDFLAGS += -Wl,--section-start=.text=$(BOOTSTART)
 
 #*********************************************/
