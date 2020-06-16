@@ -117,7 +117,7 @@ default: 													//POR, WDTout, BOR
 		Prog_mem_address_H = 0;
 		Prog_mem_address_L = 0;
 		read_flash ();
-		if (Flash_readout == 0xFF)asm("jmp 0x5E20");
+		if (Flash_readout == 0xFF)asm("jmp 0x5DE0");
 		else asm("jmp 0x0000");break;}						//WDT due to user program, POR or BOR,mode r or D which also generate a WDTout
 	
 setup_HW;													//Initialises all IO to week pull up; UART introduces 5mS delay
@@ -144,17 +144,17 @@ switch (receiveChar()){
 case 'r':	Prog_mem_address_H = 0;
 			Prog_mem_address_L = 0;
 			read_flash ();
-			if (Flash_readout == 0xFF)asm("jmp 0x5E20");	//Detect the absense of an User App and run default app.
+			if (Flash_readout == 0xFF)asm("jmp 0x5DE0");	//Detect the absense of an User App and run default app.
 			eeprom_write_byte((uint8_t*)0x3F7,0);			//Indicates user program is being launched using a WDTout
 			wdt_enable(WDTO_15MS); 							//Run the user application (WDTout triggers jump to 0x0000)
 			while(1); 
 
 case 't': 	mode = 't'; text_programmer();
 case 'h':	mode = 'h';hex_programmer();					//Hex file download with optional verification
-			asm("jmp 0x61E0");	
+			asm("jmp 0x61B0");	
 
 case 'T': 	mode = 't'; text_programmer(); 					//Text file download with verification
-			asm("jmp 0x6C30");								
+			asm("jmp 0x6C00");								
 
 case 'D':	Prog_mem_address_H = 0;							//Erase start of user app and trigger default app.
 			Prog_mem_address_L = 0;
