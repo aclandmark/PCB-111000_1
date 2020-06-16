@@ -138,7 +138,7 @@ return;}
 
 
 
-phys_address = 0x2E30;//0x2E48;  									//Verify Hex_text_bootloader code.
+phys_address = 0x2E08;	//0x2E30;//0x2E48;  									//Verify Hex_text_bootloader code.
 read_ops=0; 
 line_no = 0; prog_counter_mem = prog_counter; 
 
