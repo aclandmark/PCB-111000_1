@@ -247,7 +247,7 @@ signed int prog_counter_mem;								//Initialised with size of .hex file used fo
 unsigned char print_out_mode = 0;									//Print out flash contents as hex or askii characters
 char skip_lines[4];											//Enter number to limit the print out
 
-phys_address = 0x2E48;  read_ops=0; 
+phys_address = 0x2E08;  read_ops=0;
 line_no = 0; prog_counter_mem = prog_counter; 
 
 sendString("Integer(0-FF)?  ");								//0 prints no lines -1-, every line, -8- prints every eighth line etc... 
