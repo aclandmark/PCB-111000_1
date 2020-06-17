@@ -39,8 +39,8 @@ the user projects.  The PIC only offered the slave implementation of the I2C bus
 
 # include "../../Resources_Mini_OS/I2C_IO_timer_subroutines.c"
 # include "../../Resources_Mini_OS/I2C_Arithmetic_subroutines.c"
-# include "../../Resources_Mini_OS/I2C_ISR_subroutines_ARD.c"
-# include "../../Resources_Mini_OS/I2C_osccal_calibration subroutintes_ARD.c"
+# include "../../Resources_Mini_OS/I2C_ISR_subroutines.c"
+# include "../../Resources_Mini_OS/I2C_osccal_calibration subroutintes.c"
 # include "../../Resources_Mini_OS/I2C_modes_B_to_F.c"
 # include "../../Resources_Mini_OS/I2C_clock_stop_watch_subroutines.c"
 # include "../../Resources_Mini_OS/I2C_Eeprom_subroutines.c"
