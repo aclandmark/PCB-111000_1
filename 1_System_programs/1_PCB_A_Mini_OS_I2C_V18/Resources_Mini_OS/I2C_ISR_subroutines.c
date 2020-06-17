@@ -84,8 +84,7 @@ display_buf[7-mode_C_ptr] = '_';
 mode_C_ptr++; mode_C_ptr=mode_C_ptr%8;
 timer_T1_sub_with_interrupt(T1_delay_500ms);} break;
 
-case 'N':  case 'R': case 'M':  
-case 'S':  case 'T':  T1_OVF += 1; break;
+case 'M':  case 'N': case 'T':  case 'X': T1_OVF += 1; break;
 
 default: T1_ovf_flag = 1; TCCR1B = 0; break;}}
 
@@ -102,12 +101,12 @@ case 'K':  timer_2_counter++; if(timer_2_counter == 3)
 {timer_2_counter=0; display_float(Sc_Num_string);} break;
 
 
-case 'N':  case 'R': case 'M':  case 'S':  
+case 'M':  case 'N': case 'T':  case 'X':  
 TCCR1B = 0;																			//Halt T1
 TCNT1_BKP = TCNT1;																	//Copy the value of TCNT1
 TCNT1 = 0;																			//Clear TCNT1
 TCCR1B = 1;																			//Get T1 running again ASAP (Note T2 has not stopped running)
-if(EA_counter < 5)T1_OVF = 0;														//Ignore first 5 results
+if(EA_counter < cal_mode)T1_OVF = 0;														//Ignore first 5 results
 else
 {switch(T1_OVF){
 case 0: error_SUM = error_SUM + (TCNT1_BKP - 62500); break;
@@ -115,17 +114,6 @@ case 1: error_SUM = error_SUM + (TCNT1_BKP - 62500 + 65536); break;
 case 2: error_SUM = error_SUM + (TCNT1_BKP - 62500 + 131072); break;}
 T1_OVF = 0;}EA_counter++;break;
 
-case 'T':	
-TCCR1B = 0;																			//Halt T1
-TCNT1_BKP = TCNT1;																	//Copy the value of TCNT1
-TCNT1 = 0;																			//Clear TCNT1
-TCCR1B = 1;																			//Get T1 running again ASAP (Note T2 has not stopped running)
-if(EA_counter < 1)T1_OVF = 0;														//Ignore first  result
-else{switch(T1_OVF){
-case 0: error_SUM = error_SUM + (TCNT1_BKP - 62500); break;
-case 1: error_SUM = error_SUM + (TCNT1_BKP - 62500 + 65536); break;
-case 2: error_SUM = error_SUM + (TCNT1_BKP - 62500 + 131072); break;}
-T1_OVF = 0;}EA_counter++;break;
 
 default:
 timer_2_counter++; if(timer_2_counter == 16){timer_2_counter=0; 
