@@ -30,7 +30,6 @@ betweeen WDTouts and other resets.
 */
 
 
-
 #include "Proj_2E_header_file.h"
 
 
@@ -52,12 +51,12 @@ else
   I2C_Tx_any_segment('h', 0);}                                  //Re-establish display
 
 sei();
-SW_reset_with_interrupt;
+Thirty_mS_watch_dog_with_interrupt;
 
 
 while(1){digit_num=0;
 while(digit_num < 8){
-if(isCharavailable_Local(4))                                //Wait up to 60mS for a key press.  In the absence of one
+if(isCharavailable(4))                                //Wait up to 60mS for a key press.  In the absence of one
 {switch(letter = receiveChar()){                            //the program reverts back to "while(digit_num < 8){"
 case 'a': case 'A':                                         //otherwise it continues and updates the display
 case 'b': case 'B':                                         //Program execution is not put on hold awaiting a keypress
@@ -93,4 +92,8 @@ ISR(PCINT2_vect)
 
 
 /*****************************************************************/
-ISR (WDT_vect){set_Arduino_WDTout;}                                       
+ISR (WDT_vect){set_Arduino_WDTout;}  
+
+
+
+                                     
