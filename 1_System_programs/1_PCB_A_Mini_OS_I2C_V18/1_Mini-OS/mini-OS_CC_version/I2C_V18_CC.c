@@ -60,9 +60,9 @@ char test_num, test_digit, sign_bit;
 
 char *SW_Version = "\r\nPCB_A Mini-OS: I2C_V18_CC\r\n";
 char *SW_info = "SW information:\
-  Compatible with User Projects V1_8, PCB_A_Bootloader V5_CC.\r\n\
-  and UNO_bootloader_for_hex&text_V5\
-  \r\nProgrammed using Project_programmer_AVR_V1\r\n";
+  Compatible with AVR and UNO user projects, PCB_A_Bootloader V5_CC.\r\n\
+  and UNO_bootloader_for_hex&text_V6\
+  \r\nProgrammed using using Project_programmer_UNO\r\n";
 	
 
 
