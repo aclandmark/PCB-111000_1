@@ -73,10 +73,12 @@ EEPROM reservations:
 
 
 /********************************************************************************
-SW_Version: UNO_bootloader_for_hex&text_V5
+SW_Version: UNO_bootloader_for_hex&text_V6
 SW information:
-  Compatible with User Projects V1_7 and PCB_A Mini-OS: I2C_V16_1_CC
-  Programmed using Arduino or PCB_A_Bootloader V5_CC.
+  Compatible with 
+	AVR and UNO user projects,
+	PCB_A Mini-OS: I2C_V18_CC & CA
+  Programmed using PCB_A_Bootloader V5_CC of CA or USBasp programmer
 ********************************************************************************/
 
 
