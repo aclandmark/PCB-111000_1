@@ -119,8 +119,9 @@ Prog_mem_address_L = start_address;
 read_flash ();
 if(Flash_readout)sendChar(Flash_readout); else break;
 line_length += 1;
-if ((Flash_readout == ' ') && (line_length > 90))
-{sendString("\r\n");line_length = 0;}
+//if ((Flash_readout == ' ') && (line_length > 90))
+//{sendString("\r\n");line_length = 0;}
+if(Flash_readout == '\t')sendString("\r\n");
 start_address -= 1; }}
 
 
