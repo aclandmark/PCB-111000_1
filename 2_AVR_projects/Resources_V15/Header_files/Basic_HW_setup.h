@@ -190,7 +190,9 @@ if ((eeprom_read_byte((uint8_t*)0x3F4) & 0x40)){\
 eeprom_write_byte((uint8_t*)0x3F4,\
 (eeprom_read_byte((uint8_t*)0x3F4) | 0x80));\
 \
-asm("jmp 0x6C30");}	
+for(int m = 0; m < 4; m++)String_to_PC("\r\n");\
+\
+asm("jmp 0x6C00");}		//Was 0x6C30 ??????	
 
 
 
