@@ -61,8 +61,8 @@ sendHex(16, Atmel_config(read_lock_bits_h, 0));sendString("  ");
 sendString("    on-chip cal bit:  ");
 
 if(eeprom_read_byte((uint8_t*)0x3FD) == OSCCAL)					//Print out OSCCAL
-{sendHex(16, OSCCAL); sendString("\t DF value");}
-else {sendHex(16, OSCCAL); sendString("\t User value");}
+{sendHex(10, OSCCAL); sendString("\t DF value");}
+else {sendHex(10, OSCCAL); sendString("\t User value");}
 
 
 newline();
