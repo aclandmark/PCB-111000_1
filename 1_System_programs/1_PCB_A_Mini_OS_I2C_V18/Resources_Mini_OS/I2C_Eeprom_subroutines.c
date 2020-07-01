@@ -8,30 +8,35 @@ void Message_from_the_OS(void){
 int text_max, eeprom_ptr;
 char string_counter, string_no;
 
-text_max = (eeprom_read_byte((uint8_t*)(0)) <<8) +\
-eeprom_read_byte((uint8_t*)(1));
+if(((eeprom_read_byte((uint8_t*)(0))) == 0xFF) &&\
+((eeprom_read_byte((uint8_t*)(1))) == 0xFF))					//No text
+
+{text_max = 7;
+eeprom_write_byte((uint8_t*)(5), '?');
+eeprom_write_byte((uint8_t*)(6), 0);}
+
+else
+{text_max = (eeprom_read_byte((uint8_t*)(0)) <<8) +\
+eeprom_read_byte((uint8_t*)(1));}								//Address of end of text section + 1
+
 string_counter = 0;
-eeprom_ptr = 5;
+eeprom_ptr = 5;													//Address of start of text
 
-while(eeprom_ptr <= text_max){
-
-if (!(eeprom_read_byte((uint8_t*)(eeprom_ptr))))
+while(eeprom_ptr < text_max){									//scan text section
+if (!(eeprom_read_byte((uint8_t*)(eeprom_ptr))))				//Count the number of strings
 string_counter++;
 eeprom_ptr++;}
 	
-string_counter -=1;
-string_no =  (PRN_8bit_GEN()%(string_counter)) + 1;			//Generate random string number
-
-if(!(string_no))string_no++;
+string_no =  (PRN_8bit_GEN()%(string_counter)) + 1;			//Generate random string number (between 1 and String_counter)
 string_counter=1;
 eeprom_ptr = 5;
 
-while(1){if(string_counter==string_no)break;
+while(1){if(string_counter==string_no)break;					//Scan text section untill required string is reached
 	else if (!(eeprom_read_byte((uint8_t*)(eeprom_ptr))))
 	string_counter++;
 	eeprom_ptr++;}
 
-Initialise_I2C_master_write;
+Initialise_I2C_master_write;									//Send string
 
 do{
 I2C_master_transmit(eeprom_read_byte((uint8_t*)eeprom_ptr));
