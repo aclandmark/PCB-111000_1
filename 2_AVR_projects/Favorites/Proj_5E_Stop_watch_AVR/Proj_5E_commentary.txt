@@ -1,0 +1,17 @@
+*********************************************************
+
+
+Proj_5E_Stop_watch
+
+
+IT INTRODUCES
+1.  Stop watch (SW) provided by the mini-OS
+
+2.  Project subroutines
+  I2C_Tx_Clock_command(one100ms_mode)           Initiates 100mS mode
+  I2C_Tx_Clock_command(ten_ms_mode)             Initiates 10mS mode
+  I2C_Tx_Clock_command(store_time)              Save time and pause display
+  I2C_Tx_Clock_command(display_stored_times)    Displays time saved to memory
+  I2C_Tx_Clock_command(display_current_time)    Resume stop watch mode
+  
+Switch location SW1(PD2) - SW2(PD7) – SW3(PB2)
