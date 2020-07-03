@@ -85,7 +85,7 @@ case 3282: sendString ("328P");break;
 default: wdt_enable(WDTO_1S); while(1);break;}
 
 PageSZ = 0x40; PAmask = 0x3FC0; FlashSZ=0x4000;                 //flash page size, gives address on page, flash size words
-EE_top = 0x400-0x03;                                            //Last 3 bytes reserved for cal bytes
+EE_top = 0x400-0x10;                                            //Last 16 bytes reseerved for system use
 text_start = 0x5;                                               //First 5 bytes reserved for programmmer use
 
 sendString(" detected\r\nPress -p- or -e- to program flash \
