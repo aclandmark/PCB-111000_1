@@ -9,13 +9,10 @@ int main (void){								//The "main" routine lies between a pair of {} brackets.
 unsigned long PORT_1, PORT_2;
  
 
-//CLKPR = (1 << CLKPCE);
-//CLKPR = (1 << CLKPS0);
-
 setup_UNO_extra;					
 
 while(1)
-{PORT_1=1; PORT_2 = 0x80000000;
+{PORT_1=1; PORT_2 = 0x80000000;					//1000 0000 0000 0000 0000 0000 0000 0000
 
 	for(int m = 1; m < 33; m++){				//Code between the {} brackets is repeated 16 times 						
 												//as m increments from 1 to 16	(m++ is shorthand for increment m)
