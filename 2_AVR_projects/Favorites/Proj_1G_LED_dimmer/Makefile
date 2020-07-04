@@ -53,7 +53,7 @@
 
 
 # MCU name
-MCU = atmega168
+MCU = atmega328
 
 
 # Processor frequency.
@@ -82,7 +82,7 @@ FORMAT = ihex
 
 
 # Target file name (without extension).
-TARGET = Proj_1G
+TARGET = Proj_1G_AVR
 
 
 # Object files directory
