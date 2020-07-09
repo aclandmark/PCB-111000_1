@@ -22,18 +22,18 @@ void enter_number(void);
 #define message_1 \
 "\r\n\
 INTEGER NUMBER Ops\r\n\
-Press sw1 for roots or sw3 for powers\r\n\
-repeatedly press sw2 to scroll through the digits\r\n"
+Press sw1 for roots or sw2 for powers\r\n\
+repeatedly press sw3 to scroll through the digits\r\n"
 
 #define message_2 \
-"when final digit is being pressed press sw1 before releasing sw2 then release sw1\r\n\
-press sw2 for next number (only one digit is allowed)\r\n"
+"when final digit is being pressed press sw1 before releasing sw3 then release sw1\r\n\
+press sw3 for next number (only one digit is allowed)\r\n"
 
 
 #define message_3 \
-"release sw2 and root or power will be calculated\r\n\
-pulse sw2 to repeat calculation\r\n\
-hold sw1 or sw3 down while pulsing sw2 then press it again to reset the device\r\n"
+"release sw3 and root or power will be calculated\r\n\
+pulse sw3 to repeat calculation\r\n\
+hold sw1 or sw2 down while pulsing sw3 then press it again to reset the device\r\n"
 
 
 #define User_instructions \
