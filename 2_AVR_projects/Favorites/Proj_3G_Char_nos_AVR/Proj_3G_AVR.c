@@ -2,7 +2,7 @@
 /*Press middle switch to increment display, sw1 to decrement it and sw3 to change the sign*/
 
 
-//Proj_3G:  Demonstates positive and negative binary numbers 
+//Proj_3G:  Demonstrates positive and negative binary numbers 
 
 
 
