@@ -1,5 +1,5 @@
 
-/**************Proj_1F_LED_display***************************/
+//Proj_1G: Basic display with intensity conrol
 
 
 
@@ -9,7 +9,7 @@
 
 unsigned int n = 0;
 unsigned int PORT_1,PORT_2;
-volatile char T1_OVF;                           			//The timer intrerrup flag, set every time a timer interrupt is generated
+volatile char T1_OVF;                           			//The timer intrerrup flag, set every time the timer counter overflows
 
 
 
@@ -60,10 +60,10 @@ if(!(n))													//If n is zero
 
 
 /*****************************************************************************************************************/
-ISR(USART_RX_vect){
-char Dimmer_control_local;									//This routine provides memory for "Dimmer_control_local"
-Dimmer_control_local = (receiveChar()-'0')%4;				//and passes its address to "I2C_Tx"
-I2C_Tx_local(1, 'Q', &Dimmer_control_local);}					//The "&" indicates that an address is being passed to "I2C_TX()"					  					
+ISR(USART_RX_vect){											//This routine provides memory for "Dimmer_control_local"
+char Dimmer_control_local;									//and passes its address to "I2C_Tx()"
+Dimmer_control_local = (receiveChar()-'0')%4;				//The "&" indicates that an address is being passed to "I2C_TX()"
+I2C_Tx(1, 'Q', &Dimmer_control_local);}					//'Q' is the mini-OS mode the controls display intensty							  					
 
 
 
