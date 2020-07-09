@@ -9,25 +9,34 @@ Press PCB_A reset switch to initialise he display
 
 
 
-#include "Proj_2G_header_file.h"        //See this file for the definitions of the digits 0 to 9
+
+
+
+//Proj_2G:  A slightly better way of entering numbers
+
+
+
+#include "Proj_2G_header_file.h"        					//See this file for the definitions of the digits 0 to 9
 
 
  
 int main (void){
 
 char   digit;
-int digit_num=0;                          //defines number of next digit on the display           
-const char* string_ptr = 0;              //pointer: will be loaded with the address of an array 
-setup_UNO_extra;                                 //(i.e. the address of the first segment in array "zero" or "one" or "two" etc....) 
-User_prompt;                              //Press R or r to exit (pauses program execution while user launches a terminal program)
-String_to_PC("Send digits?");
-while(1){                               //Infinite loop
-digit_num = 0;                          //First digit on display
-while (digit_num <= 7){                 //start of "while();" loop used to fill up the display with 8 digits
-digit = waitforkeypress();              //user enters digit (0 to 9) at the PC keyboard
+int digit_num=0;                          					//defines number of next digit on the display           
+const char* string_ptr = 0;              					//"string_pointer" will be loaded with the address of an array 
 
-switch(digit){                          //The appropriate address is loaded into location "string_pointer"
-case '0': string_ptr = zero; break;     //The address of array zero is loaded into location "string_ptr"
+setup_UNO_extra;                             
+
+String_to_PC("Send digits?");
+
+while(1){                               					//Infinite loop
+digit_num = 0;                          					//First digit on display
+while (digit_num <= 7){                						//start of "while();" loop used to fill up the display with 8 digits
+digit = waitforkeypress();              					//user enters digit (0 to 9) at the PC keyboard
+
+switch(digit){                          					//The appropriate address is loaded into location "string_pointer"
+case '0': string_ptr = zero; break;     					//The address of array zero is loaded into location "string_ptr"
 case '1': string_ptr = one; break;
 case '2': string_ptr = two; break;
 case '3': string_ptr = three; break;
@@ -37,10 +46,16 @@ case '6': string_ptr = six; break;
 case '7': string_ptr = seven; break;
 case '8': string_ptr = eight; break;
 case '9': string_ptr = nine; break;
-default: continue; break;}                                   //Illegal key press: Go immediately to the start of the do loop
-                                                             //Send the address of the required string to subroutine "display_num_string();"
-display_num_string(string_ptr, digit_num);digit_num++;}     //End of "while();" loop
-waitforkeypress();I2C_Tx_any_segment_clear_all();}}         //clear display and repeat
+default: continue; break;}                                  //Illegal key press: Go immediately to the start of the do loop
+
+display_num_string(string_ptr, digit_num);					//Send the address of the required string to subroutine "display_num_string();"
+digit_num++;} 											    //End of "while();" loop
+
+waitforkeypress();I2C_Tx_any_segment_clear_all();}}        //clear display and repeat
+
+
+
+
 
 
 /******************************************************************************************************************************/
