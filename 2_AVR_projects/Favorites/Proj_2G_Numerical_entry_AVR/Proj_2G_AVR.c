@@ -46,7 +46,7 @@ case '6': string_ptr = six; break;
 case '7': string_ptr = seven; break;
 case '8': string_ptr = eight; break;
 case '9': string_ptr = nine; break;
-default: continue; break;}                                  //Illegal key press: Go immediately to the start of the do loop
+default: continue; break;}                                  //Illegal key press: Go immediately to the start of the inner while loop
 
 display_num_string(string_ptr, digit_num);					//Send the address of the required string to subroutine "display_num_string();"
 digit_num++;} 											    //End of "while();" loop
