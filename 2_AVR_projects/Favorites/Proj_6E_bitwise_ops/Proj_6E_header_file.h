@@ -18,15 +18,5 @@
 #define dig_2 digits[2]
 
 
-#define message_1 \
-"\r\nMore on bitwise ops\r\n\
-Press r or R at the user prompt\r\n\
-and x or X to escape\r\n\
-giving 4 modes of operation\r\n"
-
-#define User_instructions \
-String_to_PC (message_1);
-
-
 char logical_op(char, char, char);
 char binary_char_from_KBD_Local(void);
