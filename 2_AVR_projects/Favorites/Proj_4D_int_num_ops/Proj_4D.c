@@ -23,6 +23,11 @@ hold sw1 or sw2 down while pulsing sw3 then press it again to reset the device.*
 
 
 
+
+//Proj_4B:  Acquiring data from the user switches and letting the mini-OS doing some arithmetic with them
+
+
+
 #include "Proj_4D_header_file.h"
 
 
@@ -38,7 +43,7 @@ config_sw3_for_PCI;
 while(1){if(switch_2_down) {Op = 'P'; break;}
 		if(switch_1_down) {Op = 'R'; break;}}
 while (switch_1_down); while (switch_2_down);
-		
+
 while(1){
 int_plus_short_from_IO();								//Line A
 I2C_Tx_Uarithmetic_OP(Op);								//OS does the arithmetic
