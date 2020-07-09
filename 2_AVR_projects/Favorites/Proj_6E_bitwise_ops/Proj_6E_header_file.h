@@ -28,5 +28,5 @@ giving 4 modes of operation\r\n"
 String_to_PC (message_1);
 
 
-char logical_op(char, char, char, char);
+char logical_op(char, char, char);
 char binary_char_from_KBD_Local(void);
