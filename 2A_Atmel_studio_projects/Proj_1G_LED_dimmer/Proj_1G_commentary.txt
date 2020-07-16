@@ -10,7 +10,7 @@ Note that memory locations required by both the main routine and a subroutine ar
 3.      Pointers:	A subroutine is usually allocated some memory space that is only visible to it.	Sometimes it is convenient for a subroutine to use memory space allocated to the routine that calls it.	Where this is the case the '&' symbol is used to signify that the calling routine is providing the memory.	The address of the memory location is passed to the subroutine rather than the contents.	The '*' symbol signifies that the subroutine is using memory supplied by the calling routine.  
 
 4.      Subroutine I2C_Tx().	This uses the I2C bus to communicate with the PCB_A Atmega 328. This subroutine is not normally accessed directly by user projects.
-Several program segments are used:	“waiting_for_I2C_master” and “send_byte_with_Ack(num_bytes)”.	These crop up quite frequently and have therefore been defined to clarify program operation.
+Several program segments are used:	"waiting_for_I2C_master" and "send_byte_with_Ack(num_bytes)".	These crop up quite frequently and have therefore been defined to clarify program operation.
 
 5.      Volatile variables
 All variables used in the main() routine have permanent storage space in program memory.	Variables only used by the subroutines share a block of memory.	Every time a subroutine is called it has to initialise its variables.	This is not always convenient.		For example: two or more subroutines way need to share a variable.	Memory space allocated to this variable cannot be re-initialised every time the subroutine is called.	Memory space must therefore be permanently allocated to it.	The volatile key word is used to ensure this happens.
