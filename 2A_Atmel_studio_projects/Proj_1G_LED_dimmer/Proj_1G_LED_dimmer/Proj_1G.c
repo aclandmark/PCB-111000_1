@@ -9,7 +9,7 @@
 
 unsigned int n = 0;
 unsigned int PORT_1,PORT_2;
-volatile char T1_OVF;                           					//The timer interrupt flag, set every time the timer counter overflows
+volatile char T1_OVF;                           					//Timer1 overflow interrupt flag, set by the timer hardware
 
 
 
