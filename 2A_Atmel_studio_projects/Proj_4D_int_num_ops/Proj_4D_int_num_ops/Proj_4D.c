@@ -21,7 +21,8 @@ Hold sw1 or sw2 down while pulsing sw3 then press it again to reset the device.*
 
 #include "Proj_4D_header_file.h"
 
-
+volatile char   Return_key, data_counter;							//These variables are not used in the main() routine
+char  digits[8];
 
 int main (void){
 	char  Op = 'P';
