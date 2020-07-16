@@ -1,6 +1,5 @@
 
-volatile char   Return_key, data_counter;
-char  digits[8];
+
 
 #include "../../Resources_V15/Header_files/Basic_HW_setup.h"
 #include "../../Resources_V15/Subroutines/Basic_HW_plus_Timer.c"
