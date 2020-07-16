@@ -1,5 +1,5 @@
 
-//Proj_4B:  Acquiring numbers from the user switches and letting the mini-OS doing some arithmetic with them
+//Proj_4D:  Acquiring numbers from the user switches and letting the mini-OS doing some arithmetic with them
 
 
 
