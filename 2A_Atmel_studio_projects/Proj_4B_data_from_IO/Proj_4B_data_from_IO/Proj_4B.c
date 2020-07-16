@@ -24,7 +24,7 @@ long number_from_IO(void);
 
 
 char  digits[8];																//stores the digits to be displayed
-volatile char Data_Entry_complete;
+volatile char Data_Entry_complete;												//This variable is not used in the main() routine
 
 
 int main (void){
