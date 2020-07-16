@@ -1,6 +1,6 @@
 
 
-//Proj_1C:  Target practice: Testing your reaction time		Press sw2 to shoot the LEDs down
+//Proj_1C1:  Target practice: Testing your reaction time		Press sw2 to shoot the LEDs down
 
 
 #include "Proj_1C1_header_file.h"
