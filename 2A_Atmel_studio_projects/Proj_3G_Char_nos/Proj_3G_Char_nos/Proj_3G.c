@@ -12,8 +12,8 @@
 
 #include "Proj_3G_header_file.h"
 
-char digit=1, op, mode;
-
+char digit=1;
+char  op, mode;																//Changed by ISRs but volatile keyword not required
 
 int main (void){
 
