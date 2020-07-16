@@ -7,7 +7,7 @@ The following project subroutines are introduced:
 
 2. I2C_Tx_8_byte_array()	Every time that a new numerical key press is made this subroutine is used to update the display.	It sends the "digits" string to the PCB_A device and the mini-OS displays it.
 
-3. I2C_displayToNum()	When the user has finished entering the number and pressed the return key	this subroutine requests that the mini-OS to convert the display to an actual number	and return it to the user program.
+3. I2C_displayToNum()	When the user has finished entering the number and pressed the return key	this subroutine requests that the mini-OS convert the display to an actual number	and return it to the user program.
 
 4. Num_to_PC()	This converts a number to a string of characters and sends them to the PC.
 A basic discussion of converting numbers to strings and strings to numbers is given in	https://epdf.tips/c-programming-for-microcontrollers.html. 
