@@ -28,8 +28,9 @@ void Clock_period(void){for(int p = 0; p<= 3; p++){asm("nop");}}
 
 
 signed int EE_top;											//Limits EEPROM space available for strings and data		
+//int EE_size;												///EEPROM size
 int text_start;												//First 5 addresses reserved to define string/data EEPROM partitions		
-unsigned char pcb_type = 0;											//1 for UNO and 2 for PCB_A
+unsigned char pcb_type = 0;									//1 for UNO and 2 for PCB_A
 	
 int  cmd_counter;											//Counts commands as they are downloaded from the PC
 int prog_counter;											//Counts commands burned to flash
@@ -49,9 +50,9 @@ int Hex_address;											//Address read from the hex file
 int HW_address;												//Hard ware address (usually tracks Hex_address)
 signed int page_address;									//Address of first location on a page of flash 
 volatile int write_address;									//Address on page_buffer to which next command will be written
-signed int FlashSZ;											//Amount of flash memory supplied on target device
-signed int PAmask;											//Used to obtain the flash page address from the hex address
-signed int PageSZ;											//Size of a page of flash
+//signed int FlashSZ;											//Amount of flash memory supplied on target device
+//signed int PAmask;											//Used to obtain the flash page address from the hex address
+//signed int PageSZ;											//Size of a page of flash
 
 signed char short_record;									//Record  containing less that eight 16 bit commands
 signed char page_offset;									//Address of first location on page buffer to be used
@@ -223,7 +224,7 @@ timer_T0_sub(T0_delay_20ms);
 
 
 /************************************************************************************************************************************/
-#define Atmel_powerup_and_target_detect \
+/*#define Atmel_powerup_and_target_detect \
 Atmel_powerup;\
 while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
 else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
@@ -234,6 +235,21 @@ switch(target_type_M) {\
 case 0x94: if(target_type == 0x06)target = 1681; if(target_type == 0x0B)target = 1682;break;\
 case 0x95: if(target_type == 0x14)target = 3281; if(target_type == 0x0F)target = 3282;break;}\
 if(!(target)){ sendString("\r\n"); sendString("Target_not_recognised"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);}
+*/
+
+
+#define Atmel_powerup_and_target_detect \
+Atmel_powerup;\
+while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
+else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
+\
+if ((Atmel_config(signature_bit_2_h, signature_bit_2_l)  != target_type_M) || \
+(Atmel_config(signature_bit_3_h, signature_bit_3_l) != target_type))\
+{sendString("Target_not_recognised"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);}
+
+
+
+
 
 
 
