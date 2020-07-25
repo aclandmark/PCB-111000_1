@@ -6,30 +6,26 @@
 
 int main (void){ 
 
-unsigned int target_type = 0,  target_type_M;               //Device signature bytes      
+//unsigned int target_type = 0,  target_type_M;               //Device signature bytes      
 unsigned char keypress;
 unsigned char OSCCAL_mini_OS;
 int error_mag;
 
 CLKPR = (1 << CLKPCE);
 CLKPR = (1 << CLKPS0);                                      //Convert 16MHx xtal to 8MHx clock
-setup_328_HW;                                               //see "Resources\ATMEGA_Programmer.h"
+setup_328_HW;                                                     //see "Resources\ATMEGA_Programmer.h"
 
 while(1){
 do{sendString("s  ");} 
-while((isCharavailable(255) == 0));                           //User prompt 
+while((isCharavailable(255) == 0));                               //User prompt 
 if(receiveChar() == 's')break;}
-Atmel_powerup_and_target_detect;                              //Leave target in programming mode                              
-sendString ("\r\n\r\nATMEGA");
+Atmel_powerup_and_target_detect;                                  //Leave target in programming mode                              
 
-switch (target){
-case 3281: sendString ("328"); break;
-case 3282: sendString ("328P");break;
-default: wdt_enable(WDTO_1S); while(1);break;}
+sendString ("\r\n\r\nATMEGA ");
+sendString(Device);
 
-PageSZ = 0x40; PAmask = 0x3FC0; FlashSZ=0x4000;                 //flash page size, gives address on page, flash size words
-EE_top = 0x400-0x10;                                            //Last 16 bytes reseerved for system use
-text_start = 0x5;                                               //First 5 bytes reserved for programmmer use
+EE_top = EE_size-0x3;                                             //Last 16 bytes reseerved for OSCCAL calibration
+text_start = 0x5;                                                 //First 5 bytes reserved for programmmer use
 
 sendString(" detected\r\nPress -p- to program flash, \
 -e- for EEPROM or -x- to escape.");
@@ -52,11 +48,10 @@ Exit_Programmer;break;
 case 'p': break;
 case 'x': Exit_Programmer;break;
 default: break;} 
-if ((op_code == 't') || (op_code == 'p')) break;} 
+if (op_code == 'p') break;} 
 
-if (op_code == 'p')sendString("\r\nSend hex file (or x to escape).\r\n");
-
-
+if (op_code == 'p')
+sendString("\r\nSend hex file (or x to escape).\r\n");
 
 (Atmel_config(Chip_erase_h, 0));
 
@@ -71,7 +66,6 @@ Program_Flash_Text();
 Verify_Flash_Text();}
 
 sendString (Version);
-
 
 newline();
 Reset_H;                                                            //Set target device running          
