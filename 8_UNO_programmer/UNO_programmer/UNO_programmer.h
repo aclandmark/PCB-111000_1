@@ -8,6 +8,7 @@
 
 
 #include "Resources_UNO_programmer\ATMEGA_Programmer.h"
+#include "Resources_UNO_programmer\Device_characteristics.h"
 #include "Resources_UNO_programmer\ATMEGA_Programmer_HW_subs.c"
 #include "Resources_UNO_programmer\Basic_IO_and_Timer_subs.c"
 #include "Resources_UNO_programmer\ASKII_subroutines.c"
