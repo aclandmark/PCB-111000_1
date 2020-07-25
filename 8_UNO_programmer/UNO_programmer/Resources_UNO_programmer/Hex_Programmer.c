@@ -195,8 +195,7 @@ if (phys_address == FlashSZ)break;}
 LEDs_off;
 newline(); 
 
-sendString("Hex_file_size:  ");
+sendString("\r\nHex_file_size:  ");
 sendHex(10,cmd_counter); sendString("  d'loaded:  "); 
 sendHex(10,prog_counter); sendString(" in:  "); 
-sendHex(10,read_ops); sendString(" out\r\n");
-newline();}
+sendHex(10,read_ops); sendString(" out\r\n");}
