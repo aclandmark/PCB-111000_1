@@ -82,7 +82,7 @@ phys_address = 0x37FF;
 
 sendString("\r\n");sendHex(16,phys_address);sendChar('\t');
  while ((high_char = Read_write_mem('H',phys_address, 0x0)) != 0xFF)
- {timer_T0_sub(T0_delay_2ms);
+ {timer_T0_sub(T0_delay_5ms);
  low_char = Read_write_mem('L',phys_address, 0x0);
 if(high_char)
 sendChar(high_char);              
@@ -92,7 +92,7 @@ sendChar(low_char);
 else {sendString("\r\n");sendHex(16,phys_address);sendChar('\t');}
 phys_address -= 1;}
 
-sendString("Hex ends at "); sendHex(16, read_ops);sendChar('\t');
+sendString("\r\nHex ends at "); sendHex(16, read_ops);sendChar('\t');
 
 }
   
