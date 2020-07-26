@@ -60,9 +60,15 @@ w_pointer = w_pointer & 0b01111111; }                             //Overwrites a
 
 
 void Program_Flash_Hex (void){
+char keypress;
 
-UCSR0B |= (1<<RXCIE0);                                                  //Activate UART interrupt
-sei();                                                                  //Set global interrupt
+while ((keypress = waitforkeypress()) != ':')                     //Ignore characters before the first ':'
+{if (keypress == 'x'){SW_reset;}}                          //X pressed to escape
+
+Initialise_variables_for_programming_flash;
+
+UCSR0B |= (1<<RXCIE0); sei();                                     //Set UART Rx interrupt
+(Atmel_config(Chip_erase_h, 0));                                  //Erase chip after first char of hex file has been received
 
 
 new_record();                                                 //Start reading first record which is being downloaded to array "store" 
