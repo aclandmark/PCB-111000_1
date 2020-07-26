@@ -67,7 +67,7 @@ sendString (Version);
 
 newline();
            
-SW_reset;       //TO BE REMOVED
+//SW_reset;       //TO BE REMOVED
 
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                        //Dissable UART
 Reset_H;                                                          //Set target device running 
