@@ -214,7 +214,7 @@ else sendString("  Default calibration\r\n");}
 
 else sendString ("\r\nPCB_A programmed\r\n");
 
-Exit_Programmer;
+SW_reset;
 
 }
 
