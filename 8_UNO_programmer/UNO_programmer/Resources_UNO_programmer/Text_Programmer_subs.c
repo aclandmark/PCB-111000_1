@@ -24,13 +24,13 @@ Load_page('H', write_address, store[r_pointer] >> 8);
 store[r_pointer] = 0;                                                     //clear the contents of the location in array store
 inc_r_pointer;                                                            //restore the value of "r_pointer" to that of "w_pointer"
 if (write_address == 0){
-sendChar('H');
+sendChar('*');
 write_page_SUB(address_in_flash);
 write_address = 0x40;}                                                    //Restore address_in_flash
 if(!(endoftext)) break;}                                                  //Break when two '\0' chars have been appended to text stored in the array
 address_in_flash -= write_address;
 write_page_SUB(address_in_flash);
-sendChar('J');
+sendChar('*');
 sendHex(10,address_in_flash);
 cli();  
 UCSR0B &= (~(1<<RXCIE0));}
