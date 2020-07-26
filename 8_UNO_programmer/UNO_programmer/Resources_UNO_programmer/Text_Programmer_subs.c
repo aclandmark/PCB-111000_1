@@ -12,7 +12,7 @@ sei();                                                                  //Set gl
 
 Timer_T2_sub_with_interrupt(7,0);                                       //Start Timer2 with interrupt
 
-address_in_flash = 0x3800;//0x4000; //0                                   //First character will be storrred at 0x6FFF not 0x6FFE
+address_in_flash = FlashSZ;//0x4000; //0                                   //First character will be storrred at 0x6FFF not 0x6FFE
 write_address = 0x40;                                                     //Address on page buffer
 while (1){
 while (r_pointer == w_pointer);                                           //wait for w_pointer to be incremented
@@ -78,7 +78,7 @@ int line_no;                                                                //Re
 int phys_address;                                                          //Address in flash memory
 signed int prog_counter_mem;                                                //Initialised with size of .hex file used for programming
 
-phys_address = 0x37FF;   
+phys_address = FlashSZ - 1;   
 
 sendString("\r\n");sendHex(16,phys_address);sendChar('\t');
  while ((high_char = Read_write_mem('H',phys_address, 0x0)) != 0xFF)
