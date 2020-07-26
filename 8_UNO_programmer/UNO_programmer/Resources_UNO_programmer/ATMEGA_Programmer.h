@@ -283,24 +283,17 @@ PORTD |= ((1 << PD2)|(1 << PD3)|(1 << PD4)|(1 << PD5)|(1 << PD6)|(1 << PD7));
 ASSR = (1 << AS2);	
 
 /************************************************************************************************************************************/
-#define Exit_Programmer \
-UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));\
-if(pcb_type == 1)\
-Read_write_mem('I', 0x3FC,0x80);\
-if(pcb_type == 2)\
-{Read_write_mem('I', 0x3F9, 0);\
-Read_write_mem('I', 0x3F4, 0);\
-Read_write_mem('I', 0x3F1, 0xFF);}\
-Reset_H;\
-while(1);
+
 
 /**************************************************************************************************************************************/
 #define Prog_config_bytes \
-Atmel_config(write_extended_fuse_bits_h,0xFD );\
-Atmel_config(write_fuse_bits_H_h,0xD0 );\
-Atmel_config(write_fuse_bits_h,0xE2 );\
-Atmel_config(write_lock_bits_h,0xFF );\
-\
+Atmel_config(write_extended_fuse_bits_h,Fuse_Ex );\
+Atmel_config(write_fuse_bits_H_h,Fuse_H );\
+Atmel_config(write_fuse_bits_h,Fuse_L );\
+Atmel_config(write_lock_bits_h,Lock );\
+
+
+#define Verify_config_bytes \
 sendString("Config bytes: Fuses extended,\
 high, low and lock\t");\
 sendHex(16, Atmel_config(read_extended_fuse_bits_h, 0));\
