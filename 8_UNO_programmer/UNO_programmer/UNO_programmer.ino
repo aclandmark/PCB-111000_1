@@ -1,6 +1,7 @@
 
 #include "UNO_programmer.h"
 
+#define Version "UNO_programmer_V1.1\r\n" 
 
 
 
