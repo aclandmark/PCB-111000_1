@@ -6,14 +6,10 @@
 
 int main (void){ 
 
-//unsigned int target_type = 0,  target_type_M;               //Device signature bytes      
-unsigned char keypress;
-unsigned char OSCCAL_mini_OS;
-int error_mag;
-
 CLKPR = (1 << CLKPCE);
-CLKPR = (1 << CLKPS0);                                      //Convert 16MHx xtal to 8MHx clock
+CLKPR = (1 << CLKPS0);                                            //Convert 16MHx xtal to 8MHx clock
 setup_328_HW;                                                     //see "Resources\ATMEGA_Programmer.h"
+Reset_L;                                                          //Put target in reset state
 
 while(1){
 do{sendString("s  ");} 
@@ -24,7 +20,7 @@ Atmel_powerup_and_target_detect;                                  //Leave target
 sendString ("\r\n\r\nATMEGA ");
 sendString(Device);
 
-EE_top = EE_size-0x3;                                             //Last 16 bytes reseerved for OSCCAL calibration
+EE_top = EE_size-0x3;                                             //Last 3 bytes reserved for OSCCAL calibration
 text_start = 0x5;                                                 //First 5 bytes reserved for programmmer use
 
 sendString(" detected\r\nPress -p- to program flash, \
@@ -44,20 +40,21 @@ sendString("10 sec wait");
 for (int m = 0; m < EE_top; m++)  
 {Read_write_mem('I', m, 0xFF);}
 sendString(" Done\r\n");}
-Exit_Programmer;break;
+SW_reset;break;
 case 'p': break;
-case 'x': Exit_Programmer;break;
+case 'x': SW_reset; break;
 default: break;} 
-if (op_code == 'p') break;} 
+if ((op_code == 'p')||(op_code == 'P')) break;} 
 
-if (op_code == 'p')
+
 sendString("\r\nSend hex file (or x to escape).\r\n");
 
 (Atmel_config(Chip_erase_h, 0));
 
 Program_Flash_Hex();
 Verify_Flash_Hex();
-Prog_config_bytes;
+if (op_code == 'P'){Prog_config_bytes;}
+Verify_config_bytes;
 sendString("\r\nTest_file? y or n\r\n");
 if (waitforkeypress() == 'y')
 {op_code = 't';
@@ -68,11 +65,12 @@ Verify_Flash_Text();}
 sendString (Version);
 
 newline();
-Reset_H;                                                            //Set target device running          
-SW_reset;
+           
+SW_reset;       //TO BE REMOVED
 
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                        //Dissable UART
-while(1);
+Reset_H;                                                          //Set target device running 
+while(1);                                                         //Wait for UNO reset
 return 1;}
 
 
@@ -80,7 +78,8 @@ return 1;}
 ISR(USART_RX_vect){
 switch (op_code){
 case 't': upload_text();break;
-case 'p': upload_hex(); break;}}
+case 'p':
+case 'P': upload_hex(); break;}}
 
 
 
