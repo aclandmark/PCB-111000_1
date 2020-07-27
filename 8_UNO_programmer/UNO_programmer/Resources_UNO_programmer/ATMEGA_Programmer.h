@@ -145,12 +145,12 @@ counter = 1;
 
 #define inc_w_pointer \
 w_pointer++;\
-w_pointer = w_pointer & 0x7F;
+w_pointer = w_pointer & 0x1F;
 
 
 #define inc_r_pointer \
 r_pointer++;\
-r_pointer = r_pointer & 0b01111111;
+r_pointer = r_pointer & 0b00011111;
 
 
 
