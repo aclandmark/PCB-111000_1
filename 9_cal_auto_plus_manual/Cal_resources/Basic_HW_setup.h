@@ -1,0 +1,78 @@
+long buffer[45];
+volatile int EA_counter, EA_buff_ptr;
+volatile long error_SUM;
+
+
+char OSCCAL_WV;
+char OSCCAL_DV;
+volatile char cal_mode; 			//Defines number of averages used when measuring osccal_error	
+volatile char T1_OVF;
+
+
+#define timer_T0_sub Timer_T0_sub
+#define delay_2ms 4,195
+#define delay_20ms 5,100
+
+#define T0_delay_5ms 5,220
+#define T0_delay_10ms 5,178
+#define T1_delay_100ms 5,0xFCF2
+#define T1_delay_1sec 5,0xE17D
+#define delay_2us 1,254
+#define delay_10ms 5,183
+
+/*****************************************************************************/
+#include <avr/io.h>
+#include <avr/wdt.h>
+#include <avr/interrupt.h>
+#include <avr/eeprom.h>
+#include <stdint.h>
+
+
+/*****************************************************************************/
+#define SW_reset; {wdt_enable(WDTO_30MS);while(1);}
+
+
+/*****************************************************************************/
+
+
+#define setup_HW_special;\
+setup_watchdog;\
+USART_init(0,25);\
+nop_delay(10);\
+ADMUX |= (1 << REFS0);\
+Timer_T0_10mS_delay_x_m(1);\
+initialise_IO;
+
+
+
+#define setup_watchdog;\
+wdr();\
+MCUSR &= ~(1<<WDRF);\
+WDTCSR |= (1 <<WDCE) | (1<< WDE);\
+WDTCSR = 0;
+
+#define wdr()  __asm__ __volatile__("wdr")
+
+#define wd_timer_off;\
+wdr();\
+MCUSR &= (~(1 << WDRF));\
+WDTCSR |= (1<<WDCE) | (1<<WDE);\
+WDTCSR = 0x00;
+
+#define set_up_switched_inputs;\
+MCUCR &= (~(1 << PUD));\
+DDRD &= (~((1 << PD2)|(1 << PD7)));\
+PORTD |= ((1 << PD2) | (1 << PD7));\
+DDRB &= (~(1 << PB6));\
+PORTB |= (1 << PB6);
+
+
+/*****************************************************************************/
+#define initialise_IO;\
+MCUCR &= (~(1 << PUD));\
+DDRB = 0;\
+DDRC = 0;\
+DDRD = 0;\
+PORTB = 0xFF;\
+PORTC = 0xFF;\
+PORTD = 0xFF;\
