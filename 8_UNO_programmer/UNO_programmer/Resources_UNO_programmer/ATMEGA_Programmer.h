@@ -8,7 +8,7 @@ void Verify_Flash_Text(void);
 void upload_hex(void);
 void upload_text(void);
 
-
+void set_up_target_parameters(void);
 
 
 
@@ -27,8 +27,20 @@ void Clock_period(void){for(int p = 0; p<= 3; p++){asm("nop");}}
 #define T1_delay_1sec 5,0xE17B
 
 
-signed int EE_top;											//Limits EEPROM space available for strings and data		
-//int EE_size;												///EEPROM size
+char Suffix;													//Either P or space (i.e. 328P or 328 ).
+signed int EE_top;												//Limits EEPROM space available for strings and data		
+
+
+signed int PageSZ;												//Size of a page of flash
+signed int PAmask;												//Used to obtain the flash page address from the hex address
+signed int FlashSZ;												//Amount of flash memory supplied on target device
+int EE_size;													///EEPROM size
+unsigned char target_type_M, target_type, target_type_P;
+unsigned char Fuse_Ex, Fuse_H, Fuse_L, Lock;
+
+
+
+
 int text_start;												//First 5 addresses reserved to define string/data EEPROM partitions		
 unsigned char pcb_type = 0;									//1 for UNO and 2 for PCB_A
 	
@@ -50,9 +62,6 @@ int Hex_address;											//Address read from the hex file
 int HW_address;												//Hard ware address (usually tracks Hex_address)
 signed int page_address;									//Address of first location on a page of flash 
 volatile int write_address;									//Address on page_buffer to which next command will be written
-//signed int FlashSZ;											//Amount of flash memory supplied on target device
-//signed int PAmask;											//Used to obtain the flash page address from the hex address
-//signed int PageSZ;											//Size of a page of flash
 
 signed char short_record;									//Record  containing less that eight 16 bit commands
 signed char page_offset;									//Address of first location on page buffer to be used
@@ -223,32 +232,16 @@ timer_T0_sub(T0_delay_20ms);
 
 
 /************************************************************************************************************************************/
-/*#define Atmel_powerup_and_target_detect \
-Atmel_powerup;\
-while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
-else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
-target_type_M = Atmel_config(signature_bit_2_h, signature_bit_2_l);\
-target_type = Atmel_config(signature_bit_3_h, signature_bit_3_l);\
-target = 0;\
-switch(target_type_M) {\
-case 0x94: if(target_type == 0x06)target = 1681; if(target_type == 0x0B)target = 1682;break;\
-case 0x95: if(target_type == 0x14)target = 3281; if(target_type == 0x0F)target = 3282;break;}\
-if(!(target)){ sendString("\r\n"); sendString("Target_not_recognised"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);}
-*/
-
-
 #define Atmel_powerup_and_target_detect \
 Atmel_powerup;\
 while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
 else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
 \
-if ((Atmel_config(signature_bit_2_h, signature_bit_2_l)  != target_type_M) || \
-(Atmel_config(signature_bit_3_h, signature_bit_3_l) != target_type))\
-{sendString("Target_not_recognised"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);}
-
-
-
-
+Suffix = '?';\
+if (Atmel_config(signature_bit_2_h, signature_bit_2_l)  == target_type_M)\
+{if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == target_type)Suffix = ' ';\
+if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == target_type_P)Suffix = 'P';}\
+if(Suffix == '?'){sendString("Target_not_recognised"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);}
 
 
 
