@@ -35,7 +35,7 @@ volatile char T1_OVF;
 /*****************************************************************************/
 
 
-#define setup_HW_special;\
+#define setup_HW_basic;\
 setup_watchdog;\
 USART_init(0,25);\
 nop_delay(10);\
@@ -53,18 +53,7 @@ WDTCSR = 0;
 
 #define wdr()  __asm__ __volatile__("wdr")
 
-#define wd_timer_off;\
-wdr();\
-MCUSR &= (~(1 << WDRF));\
-WDTCSR |= (1<<WDCE) | (1<<WDE);\
-WDTCSR = 0x00;
 
-#define set_up_switched_inputs;\
-MCUCR &= (~(1 << PUD));\
-DDRD &= (~((1 << PD2)|(1 << PD7)));\
-PORTD |= ((1 << PD2) | (1 << PD7));\
-DDRB &= (~(1 << PB6));\
-PORTB |= (1 << PB6);
 
 
 /*****************************************************************************/
