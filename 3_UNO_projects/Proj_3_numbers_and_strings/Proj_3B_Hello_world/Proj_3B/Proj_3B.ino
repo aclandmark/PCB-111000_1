@@ -46,7 +46,7 @@ const char message_4[] = "Downloading them to an ATMEGA device";  //The name "me
 
 setup_UNO;
 User_prompt;
-
+String_to_PC(message_1);                                           //New line
 message_ptr[0] = message_1;                                       //Saving the pointers may simplify the process                
 message_ptr[1] = message_2;                                       //of printing the messages out.
 message_ptr[2] = message_3;                                       //It may also make better use of program memory space
