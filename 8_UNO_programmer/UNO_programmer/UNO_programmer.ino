@@ -1,15 +1,15 @@
 
 #include "UNO_programmer.h"
 
-#define Version "UNO_programmer_V1.1\r\n" 
-
-
+#define Version "UNO_programmer_V1.2\r\n" 
 
 int main (void){ 
 
 CLKPR = (1 << CLKPCE);
 CLKPR = (1 << CLKPS0);                                            //Convert 16MHx xtal to 8MHx clock
 setup_328_HW;                                                     //see "Resources\ATMEGA_Programmer.h"
+set_up_target_parameters();
+
 Reset_L;                                                          //Put target in reset state
 
 while(1){
@@ -20,6 +20,7 @@ Atmel_powerup_and_target_detect;                                  //Leave target
 
 sendString ("\r\n\r\nATMEGA ");
 sendString(Device);
+sendChar(Suffix);
 
 EE_top = EE_size-0x3;                                             //Last 3 bytes reserved for OSCCAL calibration
 text_start = 0x5;                                                 //First 5 bytes reserved for programmmer use
@@ -66,13 +67,14 @@ Verify_Flash_Text();}
 sendString (Version);
 
 newline();
-           
-//SW_reset;       //TO BE REMOVED
-
+ 
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                        //Dissable UART
 Reset_H;                                                          //Set target device running 
 while(1);                                                         //Wait for UNO reset
 return 1;}
+
+
+
 
 
 /***************************************************************************************************************************************************/
@@ -83,20 +85,9 @@ case 'p':
 case 'P': upload_hex(); break;}}
 
 
-
-/***************************************************************************************************************************************************/
 /***************************************************************************************************************************************************/
 ISR(TIMER2_OVF_vect) {                                                //Timer0 times out and halts at the end of the text file
 if(text_started == 3)                                                 //Ignore timeouts occurring before start of file download
   {endoftext -= 1; TCCR2B = 0; TIMSK2 &= (~(1 << TOIE2));             //Shut timer down
   inc_w_pointer; store[w_pointer] = 0;                                //Append two '\0' chars to the end of the text
   inc_w_pointer; store[w_pointer] = 0; }}
-
-
-
-/***************************************************************************************************************************************************/
-
-
-
-
-/***************************************************************************************************************************************************/
