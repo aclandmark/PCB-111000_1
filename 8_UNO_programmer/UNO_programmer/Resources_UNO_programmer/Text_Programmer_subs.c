@@ -82,7 +82,7 @@ phys_address = FlashSZ - 1;
 
 sendString("\r\n");sendHex(16,phys_address);sendChar('\t');
  while ((high_char = Read_write_mem('H',phys_address, 0x0)) != 0xFF)
- {timer_T0_sub(T0_delay_5ms);
+ {timer_T0_sub(T0_delay_10ms);
  low_char = Read_write_mem('L',phys_address, 0x0);
 if(high_char)
 sendChar(high_char);              
