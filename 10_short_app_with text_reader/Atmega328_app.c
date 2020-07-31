@@ -5,9 +5,12 @@
 
 #include "Atmega328_app.h"
 char Char_from_flash(int);
+void Determine_device_type(void);
+
 
 int char_counter;
-
+int FlashSZ;
+int EEP;
 
 char string_counter(int);
 void print_string_num(int, int);
@@ -20,9 +23,13 @@ char keypress, Num_strings;															//The number of strings written to fla
 int  start_address; 																//Address in flash of first character in a string,
 int  text_num;																		//The number of the string to be printed out
 
-
-
 setup_HW;
+Initiase_device_labels;
+Determine_device_type();
+
+
+
+
 
 char_counter = 0;																	//counts the number of characters in the text file (excludes \r & \n)
 cal_device;																			//checks cal status and adopts user cal bytes if present (Optional)
@@ -35,7 +42,7 @@ if (keypress == 'w') break;															//press "w" to continue with program e
 if(keypress == 's') {wdt_enable(WDTO_60MS); while(1);}}
 
 newline(); 
-start_address = 0x7FFF;																//start adddress of text
+start_address = FlashSZ - 1;														//start adddress of text
 Num_strings = string_counter(start_address);										//Count the number of strings
 sendString("Total numbers of strings & characters are  ");
 Num_to_PC(10,Num_strings); sendChar('\t');
@@ -118,3 +125,22 @@ asm volatile ("pop r31");
 asm volatile ("pop r0");
 
 return Flash_readout;}
+
+
+
+
+
+void Determine_device_type(void){
+
+switch(SIGNATURE_1){
+
+case 0x95: 
+Device = 0;
+EEP = 0x400;break;
+
+case 0x94: 
+Device = 1;
+EEP = 0x200;
+FlashSZ =0x4000;break;
+}
+}
