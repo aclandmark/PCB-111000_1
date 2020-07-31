@@ -53,7 +53,11 @@ WDTCSR = 0;
 
 #define wdr()  __asm__ __volatile__("wdr")
 
-
+#define Initiase_device_labels;\
+Device_ptr[0] = Device_95;\
+Device_ptr[1] = Device_94;\
+Device_ptr[2] = Device_93;\
+Device_ptr[3] = Device_92; 
 
 
 /*****************************************************************************/
