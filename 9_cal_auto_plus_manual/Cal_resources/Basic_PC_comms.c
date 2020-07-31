@@ -5,12 +5,13 @@ char receiveChar(void);
 char isCharavailable(char);
 char wait_for_return_key(void);
 void sendChar(char);
-void sendString(char*);
+void sendString(const char*);
 void newline(void);
 void sendLongNum(char, long);
 void SBtoAL(char*, long, char);
 void sendNumericString(char*);
 char decimal_digit (char);
+char decimal_digit_or_x (char);
 char UC_from_KBD(void);
 
 
@@ -57,7 +58,7 @@ UDR0 = data;}
 
 
 /*********************************************************************/
-void sendString(char s[]){
+void sendString(const char s[]){
 int i = 0;
 while(i < 200){
 if(s[i] == '\0') break;
@@ -124,6 +125,13 @@ else return 1;}
 
 
 
+/*********************************************************************/
+char decimal_digit_or_x (char data){
+if (((data <= '9') && (data >= '0')) || (data == 'x') )return 1;
+else return 0;}
+
+
+
 
 /*********************************************************************/
 char UC_from_KBD(void){
@@ -132,7 +140,9 @@ long number;
 
 do
 {keypress =  waitforkeypress();} 
-while (!(decimal_digit(keypress)));
+while (!(decimal_digit_or_x(keypress)));
+
+if (keypress == 'x')return 'x';
 
 newline(); sendChar(keypress);
 keypress -= '0';
