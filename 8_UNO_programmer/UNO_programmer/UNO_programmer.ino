@@ -64,6 +64,8 @@ sendString("Send file.");
 Program_Flash_Text();
 Verify_Flash_Text();}
 
+Read_write_mem('I', (EE_size - 4), target_type_M);                //Program target EEPROM with its type (i.e.168)  
+
 sendString (Version);
 
 newline();
