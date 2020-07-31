@@ -40,6 +40,14 @@ ADMUX |= (1 << REFS0);\
 USART_init(0,16);
 
 
+#define Initiase_device_labels;\
+Device_ptr[0] = Device_95;\
+Device_ptr[1] = Device_94;\
+Device_ptr[2] = Device_93;\
+Device_ptr[3] = Device_92; 
+
+
+
 /**********************************************************************************/
 #define config_WDT;\
 wdr();\
@@ -50,10 +58,10 @@ WDTCSR = 0;
 
 /**********************************************************************************/
 #define cal_device;\
-eeprom_write_byte((uint8_t*)0x3FD, OSCCAL);\
-if ((eeprom_read_byte((uint8_t*)0x3FE) > 0x0F)\
-&&  (eeprom_read_byte((uint8_t*)0x3FE) < 0xF0) && (eeprom_read_byte((uint8_t*)0x3FE)\
-== eeprom_read_byte((uint8_t*)0x3FF))) OSCCAL = eeprom_read_byte((uint8_t*)0x3FE);
+eeprom_write_byte((uint8_t*)(EEP - 3), OSCCAL);\
+if ((eeprom_read_byte((uint8_t*)(EEP - 2)) > 0x0F)\
+&&  (eeprom_read_byte((uint8_t*)(EEP - 2)) < 0xF0) && (eeprom_read_byte((uint8_t*)(EEP - 2))\
+== eeprom_read_byte((uint8_t*)(EEP - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EEP - 2));
 
 
 /**********************************************************************************/
