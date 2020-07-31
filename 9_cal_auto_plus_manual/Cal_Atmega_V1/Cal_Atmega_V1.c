@@ -6,8 +6,12 @@ long compute_error(char, char, char);
 void Minimise_error(int, char*, char*, long*, char*, char);
 void Auto_cal (void);
 char Manual_cal(void);
+char read_sig_byte(void);
+void Determine_device_type(void);
+void save_cal_values(void);
 
-
+char OSCCAL_UV;
+int EEP;
 
 #include <avr/io.h>
 #include <avr/wdt.h>
@@ -15,108 +19,34 @@ char Manual_cal(void);
 #include <avr/eeprom.h>
 #include <stdint.h>
 
-
 #include "Cal_Atmega_V1_header_file.h"
-
-
-
 
 
 int main (void)
 {
 setup_HW_basic;
+Initiase_device_labels;
+
 OSCCAL_DV = OSCCAL;
 ASSR = (1 << AS2); 												//initialise T2 for crystal
 
+Determine_device_type();
 
-Auto_cal ();Timer_T1_sub(T1_delay_1sec);
-
-
-while(1){
-if (Manual_cal() != 'x')break;}
-
-sendString("\r\nAll done\r\n");
-return 1;}
-
-
-
-
-
-
-
-/**********************************************************************************************************************/
-char Manual_cal(void){
-long cal_error;
-char OSCCAL_UV, osccal_MIN;		
-long percentage_error;
-
-UCSR0B &= (~(1 << RXEN0));											//avoid unwanted keypresses
-
-sendString("\r\nManual cal: please wait 5 seconds\r\n");
+Auto_cal ();
 Timer_T0_sub(T0_delay_5ms);
+sendString("\r\nPress 'x' to finnish or AOK for manal cal\r\n");
+if (waitforkeypress() != 'x')
 
+{while(1){
+if (Manual_cal() != 'x')break;}}
 
-sei();
+else {OSCCAL_UV = OSCCAL_WV;
+save_cal_values();}
 
-EA_buff_ptr = 0;
-cal_mode = 5;		
-Get_ready_to_calibrate;
-OSCCAL -=20;
-osccal_MIN = OSCCAL;												//Compute cal error for 41 values of OSCCAL
-for(int m = 0; m <= 40; m++)
-{cal_error = compute_error(1,cal_mode,1);OSCCAL++;}
-OSCCAL = OSCCAL_WV;
-close_calibration;
+sendString("\r\nAll done: AK to repeat.\r\n");
+waitforkeypress();
 
-newline();
-sendString("OSCCAL\t Error\r\n");
-
-
-for(int m = 0; m <= 40; m++)										//Print table of values
-{sendLongNum(10,osccal_MIN); osccal_MIN++;
-sendChar('\t');sendLongNum(10,buffer[m]); 
-sendChar('\t');
-percentage_error = buffer[m];
-sendLongNum(10,percentage_error*100/62500);sendChar('%'); 
-newline();}
-
-sendString("\r\nEnter new user cal value");	
-UCSR0B |= (1 << RXEN0);
-OSCCAL_UV = UC_from_KBD();
-
-	
-/*********************************************/
-Get_ready_to_calibrate;												//Test value of OSCCAL entered by user
-if(OSCCAL_UV == 0xFF)OSCCAL = OSCCAL_DV;							//If 0xFF reinstate working value
-else OSCCAL = OSCCAL_UV;											//OSCCAL test value
-calibrate_without_sign_plus_warm_up_time;								
-close_calibration;
-
-cli();
-
-if(cal_error > 1750)												//Error resulting from User OSCCAL exceeds 1750
-{OSCCAL = OSCCAL_WV;												//Reinstate default value
-OSCCAL_UV = OSCCAL;
-sendString("\tChange rejected: error too great");}			
-
-
-/*************************************************/
-eeprom_write_byte((uint8_t*)0x3FE, OSCCAL_UV); 					//save user OSCCAL to EEPROM
-eeprom_write_byte((uint8_t*)0x3FF, OSCCAL_UV); 
-
-sendString("\r\nValues saved to EEPROM  ");	
-sendLongNum(10,eeprom_read_byte((uint8_t*)0x3FE)); sendChar('\t');
-sendLongNum(10,eeprom_read_byte((uint8_t*)0x3FF)); sendString("\tUser value\r\n\t\t\t");
-sendLongNum(10,eeprom_read_byte((uint8_t*)0x3FD)); sendString("\t\tDefault value\r\n");
-
-sendString("Press x to repeat or AOK to terminate");
-return waitforkeypress();}
-
-
-
-
-
-
+SW_reset;}
 
 
 
@@ -130,7 +60,10 @@ int limit;
 
 UCSR0B &= (~(1 << RXEN0));												//avoid unwanted keypresses
 
-sendString("Auto cal running\r\n");
+sendString("Auto cal running on Atmega ");
+sendString(Device_ptr[Device]);
+newline();
+
 
 Timer_T1_sub(T1_delay_1sec);											//Crystal warm up time
 
@@ -166,6 +99,101 @@ sendString("\r\nNew OSCCAL value ");
 sendLongNum(10,OSCCAL_WV); 
 UCSR0B |= (1 << RXEN0);
 cli();}
+
+
+
+
+
+/**********************************************************************************************************************/
+char Manual_cal(void){
+long cal_error;
+char osccal_MIN;
+char keypress;		
+long percentage_error;
+
+UCSR0B &= (~(1 << RXEN0));											//avoid unwanted keypresses
+
+sendString("\r\nManual cal: please wait 5 seconds\r\n");
+Timer_T0_sub(T0_delay_5ms);
+
+
+sei();
+
+EA_buff_ptr = 0;
+cal_mode = 5;		
+Get_ready_to_calibrate;
+OSCCAL -=20;
+osccal_MIN = OSCCAL;												//Compute cal error for 41 values of OSCCAL
+for(int m = 0; m <= 40; m++)
+{cal_error = compute_error(1,cal_mode,1);OSCCAL++;}
+OSCCAL = OSCCAL_WV;
+close_calibration;
+
+newline();
+sendString("OSCCAL\t Error\r\n");
+
+
+for(int m = 0; m <= 40; m++)										//Print table of values
+{sendLongNum(10,osccal_MIN); osccal_MIN++;
+sendChar('\t');sendLongNum(10,buffer[m]); 
+sendChar('\t');
+percentage_error = buffer[m];
+sendLongNum(10,percentage_error*100/62500);sendChar('%'); 
+newline();
+Timer_T0_sub(T0_delay_10ms);}
+
+Timer_T0_10mS_delay_x_m(10);
+sendString("\r\nEnter new user cal value or x to escape");	
+
+
+UCSR0B |= (1 << RXEN0);
+
+if ((OSCCAL_UV = UC_from_KBD()) == 'x')
+{OSCCAL_UV = OSCCAL_WV;}
+
+	
+/*********************************************/
+else
+{Get_ready_to_calibrate;												//Test value of OSCCAL entered by user
+if(OSCCAL_UV == 0xFF)OSCCAL = OSCCAL_DV;							//If 0xFF reinstate working value
+else OSCCAL = OSCCAL_UV;											//OSCCAL test value
+calibrate_without_sign_plus_warm_up_time;								
+close_calibration;
+
+if(cal_error > 1750)												//Error resulting from User OSCCAL exceeds 1750
+{OSCCAL = OSCCAL_WV;												//Reinstate default value
+OSCCAL_UV = OSCCAL;
+sendString("\tChange rejected: error too great");}	}		
+
+
+cli();
+save_cal_values();
+sendString("Press x to repeat or AOK to terminate");
+return (keypress = waitforkeypress());}
+
+
+/*************************************************/
+
+void save_cal_values(void){
+
+eeprom_write_byte((uint8_t*)(EEP-1), OSCCAL_UV); 					//save user OSCCAL to EEPROM
+eeprom_write_byte((uint8_t*)(EEP-2), OSCCAL_UV); 
+
+sendString("\r\nValues saved to EEPROM  ");	
+sendLongNum(10,eeprom_read_byte((uint8_t*)EEP-1)); sendChar('\t');
+sendLongNum(10,eeprom_read_byte((uint8_t*)EEP-2)); sendString("\tUser value\r\n\t\t\t");
+sendLongNum(10,eeprom_read_byte((uint8_t*)EEP-3)); sendString("\t\tDefault value\r\n");}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -250,11 +278,15 @@ ISR(TIMER1_OVF_vect) {T1_OVF += 1;}
 
 
 
+void Determine_device_type(void){
+
+switch(SIGNATURE_1){
+
+case 0x95: 
+Device = 0;
+EEP = 0x400;break;
 
 
 
-
-
-
-
-
+}
+}
