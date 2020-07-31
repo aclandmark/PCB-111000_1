@@ -24,3 +24,12 @@ cal_error = compute_error(0,cal_mode,0);\
 cal_error = compute_error(0,cal_mode,0);\
 cal_error = compute_error(0,cal_mode,0);
 
+
+
+const char * Device_95 = "328/P";
+const char * Device_94 = "168/P";
+const char * Device_93 = "88/P";
+const char * Device_92 = "48/P";
+
+const char * Device_ptr[4];
+int Device;
