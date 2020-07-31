@@ -140,7 +140,7 @@ sendChar('\t');
 percentage_error = buffer[m];
 sendLongNum(10,percentage_error*100/62500);sendChar('%'); 
 newline();
-Timer_T0_sub(T0_delay_10ms);}
+Timer_T0_sub(5,0);}
 
 Timer_T0_10mS_delay_x_m(10);
 sendString("\r\nEnter new user cal value or x to escape");	
@@ -183,16 +183,6 @@ sendString("\r\nValues saved to EEPROM  ");
 sendLongNum(10,eeprom_read_byte((uint8_t*)EEP-1)); sendChar('\t');
 sendLongNum(10,eeprom_read_byte((uint8_t*)EEP-2)); sendString("\tUser value\r\n\t\t\t");
 sendLongNum(10,eeprom_read_byte((uint8_t*)EEP-3)); sendString("\t\tDefault value\r\n");}
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -286,7 +276,9 @@ case 0x95:
 Device = 0;
 EEP = 0x400;break;
 
-
+case 0x94: 
+Device = 1;
+EEP = 0x200;break;
 
 }
 }
