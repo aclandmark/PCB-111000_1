@@ -92,7 +92,8 @@ sendChar(low_char);
 else {sendString("\r\n");sendHex(16,phys_address);sendChar('\t');}
 phys_address -= 1;}
 
-sendString("\r\nHex ends at "); sendHex(16, read_ops);sendChar('\t');
+if((op_code == 'p') || (op_code == 'P'))
+{sendString("\r\nHex ends at "); sendHex(16, read_ops);sendChar('\t');}
 
 }
   
