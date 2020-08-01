@@ -52,12 +52,12 @@ void Upload_data_2(int, int);
 char next_char_from_PC(void);
 
 
-unsigned char RBL = 255;
+unsigned char RBL = 255;	
 
 
 /********************************************************************************************************************************************/
 void Prog_EEPROM(void){	
-unsigned char  EEPROM_buffer[265];				
+unsigned char  EEPROM_buffer[256];	///265		
 int EEP_pointer = 0,   file_pointer = 0,  array_pointer = 0,  data_counter = 0;
 char key_press, DL_flag = 0, DL_status, op_code_1, op_code_2;	    
 char reservation[4];
@@ -117,7 +117,14 @@ else																	//Print out start address of the Space reserved for the app
 (Read_write_mem('O', 0x4, 0))) < 0x200)
 {sendString("\r\nApp: Start addr's  ");
 sendHex(16,(((Read_write_mem('O', 0x3, 0)) <<8 ) +\
-(Read_write_mem('O', 0x4, 0))));newline();}}							//Note: as a result of the cal bytes some space is always reserved 
+(Read_write_mem('O', 0x4, 0))));
+
+
+if ((((Read_write_mem('O', 0x3, 0)) <<8 ) +\
+(Read_write_mem('O', 0x4, 0))) == EE_size - 3)sendString("No space reserved.");
+
+
+newline();}}							//Note: as a result of the cal bytes some space is always reserved 
 break;		
 
 
@@ -305,6 +312,7 @@ if (*ptr_DL_flag == 1)													//If EEPROM buffer is full: Text download is 
 		{*ptr_DL_flag = 3; 												//Set DL_flag to 3.																	
 		Read_write_mem('I', (EE_top-1), '\0'); 						//Terminate EEPROM in '\0'
 		*ptr_EEP_pointer = EE_top; 										//Set EEP_pointer to EEPROM 
+		sendString("\r\nEEPROM is full!");//////////////////////////////////////////////////////////////
 		return 1;}														//Return setting the "DL_status" to 1
 
 	(*ptr_EEP_pointer) += n-1; 										//Set "EEP_pointer" to next available address in the EEPROM
