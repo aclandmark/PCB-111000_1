@@ -51,7 +51,7 @@ volatile int counter;										//Counts characters in a record as they are downl
 volatile int char_count;									//The number of askii character in a single record
 volatile unsigned char Count_down;							//Counts commands as record is programmed
 volatile int   tempInt1, tempInt2;							//Used to assemble commands and addresses as the are downloaded
-int store[130];												//Used to store commands and address ready for the programmer
+int store[32];												//Used to store commands and address ready for the programmer
 volatile unsigned char w_pointer,r_pointer;					//Read/write pointers to "store" to which hex file is saved
 unsigned int Hex_cmd;										//Command read from flash during verification
 
