@@ -68,4 +68,12 @@ DDRC = 0;\
 DDRD = 0;\
 PORTB = 0xFF;\
 PORTC = 0xFF;\
-PORTD = 0xFF;\
+PORTD = 0xFF;
+
+
+/**********************************************************************************/
+#define cal_device; \
+eeprom_write_byte((uint8_t*)(EEP - 3), OSCCAL);\
+if ((eeprom_read_byte((uint8_t*)(EEP - 2)) > 0x0F)\
+&&  (eeprom_read_byte((uint8_t*)(EEP - 2)) < 0xF0) && (eeprom_read_byte((uint8_t*)(EEP - 2))\
+== eeprom_read_byte((uint8_t*)(EEP - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EEP - 2));
