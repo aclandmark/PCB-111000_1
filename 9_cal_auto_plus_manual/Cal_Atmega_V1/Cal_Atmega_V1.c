@@ -25,6 +25,7 @@ int EEP;
 int main (void)
 {
 setup_HW_basic;
+cal_device;
 Initiase_device_labels;
 
 OSCCAL_DV = OSCCAL;
