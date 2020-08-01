@@ -24,22 +24,24 @@ int  start_address; 																//Address in flash of first character in a s
 int  text_num;																		//The number of the string to be printed out
 
 setup_HW;
+cal_device;																			//checks cal status and adopts user cal bytes if present (Optional)
+
+
 Initiase_device_labels;
 Determine_device_type();
 
-
-
-
-
 char_counter = 0;																	//counts the number of characters in the text file (excludes \r & \n)
-cal_device;																			//checks cal status and adopts user cal bytes if present (Optional)
-
 
 while(1){																			//User prompt
 do{sendString("w/s  ");}while((isCharavailable(300) == 0));
 keypress = receiveChar();
 if (keypress == 'w') break;															//press "w" to continue with program execution
 if(keypress == 's') {wdt_enable(WDTO_60MS); while(1);}}
+
+sendString("\r\nProgram running on Atmega ");
+sendString(Device_ptr[Device]);
+newline();
+
 
 newline(); 
 start_address = FlashSZ - 1;														//start adddress of text
