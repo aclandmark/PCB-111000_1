@@ -8,9 +8,9 @@ int main (void){
 CLKPR = (1 << CLKPCE);
 CLKPR = (1 << CLKPS0);                                            //Convert 16MHx xtal to 8MHx clock
 setup_328_HW;                                                     //see "Resources\ATMEGA_Programmer.h"
-set_up_target_parameters();
+set_up_target_parameters();                                       //Flash size, page size etc
 
-Reset_L;                                                          //Put target in reset state
+Reset_L;                                                          //Put target in reset state to dissable UART
 
 while(1){
 do{sendString("s  ");} 
@@ -19,11 +19,11 @@ if(receiveChar() == 's')break;}
 Atmel_powerup_and_target_detect;                                  //Leave target in programming mode                              
 
 sendString ("\r\n\r\nATMEGA ");
-sendString(Device);
-sendChar(Suffix);
+sendString(Device);                                               //48, 88, 168 or 328
+sendChar(Suffix);                                                 //P if required
 
-EE_top = EE_size-0x3;                                             //Last 3 bytes reserved for OSCCAL calibration
-text_start = 0x5;                                                 //First 5 bytes reserved for programmmer use
+EE_top = EE_size-0x3;                                             //Last 3 bytes of EEPROM reserved for OSCCAL calibration
+text_start = 0x5;                                                 //First 5 bytes reserved for EEPROM programmmer use
 
 sendString(" detected\r\nPress -p- to program flash, \
 -e- for EEPROM or -x- to escape.");
@@ -34,45 +34,44 @@ switch (op_code){
 
 case 'r': Verify_Flash_Text();  SW_reset; break;
 case 'e': Prog_EEPROM(); break;
+
 case 'd':                                                       //Delete contents of the EEPROM
 sendString("\r\nReset EEPROM! D or AOK to escape");             //but leave cal data.
 newline();
 if(waitforkeypress() == 'D'){
 sendString("10 sec wait");
 for (int m = 0; m < EE_top; m++)  
-{Read_write_mem('I', m, 0xFF);}
+{Read_write_mem('I', m, 0xFF);}                                 //Write 0xFF to all EEPROM loactions bar the top 3
 sendString(" Done\r\n");}
 SW_reset;break;
-case 'p': break;
+
 case 'x': SW_reset; break;
 default: break;} 
+
 if ((op_code == 'p')||(op_code == 'P')) break;} 
-
-
 sendString("\r\nSend hex file (or x to escape).\r\n");
-
-(Atmel_config(Chip_erase_h, 0));
 
 Program_Flash_Hex();
 Verify_Flash_Hex();
+
 if (op_code == 'P'){Prog_config_bytes;}
 Verify_config_bytes;
-sendString("\r\nTest_file? y or n\r\n");
+
+sendString("\r\nText_file? y or n\r\n");
 if (waitforkeypress() == 'y')
-{op_code = 't';
+{op_code = 't';                                                 //Required by UART ISR
 sendString("Send file.");
 Program_Flash_Text();
 Verify_Flash_Text();}
 
-//Read_write_mem('I', (EE_size - 4), target_type_M);                //Program target EEPROM with its type (i.e.168)  
-
+//Read_write_mem('I', (EE_size - 4), target_type_M);            //Program target EEPROM with its type (i.e.168)  
+                                                                //Superceeded by use of the AVR command SIGNATURE
 sendString (Version);
-
 newline();
  
-UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                        //Dissable UART
-Reset_H;                                                          //Set target device running 
-while(1);                                                         //Wait for UNO reset
+UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                      //Dissable UART
+Reset_H;                                                        //Set target device running 
+while(1);                                                       //Wait for UNO reset
 return 1;}
 
 
@@ -88,8 +87,11 @@ case 'P': upload_hex(); break;}}
 
 
 /***************************************************************************************************************************************************/
-ISR(TIMER2_OVF_vect) {                                                //Timer0 times out and halts at the end of the text file
-if(text_started == 3)                                                 //Ignore timeouts occurring before start of file download
-  {endoftext -= 1; TCCR2B = 0; TIMSK2 &= (~(1 << TOIE2));             //Shut timer down
-  inc_w_pointer; store[w_pointer] = 0;                                //Append two '\0' chars to the end of the text
+ISR(TIMER2_OVF_vect) {                                          //Timer0 times out and halts at the end of the text file
+if(text_started == 3)                                           //Ignore timeouts occurring before start of file download
+  {endoftext -= 1; TCCR2B = 0; TIMSK2 &= (~(1 << TOIE2));       //Shut timer down
+  inc_w_pointer; store[w_pointer] = 0;                          //Append two '\0' chars to the end of the text
   inc_w_pointer; store[w_pointer] = 0; }}
+
+
+  
