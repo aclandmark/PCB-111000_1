@@ -7,9 +7,9 @@
 
 const char *Device = "168";
 
-#include "Resources_UNO_programmer\ATMEGA_Programmer.h"
+#include "Resources_UNO_programmer\\UNO_Programmer.h"
 #include "Resources_UNO_programmer\Device_characteristics.c"
-#include "Resources_UNO_programmer\ATMEGA_Programmer_HW_subs.c"
+#include "Resources_UNO_programmer\UNO_Programmer_HW_subs.c"
 #include "Resources_UNO_programmer\Basic_IO_and_Timer_subs.c"
 #include "Resources_UNO_programmer\ASKII_subroutines.c"
 #include "Resources_UNO_programmer\Hex_Programmer_subs.c"
