@@ -289,8 +289,11 @@ Atmel_config(write_lock_bits_h,Lock );\
 
 
 #define Verify_config_bytes \
-sendString("Config bytes: Fuses extended,\
+if (op_code == 'P')sendString("Config bytes (programmed): Fuses extended,\
 high, low and lock\t");\
+if (op_code == 'p')sendString("Config bytes (unprogrammed): Fuses extended,\
+high, low and lock\t");\
+\
 sendHex(16, Atmel_config(read_extended_fuse_bits_h, 0));\
 sendHex(16, Atmel_config(read_fuse_bits_H_h,0));\
 sendHex(16, Atmel_config(read_fuse_bits_h, 0));\
