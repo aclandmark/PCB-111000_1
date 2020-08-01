@@ -119,12 +119,9 @@ else																	//Print out start address of the Space reserved for the app
 sendHex(16,(((Read_write_mem('O', 0x3, 0)) <<8 ) +\
 (Read_write_mem('O', 0x4, 0))));
 
-
 if ((((Read_write_mem('O', 0x3, 0)) <<8 ) +\
 (Read_write_mem('O', 0x4, 0))) == EE_size - 3)sendString("No space reserved.");
-
-
-newline();}}							//Note: as a result of the cal bytes some space is always reserved 
+newline();}}															//Note: as a result of the cal bytes some space is always reserved 
 break;		
 
 
