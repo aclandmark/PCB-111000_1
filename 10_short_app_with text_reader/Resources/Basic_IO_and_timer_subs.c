@@ -1,7 +1,7 @@
 
 
 void USART_init (unsigned char, unsigned char);
-void sendString(char*);
+void sendString(const char*);
 char isCharavailable (int);
 char receiveChar(void);
 void sendChar(char);
@@ -37,7 +37,7 @@ UCSR0C =  (1 << UCSZ00)| (1 << UCSZ01);}
 
 
 /*********************************************************************************************/
-void sendString(char s[]){
+void sendString(const char s[]){
 int i = 0;
 while(i < 200){
 if(s[i] == '\0') break;
