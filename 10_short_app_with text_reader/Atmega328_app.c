@@ -45,6 +45,12 @@ newline();
 
 newline(); 
 start_address = FlashSZ - 1;														//start adddress of text
+
+if(Char_from_flash(start_address) == 0xFF){
+sendString("No text available!\r\n");
+wdt_enable(WDTO_60MS); while(1);}
+
+
 Num_strings = string_counter(start_address);										//Count the number of strings
 sendString("Total numbers of strings & characters are  ");
 Num_to_PC(10,Num_strings); sendChar('\t');
