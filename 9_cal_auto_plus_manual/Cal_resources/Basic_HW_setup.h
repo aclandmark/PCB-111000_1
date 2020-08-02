@@ -4,9 +4,12 @@ volatile long error_SUM;
 
 
 char OSCCAL_WV;
-char OSCCAL_DV;
+//char OSCCAL_DV;
 volatile char cal_mode; 			//Defines number of averages used when measuring osccal_error	
 volatile char T1_OVF;
+
+volatile char Flash_readout;
+
 
 
 #define timer_T0_sub Timer_T0_sub
