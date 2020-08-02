@@ -25,10 +25,13 @@ int EEP;
 int main (void)
 {
 setup_HW_basic;
-cal_device;
-Initiase_device_labels;
+//cal_device;
+Initiase_device_labels;												//Allows program to work with Atmega 48, 88, 168, 328/P
 
-OSCCAL_DV = OSCCAL;
+//OSCCAL_DV = OSCCAL;
+cal_device;
+
+
 ASSR = (1 << AS2); 												//initialise T2 for crystal
 
 Determine_device_type();
@@ -155,16 +158,20 @@ if ((OSCCAL_UV = UC_from_KBD()) == 'x')
 	
 /*********************************************/
 else
-{Get_ready_to_calibrate;												//Test value of OSCCAL entered by user
-if(OSCCAL_UV == 0xFF)OSCCAL = OSCCAL_DV;							//If 0xFF reinstate working value
-else OSCCAL = OSCCAL_UV;											//OSCCAL test value
+{Get_ready_to_calibrate;											//Test value of OSCCAL entered by user
+//if(OSCCAL_UV == 0xFF)OSCCAL = OSCCAL_DV;							//If 0xFF reinstate working value
+//else 
+OSCCAL = OSCCAL_UV;													//OSCCAL test value
+
 calibrate_without_sign_plus_warm_up_time;								
 close_calibration;
 
 if(cal_error > 1750)												//Error resulting from User OSCCAL exceeds 1750
 {OSCCAL = OSCCAL_WV;												//Reinstate default value
 OSCCAL_UV = OSCCAL;
-sendString("\tChange rejected: error too great");}	}		
+sendString("\tChange rejected: error too great");}			
+
+else OSCCAL_WV = OSCCAL;}
 
 
 cli();
@@ -173,8 +180,8 @@ sendString("Press x to repeat or AOK to terminate");
 return (keypress = waitforkeypress());}
 
 
-/*************************************************/
 
+/********************************************************************************************************************************/
 void save_cal_values(void){
 
 eeprom_write_byte((uint8_t*)(EEP-1), OSCCAL_UV); 					//save user OSCCAL to EEPROM
@@ -269,7 +276,7 @@ ISR(TIMER1_OVF_vect) {T1_OVF += 1;}
 
 
 
-void Determine_device_type(void){
+/*void Determine_device_type(void){
 
 switch(SIGNATURE_1){
 
@@ -282,4 +289,46 @@ Device = 1;
 EEP = 0x200;break;
 
 }
+}*/
+
+
+void Determine_device_type(void){
+
+
+asm volatile ("push r0") ;
+asm volatile ("push r20") ;
+asm volatile ("push r30") ;
+asm volatile ("push r31") ;
+
+
+
+
+asm volatile ("lds r31, 0");
+asm volatile ("lds r30, 1");
+asm volatile ("ldi r20, 0x21");
+
+asm volatile(
+  "sts %0, %1" 
+  :                            // no output operands  
+  : "I" (_SFR_IO_ADDR(SPMCSR))   // input operands
+  , "r" (20)
+);
+asm volatile ("lpm r0, Z");
+
+asm volatile ("sts Flash_readout,  r0");
+
+asm volatile ("pop r31") ;
+asm volatile ("pop r30") ;
+asm volatile ("pop r20") ;
+asm volatile ("pop r0") ;
+
+
 }
+
+
+/*load z pointer with sig byte address: address 0x001
+set the SIGRD and SPMEN bits in SPMCSR
+Execute LMP
+pause
+read*/
+
