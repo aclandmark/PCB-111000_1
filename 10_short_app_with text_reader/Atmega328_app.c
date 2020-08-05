@@ -4,16 +4,8 @@
 
 
 #include "Atmega328_app.h"
-char Char_from_flash(int);
-void Determine_device_type(void);
 
 
-int char_counter;
-int FlashSZ;
-int EEP;
-
-char string_counter(int);
-void print_string_num(int, int);
 
 
 
@@ -24,11 +16,9 @@ int  start_address; 																//Address in flash of first character in a s
 int  text_num;																		//The number of the string to be printed out
 
 setup_HW;
+set_up_target_parameters();
+
 cal_device;																			//checks cal status and adopts user cal bytes if present (Optional)
-
-
-Initiase_device_labels;
-Determine_device_type();
 
 char_counter = 0;																	//counts the number of characters in the text file (excludes \r & \n)
 
@@ -38,13 +28,7 @@ keypress = receiveChar();
 if (keypress == 'w') break;															//press "w" to continue with program execution
 if(keypress == 's') {wdt_enable(WDTO_60MS); while(1);}}
 
-sendString("\r\nProgram running on Atmega ");
-sendString(Device_ptr[Device]);
-newline();
-
-
-newline(); 
-start_address = FlashSZ - 1;														//start adddress of text
+start_address = FlashSZ*2 - 1;														//start adddress of text
 
 if(Char_from_flash(start_address) == 0xFF){
 sendString("No text available!\r\n");
@@ -91,7 +75,7 @@ start_address -= 1;}}
 void print_string_num(int text_num, int start_address){								//scroll through text section of flash counting '\0' chars
 int null_counter = 1; 																//untill the start of the required string
 char line_length = 0;	
-char next_char;														//Print the characters untill '\0' is detected
+char next_char;														
 
 while(1){	
 if(null_counter == text_num)break;
@@ -137,18 +121,19 @@ return Flash_readout;}
 
 
 
+void set_up_target_parameters(void){
+if((Device[0] == '3') && (Device[1] == '2')
+&& (Device[2] == '8'))
+{FlashSZ = 0x4000;
+EE_size = 0x400;}
 
-void Determine_device_type(void){
 
-switch(SIGNATURE_1){
+if((Device[0] == '1') && (Device[1] == '6')
+&& (Device[2] == '8'))
+{FlashSZ = 0x2000;		
+EE_size = 0x200;}
 
-case 0x95: 
-Device = 0;
-EEP = 0x400;break;
 
-case 0x94: 
-Device = 1;
-EEP = 0x200;
-FlashSZ =0x4000;break;
-}
+
+
 }
