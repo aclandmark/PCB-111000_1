@@ -1,5 +1,9 @@
 
-
+char Char_from_flash(int);
+void Determine_device_type(void);
+void set_up_target_parameters(void);
+char string_counter(int);
+void print_string_num(int, int);
 
 
 /************************Subroutines provided by .S file*******************/
@@ -19,7 +23,12 @@ volatile char loc_in_mem_H, loc_in_mem_L;					//Used to pass addresses in SRAM t
 volatile char Prog_mem_address_H, Prog_mem_address_L;		//Used to pass addresses in flash to the assembly subroutines
 volatile char Flash_readout;
 volatile int address;
-volatile char value = 8;
+int char_counter;
+int FlashSZ;
+int EE_size;
+
+
+
 
 /**********************************************************************************/
 #define delay_5ms 5,220
@@ -37,14 +46,7 @@ config_WDT;\
 Unused_I_O;\
 activity_leds;\
 ADMUX |= (1 << REFS0);\
-USART_init(0,16);
-
-
-#define Initiase_device_labels;\
-Device_ptr[0] = Device_95;\
-Device_ptr[1] = Device_94;\
-Device_ptr[2] = Device_93;\
-Device_ptr[3] = Device_92; 
+USART_init(0,25);
 
 
 
@@ -58,10 +60,10 @@ WDTCSR = 0;
 
 /**********************************************************************************/
 #define cal_device;\
-eeprom_write_byte((uint8_t*)(EEP - 3), OSCCAL);\
-if ((eeprom_read_byte((uint8_t*)(EEP - 2)) > 0x0F)\
-&&  (eeprom_read_byte((uint8_t*)(EEP - 2)) < 0xF0) && (eeprom_read_byte((uint8_t*)(EEP - 2))\
-== eeprom_read_byte((uint8_t*)(EEP - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EEP - 2));
+eeprom_write_byte((uint8_t*)(EE_size - 3), OSCCAL);\
+if ((eeprom_read_byte((uint8_t*)(EE_size - 2)) > 0x0F)\
+&&  (eeprom_read_byte((uint8_t*)(EE_size - 2)) < 0xF0) && (eeprom_read_byte((uint8_t*)(EE_size - 2))\
+== eeprom_read_byte((uint8_t*)(EE_size - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EE_size - 2));
 
 
 /**********************************************************************************/
