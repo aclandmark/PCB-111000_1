@@ -31,7 +31,7 @@ if(!(endoftext)) break;}                                                  //Brea
 address_in_flash -= write_address;
 write_page_SUB(address_in_flash);
 sendChar('*');
-sendHex(10,address_in_flash);
+//sendHex(10,address_in_flash);
 cli();  
 UCSR0B &= (~(1<<RXCIE0));}
 
@@ -77,23 +77,29 @@ unsigned char  high_char, low_char, print_line = 0;                         //Co
 int line_no;                                                                //Refers to the .hex file
 int phys_address;                                                          //Address in flash memory
 signed int prog_counter_mem;                                                //Initialised with size of .hex file used for programming
+unsigned char string_counter = 1;
 
 phys_address = FlashSZ - 1;   
 
-sendString("\r\n");sendHex(16,phys_address);sendChar('\t');
+sendString("\r\nEnd of flash ");sendHex(16,phys_address);newline();
+
+sendHex(16,string_counter++);sendChar('\t');
  while ((high_char = Read_write_mem('H',phys_address, 0x0)) != 0xFF)
  {timer_T0_sub(T0_delay_10ms);
  low_char = Read_write_mem('L',phys_address, 0x0);
 if(high_char)
 sendChar(high_char);              
-else {sendString("\r\n");sendHex(16,phys_address);sendChar('\t');}
+else {newline();sendHex(10,string_counter++);sendChar('\t');}
 if(low_char)
 sendChar(low_char);              
-else {sendString("\r\n");sendHex(16,phys_address);sendChar('\t');}
+else {newline();sendHex(10,string_counter++);sendChar('\t');}
 phys_address -= 1;}
 
-if((op_code == 'p') || (op_code == 'P'))
-{sendString("\r\nHex ends at "); sendHex(16, read_ops);sendChar('\t');}
+sendString("\r\nLast address available for hex ");sendHex(16,address_in_flash-1);
+newline();newline();
+
+//if((op_code == 'p') || (op_code == 'P'))
+//{sendString("\r\nHex ends at "); sendHex(10, read_ops);sendChar('\t');}
 
 }
   
