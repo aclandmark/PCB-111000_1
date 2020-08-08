@@ -11,4 +11,4 @@
 #include "Resources\Atmega328_app.h"
 #include "Resources\Basic_IO_and_timer_subs.c"
 
-const char *Device = "328";
+const char *Device = "168";
