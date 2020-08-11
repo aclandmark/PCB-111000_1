@@ -10,25 +10,9 @@
 
 
 
-const char * Device_95 = "328/P";
-const char * Device_94 = "168/P";
-const char * Device_93 = "88/P";
-const char * Device_92 = "48/P";
-
-const char * Device_type[4];
-int device_ptr;
 
 
 
-#define set_device_type_and_memory_size \
-Set_device_signatures;\
-switch(waitforkeypress() - '0'){\
-case 0: FlashSZ = 0x4000; EE_size = 0x400; device_ptr = 0; break;\
-case 1: FlashSZ = 0x2000; EE_size = 0x200; device_ptr = 1; break;\
-case 2: FlashSZ = 0x1000; EE_size = 0x200; device_ptr = 2; break;\
-case 3: FlashSZ = 0x800;  EE_size = 0x100; device_ptr = 3; break;}\
-sendString("\r\nCalibrating Atmega ");\
-sendString (Device_type[device_ptr]);\
-newline();			
+	
 
 
