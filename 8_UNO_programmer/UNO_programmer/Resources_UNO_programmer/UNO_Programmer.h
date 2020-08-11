@@ -76,17 +76,14 @@ signed char page_break;										//Page only partialy filled before programming 
 volatile signed char line_offset;							//LSB of address of first command in record (usually zero)
 unsigned int prog_led_control;								//Used to control Leds as hex file is downloaded
 
-
 unsigned char cal_factor=0; 								//Either default or user supplied
-
-
-
 
 volatile char endoftext, text_started;
 volatile char Rx_askii_char_old;                             //Required to check for a \r\n string
 int address_in_flash;                                       //Address in flash at which text data is to be programmed
 unsigned char  op_code;
 
+char User_response;
 
 
 
@@ -277,7 +274,17 @@ PORTD = 0xFF;\
 #define Config_Xtal_port \
 ASSR = (1 << AS2);	
 
+
+
+
 /************************************************************************************************************************************/
+#define User_prompt \
+while(1){\
+do{sendString("R?    ");}	 while((isCharavailable(250) == 0));\
+User_response = receiveChar();\
+if((User_response == 'R') || (User_response == 'r'))break;} sendString("\r\n");
+
+
 
 
 /**************************************************************************************************************************************/
