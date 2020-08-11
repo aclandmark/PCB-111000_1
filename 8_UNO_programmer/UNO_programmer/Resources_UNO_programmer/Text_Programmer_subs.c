@@ -41,7 +41,7 @@ UCSR0B &= (~(1<<RXCIE0));}
 
 void upload_text(void){
 unsigned char Rx_askii_char;
-  
+
 Rx_askii_char = receiveChar();
 if((Rx_askii_char) == '\0')return;                                   //Ignore polling from Bootloader
 if((Rx_askii_char != '*') && (!(text_started)))return;                //Ignore header text occuring before a line of * characters
@@ -80,7 +80,6 @@ signed int prog_counter_mem;                                                //In
 unsigned char string_counter = 1;
 
 phys_address = FlashSZ - 1;   
-
 sendString("\r\nEnd of flash ");sendHex(16,phys_address);newline();
 
 sendHex(16,string_counter++);sendChar('\t');
@@ -98,8 +97,7 @@ phys_address -= 1;}
 sendString("\r\nLast address available for hex ");sendHex(16,address_in_flash-1);
 newline();newline();
 
-//if((op_code == 'p') || (op_code == 'P'))
-//{sendString("\r\nHex ends at "); sendHex(10, read_ops);sendChar('\t');}
+
 
 }
   
