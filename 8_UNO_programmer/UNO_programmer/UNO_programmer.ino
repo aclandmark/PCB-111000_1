@@ -60,12 +60,24 @@ Verify_config_bytes;
 sendString("\r\nText_file? y or n\r\n");
 if (waitforkeypress() == 'y')
 {op_code = 't';                                                 //Required by UART ISR
+
+sendString
+("\r\nReduce baud rate to 19.2kB and press 'r'.\r\n");          //Sending text requires baud rate reduction
+timer_T0_sub(T0_delay_10ms);
+UBRR0L = 51;
+while (1){if (waitforkeypress() != 'r'); else break;}
+
+
 sendString("Send file.");
 Program_Flash_Text();
+
+sendString
+("\r\nRestore baud rate to 38.4kB and press 'r'.\r\n");
+timer_T0_sub(T0_delay_10ms);
+UBRR0L = 25;
+while (1){if (waitforkeypress() != 'r'); else break;}
 Verify_Flash_Text();}
 
-//Read_write_mem('I', (EE_size - 4), target_type_M);            //Program target EEPROM with its type (i.e.168)  
-                                                                //Superceeded by use of the AVR command SIGNATURE
 sendString (Version);
 newline();
  
@@ -87,7 +99,7 @@ case 'P': upload_hex(); break;}}
 
 
 /***************************************************************************************************************************************************/
-ISR(TIMER2_OVF_vect) {                                          //Timer0 times out and halts at the end of the text file
+ISR(TIMER2_OVF_vect) {                                          //Timer2 times out and halts at the end of the text file
 if(text_started == 3)                                           //Ignore timeouts occurring before start of file download
   {endoftext -= 1; TCCR2B = 0; TIMSK2 &= (~(1 << TOIE2));       //Shut timer down
   inc_w_pointer; store[w_pointer] = 0;                          //Append two '\0' chars to the end of the text
