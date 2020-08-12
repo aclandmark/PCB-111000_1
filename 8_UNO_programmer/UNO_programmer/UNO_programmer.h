@@ -5,7 +5,7 @@
 #include <avr/wdt.h>
 #include <avr/eeprom.h>
 
-const char *Device = "168";
+const char *Device = "328";
 
 #include "Resources_UNO_programmer\\UNO_Programmer.h"
 #include "Resources_UNO_programmer\Device_characteristics.c"
