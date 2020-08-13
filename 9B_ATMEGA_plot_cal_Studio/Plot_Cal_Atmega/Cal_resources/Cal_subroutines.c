@@ -38,19 +38,6 @@ while(ASSR & (1 << TCR2BUB));
 TCCR1B = 1;}
 
 
-
-
-/*********************************************************************************************************************************/
-void Minimise_error(int limit, unsigned char *counter_1, unsigned char *counter_2, long *error_mag, unsigned char *OSCCAL_mem, char local_cal_mode )
-{while(*counter_2 < 20){ OSCCAL = *counter_1; *error_mag = compute_error(0,local_cal_mode,0); 
-if(*error_mag < limit)break;
-*counter_1 -= 1;
-*counter_2 +=1;}
-if (*counter_2 < 20)*OSCCAL_mem = OSCCAL;else OSCCAL = *OSCCAL_mem;}
-
-
-
-
 /**************************************************************************************************************************************/		
 long compute_error(char local_error_mode, char local_cal_mode, char sign)					
 {long error;
@@ -65,6 +52,5 @@ error_SUM = 0;
 while(EA_counter < Num_1);EA_counter = 0;
 error = error_SUM;
 if ((!sign) && (error < 0)) error *= (-1);
-if (local_error_mode)
-{buffer[EA_buff_ptr] = error/Num_2; EA_buff_ptr++;}
+if (local_error_mode){}
 return error/Num_2;}
