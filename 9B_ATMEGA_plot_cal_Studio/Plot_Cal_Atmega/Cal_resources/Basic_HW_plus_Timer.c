@@ -2,7 +2,6 @@
 
 void USART_init (unsigned char, unsigned char);
 void nop_delay(int);
-void Timer_T0_10mS_delay_x_m(int);
 void Timer_T0_sub(char, unsigned char);
 void Timer_T1_sub(char, unsigned int);
 
@@ -11,7 +10,6 @@ void Timer_T1_sub(char, unsigned int);
 
 /*********************************************************************/
 void USART_init (unsigned char UBRROH_N, unsigned char UBRR0L_N ){
-Timer_T1_sub(T1_delay_100ms);
 UCSR0B = 0;
 UBRR0H = UBRROH_N;  									
 UBRR0L = UBRR0L_N;  								
@@ -22,9 +20,7 @@ UCSR0C =  (1 << UCSZ00)| (1 << UCSZ01);}
 /*********************************************************************/
 void nop_delay(int nop_counter){for(int q = 0; q<= nop_counter; q++) {asm("nop");}}
 
-/*********************************************************************/
-void Timer_T0_10mS_delay_x_m(int m)
-{for (int n = 0; n < m; n++){Timer_T0_sub(T0_delay_10ms);}}
+
 
 /*********************************************************************/
 void Timer_T0_sub(char Counter_speed, unsigned char Start_point){ 
