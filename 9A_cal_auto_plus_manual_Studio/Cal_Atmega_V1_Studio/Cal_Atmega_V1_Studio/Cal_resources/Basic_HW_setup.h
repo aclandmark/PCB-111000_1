@@ -10,10 +10,11 @@ void save_cal_values(unsigned char);
 void printout_cal_values(void);
 void initialise_timers_for_cal_error(void);
 void start_timers_for_cal_error(void);
-void Minimise_error(int, unsigned char*, unsigned char*, long*, unsigned char*, char);
+void Minimise_error_down(int, unsigned char*, unsigned char*, long*, unsigned char*, char);
+void Minimise_error_up(int, unsigned char*, unsigned char*, long*, unsigned char*, char);
 long compute_error(char, char, char);
 
-void Auto_cal (void);
+void Auto_cal (char);
 void Manual_cal(void);
 
 
@@ -28,22 +29,8 @@ long buffer[45];
 volatile int EA_counter, EA_buff_ptr;
 volatile long error_SUM;
 
-
-
 volatile char cal_mode; 			//Defines number of averages used when measuring osccal_error	
 volatile char T1_OVF;
-
-
-const char * Device_95 = "328/P";
-const char * Device_94 = "168/P";
-const char * Device_93 = "88/P";
-const char * Device_92 = "48/P";
-
-const char * Device_type[4];
-int device_ptr;
-
-
-
 
 
 #define timer_T0_sub Timer_T0_sub
@@ -91,28 +78,6 @@ WDTCSR = 0;
 #define wdr()  __asm__ __volatile__("wdr")
 
 
-/*****************************************************************************/
-#define Set_device_signatures \
-Device_type[0] = Device_95;\
-Device_type[1] = Device_94;\
-Device_type[2] = Device_93;\
-Device_type[3] = Device_92; 
-
-
-
-/*****************************************************************************/
-#define set_device_type_and_memory_size \
-Set_device_signatures;\
-switch(waitforkeypress() - '0'){\
-case 0: FlashSZ = 0x4000; EE_size = 0x400; device_ptr = 0; break;\
-case 1: FlashSZ = 0x2000; EE_size = 0x200; device_ptr = 1; break;\
-case 2: FlashSZ = 0x1000; EE_size = 0x200; device_ptr = 2; break;\
-case 3: FlashSZ = 0x800;  EE_size = 0x100; device_ptr = 3; break;}\
-sendString("\r\nCalibrating Atmega ");\
-sendString (Device_type[device_ptr]);\
-newline();		
-
-
 
 /*****************************************************************************/
 #define initialise_IO \
@@ -157,3 +122,39 @@ eeprom_write_byte((uint8_t*)(EE_size - 3), OSCCAL);\
 if ((eeprom_read_byte((uint8_t*)(EE_size - 2)) > 0x0F)\
 &&  (eeprom_read_byte((uint8_t*)(EE_size - 2)) < 0xF0) && (eeprom_read_byte((uint8_t*)(EE_size - 2))\
 == eeprom_read_byte((uint8_t*)(EE_size - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EE_size - 2));
+
+
+
+/*****************************************************************************/
+const char * Device_95 = "328/P";
+const char * Device_94 = "168/P";
+const char * Device_93 = "88/P";
+const char * Device_92 = "48/P";
+
+const char * Device_type[4];
+int device_ptr;
+
+
+
+
+/*****************************************************************************/
+#define Set_device_signatures \
+Device_type[0] = Device_95;\
+Device_type[1] = Device_94;\
+Device_type[2] = Device_93;\
+Device_type[3] = Device_92;
+
+
+
+
+/*****************************************************************************/
+#define set_device_type_and_memory_size \
+Set_device_signatures;\
+switch(eeprom_read_byte((uint8_t*)(EEP_MAX - 4))){\
+	case 0x95: FlashSZ = 0x4000; EE_size = 0x400; device_ptr = 0; break;\
+	case 0x94: FlashSZ = 0x2000; EE_size = 0x200; device_ptr = 1; break;\
+	case 0x93: FlashSZ = 0x1000; EE_size = 0x200; device_ptr = 2; break;\
+	case 0x92: FlashSZ = 0x800;  EE_size = 0x100; device_ptr = 3; break;}
+
+
+
