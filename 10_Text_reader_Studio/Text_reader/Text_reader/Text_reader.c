@@ -10,14 +10,13 @@ int  start_address;													//Address in flash of first character in a strin
 int  text_num;														//The number of the string to be printed out
 
 setup_HW;
+User_prompt;
 
 sendString("\r\nProgram running on Atmega ");
 sendString (Device_type[device_ptr]);
 newline();
 
 char_counter = 0;													//counts the number of characters in the text file (excludes \r & \n)
-
-User_prompt;
 
 start_address = FlashSZ*2 - 1;										//start address of text
 
