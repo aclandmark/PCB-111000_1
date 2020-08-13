@@ -41,7 +41,7 @@ TCCR1B = 1;}
 
 
 /*********************************************************************************************************************************/
-void Minimise_error(int limit, unsigned char *counter_1, unsigned char *counter_2, long *error_mag, unsigned char *OSCCAL_mem, char local_cal_mode )
+void Minimise_error_down(int limit, unsigned char *counter_1, unsigned char *counter_2, long *error_mag, unsigned char *OSCCAL_mem, char local_cal_mode )
 {while(*counter_2 < 20){ OSCCAL = *counter_1; *error_mag = compute_error(0,local_cal_mode,0); 
 if(*error_mag < limit)break;
 *counter_1 -= 1;
@@ -49,6 +49,12 @@ if(*error_mag < limit)break;
 if (*counter_2 < 20)*OSCCAL_mem = OSCCAL;else OSCCAL = *OSCCAL_mem;}
 
 
+void Minimise_error_up(int limit, unsigned char *counter_1, unsigned char *counter_2, long *error_mag, unsigned char *OSCCAL_mem, char local_cal_mode )
+{while(*counter_2 < 20){ OSCCAL = *counter_1; *error_mag = compute_error(0,local_cal_mode,0);
+	if(*error_mag < limit)break;
+	*counter_1 += 1;
+*counter_2 +=1;}
+if (*counter_2 < 20)*OSCCAL_mem = OSCCAL;else OSCCAL = *OSCCAL_mem;}
 
 
 /**************************************************************************************************************************************/		
