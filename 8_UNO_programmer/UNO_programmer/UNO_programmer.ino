@@ -8,7 +8,6 @@ int main (void){
 CLKPR = (1 << CLKPCE);
 CLKPR = (1 << CLKPS0);                                            //Convert 16MHx xtal to 8MHx clock
 setup_328_HW;                                                     //see "Resources\ATMEGA_Programmer.h"
-set_up_target_parameters();                                       //Flash size, page size etc
 
 Reset_L;                                                          //Put target in reset state to dissable UART
 
@@ -17,15 +16,13 @@ do{sendString("s  ");}
 while((isCharavailable(255) == 0));                               //User prompt 
 if(receiveChar() == 's')break;}
 Atmel_powerup_and_target_detect;                                  //Leave target in programming mode                              
+set_up_target_parameters();                                       //Flash size, page size etc
 
-sendString ("\r\n\r\nATMEGA ");
-sendString(Device);                                               //48, 88, 168 or 328
-sendChar(Suffix);                                                 //P if required
 
 EE_top = EE_size-0x3;                                             //Last 3 bytes of EEPROM reserved for OSCCAL calibration
 text_start = 0x5;                                                 //First 5 bytes reserved for EEPROM programmmer use
 
-sendString(" detected\r\nPress -p- to program flash, \
+sendString(" detected.\r\nPress -p- to program flash, \
 -e- for EEPROM or -x- to escape.");
 
 while(1){
@@ -80,7 +77,10 @@ Verify_Flash_Text();}
 
 sendString (Version);
 newline();
- 
+
+Read_write_mem('I', EE_size - 4, \
+(Atmel_config(signature_bit_2_h, signature_bit_2_l)));          //Define target type on target device
+
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                      //Dissable UART
 Reset_H;                                                        //Set target device running 
 while(1);                                                       //Wait for UNO reset
