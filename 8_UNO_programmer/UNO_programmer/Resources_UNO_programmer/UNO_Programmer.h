@@ -34,8 +34,8 @@ signed int EE_top;												//Limits EEPROM space available for strings and da
 signed int PageSZ;												//Size of a page of flash
 signed int PAmask;												//Used to obtain the flash page address from the hex address
 signed int FlashSZ;												//Amount of flash memory supplied on target device
-int EE_size;													///EEPROM size
-unsigned char target_type_M, target_type, target_type_P;
+int EE_size;													//EEPROM size
+unsigned char Target_type, Target_type_M, Target_type_P;
 unsigned char Fuse_Ex, Fuse_H, Fuse_L, Lock;
 
 
@@ -57,7 +57,6 @@ unsigned int Hex_cmd;										//Command read from flash during verification
 
 unsigned char cmd_pin, resp_pin, clock_pin, reset_pin;		//Used to define the programming pins
 
-unsigned int target;										//Target device type
 int Hex_address;											//Address read from the hex file
 int HW_address;												//Hard ware address (usually tracks Hex_address)
 signed int page_address;									//Address of first location on a page of flash 
@@ -222,7 +221,7 @@ timer_T0_sub(T0_delay_20ms);
 
 
 /************************************************************************************************************************************/
-#define Atmel_powerup_and_target_detect \
+/*#define Atmel_powerup_and_target_detect \
 Atmel_powerup;\
 while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
 else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
@@ -246,7 +245,29 @@ case 0x94: sendString("168/P"); break;\
 case 0x93: sendString("88/P"); break;\
 case 0x92: sendString("48/P"); break;}\
 sendString("\r\nA diferent one was select in the header file. \r\nPlease try again!\r\n");\
-wdt_enable(WDTO_60MS);while(1);}
+wdt_enable(WDTO_60MS);while(1);}*/
+
+
+
+#define Atmel_powerup_and_target_detect \
+Atmel_powerup;\
+while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
+	else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
+	\
+	sendString("\r\nAtmega ");\
+	Target_type = Atmel_config(signature_bit_2_h, signature_bit_2_l);\
+	switch(Target_type)\
+		{case 0x95: sendString("328/P"); break;\
+		case 0x94: sendString("168/P"); break;\
+		case 0x93: sendString("88/P"); break;\
+		case 0x92: sendString("48/P"); break;\
+		default: sendString("\r\nUnknown"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);break;}\
+	\
+	Suffix = '?';\
+	if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == Target_type_M)Suffix = ' ';\
+	if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == Target_type_P)Suffix = 'P';
+	
+
 
 
 
