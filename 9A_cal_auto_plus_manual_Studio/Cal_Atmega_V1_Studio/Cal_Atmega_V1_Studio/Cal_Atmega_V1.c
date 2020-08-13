@@ -99,7 +99,7 @@ void Auto_cal (char direction){
 			counter_2 = 0;
 			cal_mode = 5;
 			limit = 1000;
-			for(int m = 1; m <= 9; m++){
+			for(int m = 1; m <= 9; m++){sendChar('.');
 				limit -= 100;
 				Minimise_error_up(limit, &counter_1, &counter_2, &error_mag, &OSCCAL_mem, cal_mode);}}
 	
