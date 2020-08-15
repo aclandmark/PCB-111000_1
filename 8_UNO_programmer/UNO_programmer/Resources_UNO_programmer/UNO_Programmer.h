@@ -95,7 +95,7 @@ ADMUX |= (1 << REFS0);\
 initialise_IO;\
 Set_LED_ports;\
 LEDs_off;\
-timer_T0_sub(T0_delay_5ms);\
+Timer_T0_sub(T0_delay_5ms);\
 Define_programmining_pins;\
 Reset_L;\
 Config_Xtal_port;\
@@ -210,62 +210,30 @@ r_pointer = r_pointer & 0b00011111;
 
 /************************************************************************************************************************************/
 #define Atmel_powerup \
-timer_T0_sub(T0_delay_2ms);\
+Timer_T0_sub(T0_delay_2ms);\
 Reset_L;\
 PGC_L;\
-timer_T0_sub(T0_delay_2ms);\
+Timer_T0_sub(T0_delay_2ms);\
 Reset_H;\
-timer_T0_sub(T0_delay_2ms);\
+Timer_T0_sub(T0_delay_2ms);\
 Reset_L;\
-timer_T0_sub(T0_delay_20ms);
+Timer_T0_sub(T0_delay_20ms);
 
 
 /************************************************************************************************************************************/
-/*#define Atmel_powerup_and_target_detect \
-Atmel_powerup;\
-while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
-else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
-\
-Suffix = '?';\
-if (Atmel_config(signature_bit_2_h, signature_bit_2_l)  == target_type_M)\
-{if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == target_type)Suffix = ' ';\
-if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == target_type_P)Suffix = 'P';}\
-\
-if(Suffix == '?'){switch(Atmel_config(signature_bit_2_h, signature_bit_2_l))\
-{case 0x95:\
-case 0x94:\
-case 0x93:\
-case 0x92:  break;\
-default: sendString("\r\nTarget_not_recognised"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);break;}\
-sendString("\r\nTarget device detected: Atmega ");\
-\
-switch(Atmel_config(signature_bit_2_h, signature_bit_2_l))\
-{case 0x95: sendString("328/P"); break;\
-case 0x94: sendString("168/P"); break;\
-case 0x93: sendString("88/P"); break;\
-case 0x92: sendString("48/P"); break;}\
-sendString("\r\nA diferent one was select in the header file. \r\nPlease try again!\r\n");\
-wdt_enable(WDTO_60MS);while(1);}*/
-
-
-
 #define Atmel_powerup_and_target_detect \
 Atmel_powerup;\
 while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bit_1_h, 0) == 0x1E))break;\
 	else {sendString("Target_not_detected\r\n"); wdt_enable(WDTO_60MS);while(1);}}\
 	\
 	sendString("\r\nAtmega ");\
-	Target_type = Atmel_config(signature_bit_2_h, signature_bit_2_l);\
-	switch(Target_type)\
-		{case 0x95: sendString("328/P"); break;\
-		case 0x94: sendString("168/P"); break;\
-		case 0x93: sendString("88/P"); break;\
-		case 0x92: sendString("48/P"); break;\
-		default: sendString("\r\nUnknown"); sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);break;}\
-	\
+	Detect_device_type();\
+	set_up_target_parameters();\
 	Suffix = '?';\
+	\
 	if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == Target_type_M)Suffix = ' ';\
-	if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == Target_type_P)Suffix = 'P';
+	if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == Target_type_P)Suffix = 'P';\
+	sendChar(Suffix);
 	
 
 
