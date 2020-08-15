@@ -1,4 +1,13 @@
 
+#include <avr/io.h>
+#include <stdlib.h>
+#include <avr/interrupt.h>
+#include <avr/wdt.h>
+#include <avr/eeprom.h>
+
+
+
+/***************************************************************************/
 char Char_from_flash(int);
 void Determine_device_type(void);
 void set_up_target_parameters(void);
@@ -21,10 +30,10 @@ int EEP_MAX = 0x2000;
 
 /**********************************************************************************/
 #define setup_HW \
-config_WDT;\
-Unused_I_O;\
+setup_watchdog;\
 ADMUX |= (1 << REFS0);\
 USART_init(0,25);\
+Initialise_IO;\
 set_device_type_and_memory_size;\
 cal_device;
 
@@ -33,11 +42,24 @@ cal_device;
 #define wdr()  __asm__ __volatile__("wdr")
 
 
-#define config_WDT \
+#define setup_watchdog \
 wdr();\
 MCUSR &= ~(1<<WDRF);\
 WDTCSR |= (1 <<WDCE) | (1<< WDE);\
 WDTCSR = 0;
+
+
+/**********************************************************************************/
+#define Initialise_IO \
+MCUCR &= (~(1 << PUD));\
+DDRB = 0;\
+DDRC = 0;\
+DDRD = 0;\
+PORTB = 0xFF;\
+PORTC = 0xFF;\
+PORTD = 0xFF;
+
+
 
 
 
@@ -49,15 +71,6 @@ if ((eeprom_read_byte((uint8_t*)(EE_size - 2)) > 0x0F)\
 == eeprom_read_byte((uint8_t*)(EE_size - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EE_size - 2));
 
 
-/**********************************************************************************/
-#define Unused_I_O \
-MCUCR &= (~(1 << PUD));\
-DDRB = 0;\
-DDRC = 0;\
-DDRD = 0;\
-PORTB = 0xFF;\
-PORTC = 0xFF;\
-PORTD = 0xFF;
 
 
 
