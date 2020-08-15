@@ -38,8 +38,8 @@ void Plot_cal (void){
 		OSCCAL = counter_1; error_mag = compute_error(0,cal_mode,1);
 
 		OSCCAL = OSCCAL_WV;
-		sendLongNum(10,counter_1);
-		sendChar('\t');sendLongNum(10,error_mag);
+		Num_to_PC(10,counter_1);
+		sendChar('\t');Num_to_PC(10,error_mag);
 		newline();
 		Timer_T0_sub(delay_2ms);}}
 
