@@ -1,6 +1,6 @@
 
 
-/*Subroutines which interface with the seial programming ports of the target device*/
+/*Subroutines which interface with the serial programming ports of the target device*/
 
 
 
@@ -8,7 +8,7 @@ unsigned char Atmel_config ( unsigned int, unsigned int );
 unsigned char Read_write_mem(char, int, char);
 void Load_page(char, int, unsigned char);
 
-void timer_T0_sub(char, unsigned char);
+void Timer_T0_sub(char, unsigned char);
 void Timer_T2_sub(char, unsigned char);
 
 
@@ -55,7 +55,7 @@ if((n > 9) && (PGD_resp_H)) Echo = Echo | (1<< (15-n));break;}
 
 }PGC_L;	PGClock_L;  
 
-timer_T0_sub(T0_delay_10ms);
+Timer_T0_sub(T0_delay_10ms);
 return Echo;}                
 
 
@@ -93,8 +93,8 @@ PGC_H; PGClock_H;
 if (PGD_resp_H) (Echo = (Echo | (1<< (7-n))));		
 }PGC_L;	PGClock_L;
 
-if(Operation == 'W')timer_T0_sub(T0_delay_5ms);	//Timer_T2_sub(6,100);
-if(Operation == 'I')timer_T0_sub(T0_delay_5ms);	
+if(Operation == 'W')Timer_T0_sub(T0_delay_5ms);	//Timer_T2_sub(6,100);
+if(Operation == 'I')Timer_T0_sub(T0_delay_5ms);	
 return Echo;}
 
 
