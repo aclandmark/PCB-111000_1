@@ -1,4 +1,22 @@
 
+void sendString(const char*);
+void sendChar(char);
+unsigned char Atmel_config ( unsigned int, unsigned int );
+void Detect_device_type(void);
+
+
+
+
+void Detect_device_type(void){
+
+Target_type = Atmel_config(signature_bit_2_h, signature_bit_2_l);
+switch(Target_type)\
+	{case 0x95: sendString("328"); break;
+	case 0x94: sendString("168"); break;
+	case 0x93: sendString("88"); break;
+	case 0x92: sendString("48"); break;
+	default: sendString("\r\nUnknown"); 
+	sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);break;}}
 
 
 void set_up_target_parameters(void){
