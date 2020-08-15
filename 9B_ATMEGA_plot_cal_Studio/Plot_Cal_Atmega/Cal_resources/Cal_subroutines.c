@@ -13,9 +13,9 @@ eeprom_write_byte((uint8_t*)(EE_size - 3), OSCCAL_DV);}
 /********************************************************************************************************************************/
 void printout_cal_values(void){
 sendString("\r\nValues saved to EEPROM  ");	
-sendLongNum(10,eeprom_read_byte((uint8_t*)EE_size-1)); sendChar('\t');
-sendLongNum(10,eeprom_read_byte((uint8_t*)EE_size-2)); sendString("\tUser value\r\n\t\t\t");
-sendLongNum(10,eeprom_read_byte((uint8_t*)EE_size-3)); sendString("\t\tDefault value\r\n");}
+Num_to_PC(10,eeprom_read_byte((uint8_t*)EE_size-1)); sendChar('\t');
+Num_to_PC(10,eeprom_read_byte((uint8_t*)EE_size-2)); sendString("\tUser value\r\n\t\t\t");
+Num_to_PC(10,eeprom_read_byte((uint8_t*)EE_size-3)); sendString("\t\tDefault value\r\n");}
 
 
 
