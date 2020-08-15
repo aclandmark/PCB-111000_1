@@ -6,6 +6,8 @@
 #include <stdint.h>
 
 
+
+/***************************************************************************/
 void save_cal_values(unsigned char);
 void printout_cal_values(void);
 void initialise_timers_for_cal_error(void);
@@ -19,6 +21,7 @@ void Manual_cal(void);
 
 
 
+/***************************************************************************/
 unsigned char OSCCAL_WV;
 unsigned char OSCCAL_UV;
 unsigned char OSCCAL_DV;
@@ -33,7 +36,8 @@ volatile char cal_mode; 			//Defines number of averages used when measuring oscc
 volatile char T1_OVF;
 
 
-#define timer_T0_sub Timer_T0_sub
+
+/***************************************************************************/
 #define delay_2ms 4,195
 #define delay_20ms 5,100
 
@@ -46,28 +50,20 @@ volatile char T1_OVF;
 #define delay_2us 1,254
 #define delay_10ms 5,183
 
+
+
+
 /*****************************************************************************/
-#include <avr/io.h>
-#include <avr/wdt.h>
-#include <avr/interrupt.h>
-#include <avr/eeprom.h>
-#include <stdint.h>
+#define setup_HW \
+setup_watchdog;\
+ADMUX |= (1 << REFS0);\
+USART_init(0,25);\
+Initialise_IO;
+
 
 
 /*****************************************************************************/
 #define SW_reset {wdt_enable(WDTO_30MS);while(1);}
-
-
-/*****************************************************************************/
-#define setup_HW_basic \
-setup_watchdog;\
-USART_init(0,25);\
-nop_delay(10);\
-ADMUX |= (1 << REFS0);\
-Timer_T0_10mS_delay_x_m(1);\
-initialise_IO;
-
-
 
 #define setup_watchdog \
 wdr();\
@@ -80,7 +76,7 @@ WDTCSR = 0;
 
 
 /*****************************************************************************/
-#define initialise_IO \
+#define Initialise_IO \
 MCUCR &= (~(1 << PUD));\
 DDRB = 0;\
 DDRC = 0;\
@@ -88,6 +84,17 @@ DDRD = 0;\
 PORTB = 0xFF;\
 PORTC = 0xFF;\
 PORTD = 0xFF;
+
+
+/**********************************************************************************/
+#define cal_device \
+eeprom_write_byte((uint8_t*)(EE_size - 3), OSCCAL);\
+if ((eeprom_read_byte((uint8_t*)(EE_size - 2)) > 0x0F)\
+&&  (eeprom_read_byte((uint8_t*)(EE_size - 2)) < 0xF0) && (eeprom_read_byte((uint8_t*)(EE_size - 2))\
+== eeprom_read_byte((uint8_t*)(EE_size - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EE_size - 2));
+
+
+
 
 
 /*****************************************************************************/
@@ -115,13 +122,6 @@ cal_error = compute_error(0,cal_mode,0);
 
 
 
-
-/**********************************************************************************/
-#define cal_device \
-eeprom_write_byte((uint8_t*)(EE_size - 3), OSCCAL);\
-if ((eeprom_read_byte((uint8_t*)(EE_size - 2)) > 0x0F)\
-&&  (eeprom_read_byte((uint8_t*)(EE_size - 2)) < 0xF0) && (eeprom_read_byte((uint8_t*)(EE_size - 2))\
-== eeprom_read_byte((uint8_t*)(EE_size - 1)))) OSCCAL = eeprom_read_byte((uint8_t*)(EE_size - 2));
 
 
 
