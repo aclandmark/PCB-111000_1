@@ -16,10 +16,9 @@ do{sendString("s  ");}
 while((isCharavailable(255) == 0));                               //User prompt 
 if(receiveChar() == 's')break;}
 Atmel_powerup_and_target_detect;                                  //Leave target in programming mode                              
-set_up_target_parameters();                                       //Flash size, page size etc
 
 
-EE_top = EE_size-0x3;                                             //Last 3 bytes of EEPROM reserved for OSCCAL calibration
+EE_top = EE_size-0x4;                                             //Last 4 bytes of EEPROM reserved for OSCCAL calibration
 text_start = 0x5;                                                 //First 5 bytes reserved for EEPROM programmmer use
 
 sendString(" detected.\r\nPress -p- to program flash, \
@@ -60,7 +59,7 @@ if (waitforkeypress() == 'y')
 
 sendString
 ("\r\nReduce baud rate to 19.2kB and press 'r'.\r\n");          //Sending text requires baud rate reduction
-timer_T0_sub(T0_delay_10ms);
+Timer_T0_sub(T0_delay_10ms);
 UBRR0L = 51;
 while (1){if (waitforkeypress() != 'r'); else break;}
 
@@ -70,7 +69,7 @@ Program_Flash_Text();
 
 sendString
 ("\r\nRestore baud rate to 38.4kB and press 'r'.\r\n");
-timer_T0_sub(T0_delay_10ms);
+Timer_T0_sub(T0_delay_10ms);
 UBRR0L = 25;
 while (1){if (waitforkeypress() != 'r'); else break;}
 Verify_Flash_Text();}
