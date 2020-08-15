@@ -57,7 +57,7 @@ unsigned char RBL = 255;
 
 /********************************************************************************************************************************************/
 void Prog_EEPROM(void){	
-unsigned char  EEPROM_buffer[256];	///265		
+unsigned char  EEPROM_buffer[256];			
 int EEP_pointer = 0,   file_pointer = 0,  array_pointer = 0,  data_counter = 0;
 char key_press, DL_flag = 0, DL_status, op_code_1, op_code_2;	    
 char reservation[4];
@@ -92,7 +92,7 @@ sendString("1,2 or 3\r\n");
 
 op_code_2 =  waitforkeypress();		binUnwantedChars();		
 EE_top = (((Read_write_mem('O', 0x3, 0))<<8 ) +\
-(Read_write_mem('O', 0x4, 0)));										//Determine bottom of application reservation
+(Read_write_mem('O', 0x4, 0)));											//Determine bottom of application reservation
 Upload_text((Read_write_mem('O', 0x0, 0x0) << 8)\
 + Read_write_mem('O', 0x1, 0x0));										//Read text strings from EEPROM	
 
@@ -138,7 +138,7 @@ if(non_numeric_char (reservation[1]))sendChar ('?'); else break;}		//Only accept
 
 if(isCharavailable(100)){while(1){										//If keypress made acquire it else skip to "askiX2_to_hex" subroutine
 key_press = receiveChar();
-if (non_numeric_char (key_press)) {sendChar ('?'); 					//Illegal keypress
+if (non_numeric_char (key_press)) {sendChar ('?'); 						//Illegal keypress
 while (!(UCSR0A & (1 << RXC0)));}else break;}binUnwantedChars();		//Insists on legal keypress: 	
 reservation[0] = reservation[1]; 
 reservation[1] = key_press;}
@@ -158,14 +158,14 @@ Read_write_mem('I', 0x4, (EE_top & 0x00FF));
 
 
 
-//Repeat file download as many times as necessary to save text and data untill end of file reached or the EEPROM allocation is all used up.
+//Repeat file download as many times as necessary to save text and data until end of file reached or the EEPROM allocation is all used up.
 //This saves the need to lower the baud rate to allow time to write to EEPROM (which was considered to more awkward of the two options).
 
 
 
 sendString("\r\nSend text file.");
 
-do 																		//Remain in do-loop untill text all downloaded
+do 																		//Remain in do-loop until text all downloaded
 	{DL_status = (Download_text(&EEP_pointer,\
 	&file_pointer, 	&DL_flag, &array_pointer,\
 	EEPROM_buffer));													//Text saved to EEPROM buffer, then copied to EEPROM
@@ -177,12 +177,12 @@ do 																		//Remain in do-loop untill text all downloaded
 	}while (!(DL_status));												//Exit at end of text (-"- detected) 
 LEDs_off;	
 
-if (DL_flag == 2)														//Download data (if any) untill EEPROM buffer is full
+if (DL_flag == 2)														//Download data (if any) until EEPROM buffer is full
 	{while (!(Download_data(&EEP_pointer, &file_pointer,\
 	&DL_flag, &data_counter,&array_pointer,\
 	EEPROM_buffer)))													//Save text and data to EEPROM			
 		{LEDs_off;														//If EEPROM buffer fills						
-		sendString("  Again!");											//request additional download untill EEPROM is full
+		sendString("  Again!");											//request additional download until EEPROM is full
 		}
 	}
 binUnwantedChars ();
@@ -257,12 +257,12 @@ char text_char;	//text_char_old, keypress;
 text_char = waitforkeypress();												//Count characters as they are downloaded from the PC									
 if (text_char !=  '\0')UART_counter++;										//Arduino seems to down load several spurious nulls during download.
 while(1){text_char = next_char_from_PC(); 
-if ((text_char !=  '\0'))UART_counter++; 									//Ignore characters untill a -"- is detected, then place them
+if ((text_char !=  '\0'))UART_counter++; 									//Ignore characters until a -"- is detected, then place them
 if (text_char == '"') break;}												//in an EEPROM buffer if being downloaded for the first time	
 
 
-//Save text to EEPROM_buffer untill it is full or second -"- is encountered 
-//signalling the end of the text strings and start of data (if any)
+//Save text to EEPROM_buffer until it is full or second -"- is encountered 
+//signaling the end of the text strings and start of data (if any)
 
 	
 while(!(*ptr_DL_flag))													//EEPROM buffer full? No: Enter loop 1. Yes: skip Loop 1. 
@@ -271,7 +271,7 @@ else UART_counter++; 													//Loop 1: Acquire text characters and incremen
 
 if (text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip loop 2.
 	{if (UART_counter > *ptr_file_pointer)								//Loop 2: Text downloaded for first time? Yes: Enter Loop 3. No: skip loop 3
-		{switch (text_char)												//Loop 3: Detect carraige return and new line:
+		{switch (text_char)												//Loop 3: Detect carriage return and new line:
 			{case '\n':													//combine them if necessary and replace with '\0'
 			case '\r':
 				if (EEPROM_buffer[((*ptr_array_pointer)-1)] != '\0')
@@ -282,7 +282,7 @@ if (text_char != '"')													//Check for -"-? No: Enter Loop 2: Yes: skip l
 		EEPROM_buffer[((*ptr_array_pointer)++)] = text_char;			//Place characters as they are received in the EEPROM buffer
 
 		if((*ptr_array_pointer >= RBL) && (text_char != '\r') &&\
-				 (text_char != '\0'))									//If EEPROM bufffer fills up part way through a string 
+				 (text_char != '\0'))									//If EEPROM buffer fills up part way through a string 
 			*ptr_DL_flag = 1;											//set "*ptr_DL_flag" to force exit from Loop 1
 		}																//Loop 3																														
 	}																	//Loop 2
@@ -299,7 +299,7 @@ if (*ptr_DL_flag == 1)													//If EEPROM buffer is full: Text download is 
 
 	LEDs_on;
 	{int n=0;															//Copy characters from "EEPROM_buffer" to the EEPROM
-	while (((*ptr_EEP_pointer) +n) < EE_top)							//Stop copying when space rerserved for the application is reached
+	while (((*ptr_EEP_pointer) +n) < EE_top)							//Stop copying when space reserved for the application is reached
 		{Read_write_mem('I', ((*ptr_EEP_pointer) + n),\
 		EEPROM_buffer[n]); 
 		n++;
@@ -307,12 +307,12 @@ if (*ptr_DL_flag == 1)													//If EEPROM buffer is full: Text download is 
 
 	if (((*ptr_EEP_pointer)+n) == EE_top)								//EEPROM allocation all used? Yes:
 		{*ptr_DL_flag = 3; 												//Set DL_flag to 3.																	
-		Read_write_mem('I', (EE_top-1), '\0'); 						//Terminate EEPROM in '\0'
+		Read_write_mem('I', (EE_top-1), '\0'); 							//Terminate EEPROM in '\0'
 		*ptr_EEP_pointer = EE_top; 										//Set EEP_pointer to EEPROM 
-		sendString("\r\nEEPROM is full!");//////////////////////////////////////////////////////////////
+		sendString("\r\nEEPROM is full!");
 		return 1;}														//Return setting the "DL_status" to 1
 
-	(*ptr_EEP_pointer) += n-1; 										//Set "EEP_pointer" to next available address in the EEPROM
+	(*ptr_EEP_pointer) += n-1; 											//Set "EEP_pointer" to next available address in the EEPROM
 	*ptr_array_pointer = 0;}  											//Get ready to start filling the EEPROM buffer again.
 	return 0;}															//Return setting the "DL_status" to 0
 
@@ -322,7 +322,7 @@ if (*ptr_DL_flag == 1)													//If EEPROM buffer is full: Text download is 
 
 else 																	//-"- char encountered to terminate text input
 	LEDs_on;							
-	EEPROM_buffer[((*ptr_array_pointer)++)] = '\0';					//Terminate final string in a '\0'.
+	EEPROM_buffer[((*ptr_array_pointer)++)] = '\0';						//Terminate final string in a '\0'.
 	*ptr_file_pointer = UART_counter;									//Save the "UART_counter" in "file_pointer"
 	(*ptr_EEP_pointer) += (*ptr_array_pointer); 						//Set "EEP_pointer" to the address available for the first number 
 	if((*ptr_EEP_pointer) >= EE_top)									//If saving the entire string would cause the EEPROM allocation to be exceeded
@@ -335,7 +335,7 @@ else 																	//-"- char encountered to terminate text input
 				n++;
 				}
 			}
-		Read_write_mem('I', (EE_top-1), '\0'); 						//Terminate the EEPROM in '\0'
+		Read_write_mem('I', (EE_top-1), '\0'); 							//Terminate the EEPROM in '\0'
 		*ptr_EEP_pointer = EE_top; 
 		return 1;														//Return setting the "DL_status" to 1
 		}
@@ -405,8 +405,8 @@ switch (*ptr_DL_flag)
 		{int n=0;\
 		while ((ADDR_last_string +n) < (EE_top))
 			{Read_write_mem('I', (ADDR_last_string + n),\
-			EEPROM_buffer[n]);											//Save remaining text and data to EEPROM untill the EEPROM is full
-			n++;														//or untill the EEPROM_buffer is empty (i.e.the download is complete)
+			EEPROM_buffer[n]);											//Save remaining text and data to EEPROM until the EEPROM is full
+			n++;														//or until the EEPROM_buffer is empty (i.e.the download is complete)
 			if (n==(*ptr_array_pointer))break;
 			}
 		} 
@@ -467,9 +467,6 @@ return 0;
 
 
 
-
-
-
 /********************************************************************************************************************************************/
 int decimal_conversion (char data_text, int *ptr_UART_counter){
 int char_counter=0;
@@ -520,7 +517,7 @@ while(EEP_mem_counter < EEP_pointer)
 	while(1)
 		{string_char = Read_write_mem('O',(EEP_mem_counter++),0);
 		if(string_char == '\0') break;
-		sendChar(string_char);timer_T0_sub(T0_delay_5ms);
+		sendChar(string_char);Timer_T0_sub(T0_delay_5ms);
 		}
 	}newline();
 }
