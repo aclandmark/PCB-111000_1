@@ -8,7 +8,7 @@ int main (void)
 {long error_up, error_down;
 	int EEP_MAX = 0x2000;
 	
-	setup_HW_basic;
+	setup_HW;
 
 	ASSR = (1 << AS2);																//initialise T2 for crystal
 	OSCCAL_DV = OSCCAL;																//Save default value off OSCCAL
@@ -34,20 +34,20 @@ int main (void)
 	save_cal_values(OSCCAL_WV);														//Save result of the auto calibration
 
 	sendString("\r\nNew OSCCAL value ");
-	sendLongNum(10,OSCCAL_WV);
+	Num_to_PC(10,OSCCAL_WV);
 
 	sendString("\r\nPress 'x' to finish or AOK for manual cal\r\n");
 	if (waitforkeypress() == 'x'){
 		save_cal_values(OSCCAL_WV);
-	printout_cal_values();}
+		printout_cal_values();}
 
 	else Manual_cal();
 
 	sendString("\r\nTest");
 	sendString("\r\nValues saved to EEPROM  ");
-	sendLongNum(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 1))); sendChar('\t');
-	sendLongNum(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 2))); sendString("\tUser value\r\n\t\t\t");
-	sendLongNum(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 3))); sendString("\t\tDefault value\r\n");
+	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 1))); sendChar('\t');
+	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 2))); sendString("\tUser value\r\n\t\t\t");
+	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 3))); sendString("\t\tDefault value\r\n");
 
 	sendString("\r\nAll done: AK to repeat.\r\n");
 
@@ -86,7 +86,8 @@ void Auto_cal (char direction){
 		limit = 1000;
 		for(int m = 1; m <= 9; m++){sendChar('.');
 			limit -= 100;
-			Minimise_error_down(limit, &counter_1, &counter_2, &error_mag, &OSCCAL_mem, cal_mode);}}
+			Minimise_error_down(limit, &counter_1, &counter_2,\
+			 &error_mag, &OSCCAL_mem, cal_mode);}}
 	
 	if (direction)
 		{counter_1 = 0x0F;
@@ -101,7 +102,8 @@ void Auto_cal (char direction){
 			limit = 1000;
 			for(int m = 1; m <= 9; m++){sendChar('.');
 				limit -= 100;
-				Minimise_error_up(limit, &counter_1, &counter_2, &error_mag, &OSCCAL_mem, cal_mode);}}
+				Minimise_error_up(limit, &counter_1, &counter_2,\
+				 &error_mag, &OSCCAL_mem, cal_mode);}}
 	
 	error_mag = compute_error(0,cal_mode,0);
 	OSCCAL_WV = OSCCAL;
@@ -141,11 +143,11 @@ void Manual_cal(void){
 
 
 	for(int m = 0; m <= 40; m++)												//Print table of values
-	{sendLongNum(10,osccal_MIN); osccal_MIN++;
-		sendChar('\t');sendLongNum(10,buffer[m]);
+	{Num_to_PC(10,osccal_MIN); osccal_MIN++;
+		sendChar('\t');Num_to_PC(10,buffer[m]);
 		sendChar('\t');
 		percentage_error = buffer[m];
-		sendLongNum(10,percentage_error*100/62500);sendChar('%');
+		Num_to_PC(10,percentage_error*100/62500);sendChar('%');
 		newline();
 	Timer_T0_sub(T0_delay_20ms);}												//stops PC being overwhelmed with data
 
@@ -154,22 +156,21 @@ void Manual_cal(void){
 
 	UCSR0B |= (1 << RXEN0);														//keypresses required again
 
-	if (((OSCCAL_UV = UC_from_KBD()) == 'x') || 
-	((OSCCAL_UV = UC_from_KBD()) == 'y'))
-	OSCCAL_UV = OSCCAL_WV;														//stick with result of autocal
+	if ((OSCCAL_UV = UC_from_KBD()) == 'x')
+		OSCCAL_UV = OSCCAL_WV;													//stick with result of auto cal
 
 	
 	/*********************************************/
 	else
-	{Get_ready_to_calibrate;												//Test value of OSCCAL entered by user
-		OSCCAL = OSCCAL_UV;													//Test new OSCCAL value
+		{Get_ready_to_calibrate;												//Test value of OSCCAL entered by user
+		OSCCAL = OSCCAL_UV;														//Test new OSCCAL value
 		calibrate_without_sign_plus_warm_up_time;
 		close_calibration;
 
-		if(cal_error > 1750)												//Error resulting from User OSCCAL exceeds 1750
-		{OSCCAL = OSCCAL_WV;												//Reinstate working value
+		if(cal_error > 1750)													//Error resulting from User OSCCAL exceeds 1750
+			{OSCCAL = OSCCAL_WV;												//Reinstate working value
 			OSCCAL_UV = OSCCAL_WV;
-		sendString("\tChange rejected: error too great");}}
+			sendString("\tChange rejected: error too great");}}
 
 
 		cli();
