@@ -1,0 +1,39 @@
+
+Text file used to check the operation of the Atmega 328 hex/text bootloader plus autoCal application.  Text ahead of the line of “stars” is ignored and can be used to provide introductory text.
+
+**********************************************
+"1. Programming both hex for text files directly into flash:
+
+2. The Atmega 328 has 32,768 bytes of flash which is divided into two partitions.
+
+3. The first partition extends from locations zero to 0x6FFF (28,672 bytes).
+
+4. The second partition extends from locations 0x7000 to 0x7FFF (4096 bytes).
+
+5. Flash is also partitioned into pages, each of 128 bytes."
+
+Array of integer numbers
+
+Int	 Num_A	150
+Int	 Num_B	250
+Int	 Num_C	-9812
+Int	 Num_D	$FCD8
+
+array of long numbers
+
+Long Num_E	$1234 $CDEF		plus/minus 
+Long Num_F	$CDEF $1234		minus/plus
+Long Num_G	$7FED $5678		plus/plus	
+Long Num_H	$CBA9 $8FED		minus/minus
+
+char array	$5678 $9ABC
+
+
+
+More numbers
+
+$10 $20 $30 $40 $50 $60 $70 $80 $90 -10 -20 -30 -40 -50 -60 -70 -80 -90
+
+11 21 31 41 51 61 71 81 91 $FFF5 $FFEB $FFE1 $FFD7 $FFCD $FFC3 $FFB9 $FFAF $FFA5  
+
+$100 $200 $300 $400 $500 $600 $700 $800 $900 $A00
