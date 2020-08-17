@@ -22,13 +22,17 @@ EE_top = EE_size-0x4;                                             //Last 4 bytes
 text_start = 0x5;                                                 //First 5 bytes reserved for EEPROM programmmer use
 
 sendString(" detected.\r\nPress -p- to program flash, \
--e- for EEPROM or -x- to escape.");
+-e- for EEPROM, -r- to run target or -x- to escape.");
 
 while(1){
 op_code = waitforkeypress();
 switch (op_code){
 
-case 'r': Verify_Flash_Text();  SW_reset; break;
+case 'r': UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));             //Dissable UART
+Reset_H;                                                         //Set target device running 
+while(1); break;                                                 //Wait for UNO reset
+
+case 'R': Verify_Flash_Text();  SW_reset; break;
 case 'e': Prog_EEPROM(); break;
 
 case 'd':                                                       //Delete contents of the EEPROM
