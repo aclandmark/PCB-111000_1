@@ -507,6 +507,7 @@ return askiX4_to_hex_V2 (data_string);}
 /********************************************************************************************************************************************/
 void Upload_text(int EEP_pointer)
 {char string_char;
+char char_counter = 0;
 int EEP_mem_counter = 0;
 
 EEP_mem_counter = text_start;
@@ -517,8 +518,11 @@ while(EEP_mem_counter < EEP_pointer)
 	while(1)
 		{string_char = Read_write_mem('O',(EEP_mem_counter++),0);
 		if(string_char == '\0') break;
-		sendChar(string_char);Timer_T0_sub(T0_delay_5ms);
-		}
+		char_counter += 1; 
+		if((char_counter >= 90) &&  (string_char == ' ')){sendString("\r\n\t"); char_counter = 0;}
+		else sendChar(string_char);		
+		Timer_T0_sub(T0_delay_5ms);
+		}char_counter = 0;
 	}newline();
 }
 
