@@ -77,6 +77,7 @@ int line_no;                                                                //Re
 int phys_address;                                                          //Address in flash memory
 signed int prog_counter_mem;                                                //Initialise with size of .hex file used for programming
 unsigned char string_counter = 1;
+unsigned char line_length = 0;
 
 phys_address = FlashSZ - 1;   
 sendString("\r\nEnd of flash ");sendHex(16,phys_address);newline();
@@ -86,13 +87,23 @@ sendHex(16,string_counter++);sendChar('\t');
  {Timer_T0_sub(T0_delay_10ms);
  low_char = Read_write_mem('L',phys_address, 0x0);
 if(high_char)
-sendChar(high_char);              
-else {newline();sendHex(10,string_counter++);sendChar('\t');}
-if(low_char)
-sendChar(low_char);              
-else {newline();sendHex(10,string_counter++);sendChar('\t');}
-phys_address -= 1;}
+	{line_length += 1;
+	if((high_char == ' ') && (line_length > 90))
+		{sendString("\r\n\t"); line_length = 0;}
+	else sendChar(high_char);}
+else {line_length = 0;newline();newline();
+		sendHex(10,string_counter++);sendChar('\t');}
 
-sendString("\r\nLast address available for hex ");sendHex(16,address_in_flash-1);
-newline();newline();}
+if(low_char)
+	{line_length += 1;
+	if((low_char == ' ') && (line_length > 90))
+		{sendString("\r\n\t"); line_length = 0;}
+	else sendChar(low_char);}
+else {line_length = 0;newline();newline();
+	sendHex(10,string_counter++);sendChar('\t');}
+
+phys_address -= 1;}
+if (op_code == 't')
+{sendString("\r\nLast address available for hex ");sendHex(16,address_in_flash-1);
+newline();}newline();}
   
