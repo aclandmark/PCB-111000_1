@@ -13,7 +13,7 @@ sei();																		//Set global interrupt
 Timer_T2_sub_with_interrupt(7,0);											//Start Timer2 with interrupt
 
 address_in_flash = FlashSZ;//0x4000; //0									//First character will be stored at 0x6FFF not 0x6FFE
-write_address = 0x40;														//Address on page buffer
+write_address = PageSZ;			//0x40;										//Address on page buffer
 while (1){
 while (r_pointer == w_pointer);												//wait for w_pointer to be incremented
 if(endoftext != 3)endoftext -= 1;											//Indicates that the timer has been shut down
@@ -26,7 +26,7 @@ inc_r_pointer;																//restore the value of "r_pointer" to that of "w_p
 if (write_address == 0){
 sendChar('*');
 write_page_SUB(address_in_flash);
-write_address = 0x40;}														//Restore address_in_flash
+write_address = PageSZ;}														//Restore address_in_flash
 if(!(endoftext)) break;}													//Break when two '\0' chars have been appended to text stored in the array
 address_in_flash -= write_address;
 write_page_SUB(address_in_flash);
