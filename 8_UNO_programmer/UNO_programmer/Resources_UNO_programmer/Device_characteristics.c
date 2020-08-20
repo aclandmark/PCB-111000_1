@@ -11,7 +11,8 @@ void Detect_device_type(void){
 
 Target_type = Atmel_config(signature_bit_2_h, signature_bit_2_l);
 switch(Target_type)\
-	{case 0x95: sendString("328"); break;
+	{case 0x96: sendString("644"); break;
+	case 0x95: sendString("328"); break;
 	case 0x94: sendString("168"); break;
 	case 0x93: sendString("88"); break;
 	case 0x92: sendString("48"); break;
@@ -19,7 +20,26 @@ switch(Target_type)\
 	sendString("\r\n"); wdt_enable(WDTO_60MS);while(1);break;}}
 
 
+
+
 void set_up_target_parameters(void){
+
+
+if(Target_type == 0x96)									//Atmega 644
+{
+PageSZ = 0x80;
+PAmask = 0x7F80;
+FlashSZ = 0x8000;
+EE_size = 0x800;
+Target_type_M = 0x09;
+Fuse_Ex = 0xFF;
+Fuse_H = 0xD7;
+Fuse_L = 0xE2;
+Lock = 0xFF;}
+
+
+
+
 if(Target_type == 0x95)									//Atmega 328/P
 {
 PageSZ = 0x40;
@@ -32,6 +52,7 @@ Fuse_Ex = 0xFF;
 Fuse_H = 0xD7;
 Fuse_L = 0xE2;
 Lock = 0xFF;}
+
 
 
 if(Target_type == 0x94)									//Atmega 168/P
@@ -49,6 +70,7 @@ Lock = 0xFF;}
 
 
 
+
 if(Target_type == 0x93)									//Atmega 88/P
 {
 PageSZ = 0x20;			
@@ -61,6 +83,7 @@ Fuse_Ex = 0xFF;
 Fuse_H = 0xD7;
 Fuse_L = 0xE2;
 Lock = 0xFF;}
+
 
 
 
