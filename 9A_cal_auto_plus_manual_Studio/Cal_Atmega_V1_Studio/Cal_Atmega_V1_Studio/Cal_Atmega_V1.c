@@ -27,9 +27,8 @@ int main (void)
 	Auto_cal (1);}																	//Repeat search starting from 0x10
 	
 	set_device_type_and_memory_size;
-	sendString("\r\n\r\nCalibrating Atmega ");\
-	sendString (Device_type[device_ptr]);\
-		
+	sendString("\r\n\r\nCalibrating Atmega ");
+	sendString (Device_type[device_ptr]);
 	
 	save_cal_values(OSCCAL_WV);														//Save result of the auto calibration
 
