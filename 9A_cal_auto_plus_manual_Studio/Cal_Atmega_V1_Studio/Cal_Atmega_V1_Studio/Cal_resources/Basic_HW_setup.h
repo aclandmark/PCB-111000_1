@@ -132,7 +132,7 @@ const char * Device_94 = "168/P";
 const char * Device_95 = "328/P";
 const char * Device_96 = "644";
 
-const char * Device_type[5];
+const char * Device_type[6];
 int device_ptr;
 
 
