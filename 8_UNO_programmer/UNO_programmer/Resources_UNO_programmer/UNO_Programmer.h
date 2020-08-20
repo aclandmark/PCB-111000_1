@@ -33,7 +33,7 @@ signed int EE_top;												//Limits EEPROM space available for strings and da
 
 signed int PageSZ;												//Size of a page of flash
 signed int PAmask;												//Used to obtain the flash page address from the hex address
-signed int FlashSZ;												//Amount of flash memory supplied on target device
+unsigned int FlashSZ;												//Amount of flash memory supplied on target device
 int EE_size;													//EEPROM size
 unsigned char Target_type, Target_type_M, Target_type_P;
 unsigned char Fuse_Ex, Fuse_H, Fuse_L, Lock;
@@ -44,9 +44,9 @@ unsigned char Fuse_Ex, Fuse_H, Fuse_L, Lock;
 int text_start;												//First 5 addresses reserved to define string/data EEPROM partitions		
 unsigned char pcb_type = 0;									//1 for UNO and 2 for PCB_A
 	
-int  cmd_counter;											//Counts commands as they are downloaded from the PC
-int prog_counter;											//Counts commands burned to flash
-signed int  read_ops=0;										//Total number of commands read from flash
+unsigned int  cmd_counter;											//Counts commands as they are downloaded from the PC
+unsigned int prog_counter;											//Counts commands burned to flash
+unsigned int  read_ops=0;										//Total number of commands read from flash
 volatile int counter;										//Counts characters in a record as they are downloded from the PC
 volatile int char_count;									//The number of askii character in a single record
 volatile unsigned char Count_down;							//Counts commands as record is programmed
@@ -57,14 +57,14 @@ unsigned int Hex_cmd;										//Command read from flash during verification
 
 unsigned char cmd_pin, resp_pin, clock_pin, reset_pin;		//Used to define the programming pins
 
-int Hex_address;											//Address read from the hex file
-int HW_address;												//Hard ware address (usually tracks Hex_address)
-signed int page_address;									//Address of first location on a page of flash 
-volatile int write_address;									//Address on page_buffer to which next command will be written
+unsigned int Hex_address;											//Address read from the hex file
+unsigned int HW_address;												//Hard ware address (usually tracks Hex_address)
+unsigned int page_address;									//Address of first location on a page of flash 
+volatile unsigned int write_address;									//Address on page_buffer to which next command will be written
 
 signed char short_record;									//Record  containing less that eight 16 bit commands
-signed char page_offset;									//Address of first location on page buffer to be used
-signed char space_on_page;									//Keeps a track of the space remaining on a page buffer
+unsigned char page_offset;									//Address of first location on page buffer to be used
+unsigned char space_on_page;									//Keeps a track of the space remaining on a page buffer
 unsigned char Flash_flag;									//Indicates that the page buffer contains commands
 
 signed char record_length;									//Num commands one one line of hex file (i.e. on one record)
