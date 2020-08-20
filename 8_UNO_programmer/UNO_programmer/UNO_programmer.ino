@@ -85,6 +85,8 @@ Read_write_mem('I', EE_size - 4, \
 (Atmel_config(signature_bit_2_h, signature_bit_2_l)));          //Define target type on target device
 
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));                      //Dissable UART
+
+initialise_IO;                                                  //Reset all to WPU
 Reset_H;                                                        //Set target device running 
 while(1);                                                       //Wait for UNO reset
 return 1;}
