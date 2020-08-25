@@ -1,4 +1,11 @@
 
+/*
+Introduces subroutines necessary to read text from EEPROM and Flash
+that has been programmed using the "8_UNO_programmer".
+
+At user prompt press 'r' to read flash and 'R' to read EEPROM.
+*/
+
 
 #include "Text_reader.h"
 
@@ -62,7 +69,7 @@ sendString("\r\nReading strings from EEPROM.");
 
 sendString("\r\nTotal numbers of strings is  ");
 Num_to_PC(10, (Num_strings-1));
-sendString("\r\nEnter string number or zero to exit\r\n");		//Request string
+sendString("\r\nEnter string number or zero to exit\r\n");			//Request string
 
 
 while((text_num = Num_from_KBD())){									//User enters string number
