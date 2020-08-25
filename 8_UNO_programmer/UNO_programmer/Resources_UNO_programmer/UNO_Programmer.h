@@ -102,7 +102,7 @@ Define_programmining_pins;\
 Reset_L;\
 Config_Xtal_port;\
 USART_init(0,25);\
-text_start = 0x5;
+text_start = 0x6;
 
 
 
