@@ -53,7 +53,7 @@ void Write_store(int, int*, char);
 
 
 int RBL = 399;	
-
+unsigned char string_counter = 1;
 
 
 /********************************************************************************************************************************************/
@@ -190,8 +190,13 @@ sendString("   AK?\r\n");	binUnwantedChars();
 Read_write_mem('I', 0x0, (EEP_pointer >> 8));  	
 Read_write_mem('I', 0x1, (EEP_pointer & 0x00FF));						//Save address in EEPROM available for first data item
 Read_write_mem('I', 0x2, data_counter);									//Save number of data items (each occupy 16 bits)	
+
 waitforkeypress();
 Upload_text(EEP_pointer);  
+
+Read_write_mem('I', 0x5, string_counter);
+sendHex(10, string_counter);
+
 if (data_counter > 0) Upload_data (EEP_pointer, data_counter);  
 break;  
 
@@ -505,12 +510,13 @@ EEP_mem_counter = text_start;
 while(EEP_mem_counter < EEP_pointer)
 	{newline();
 	sendHex (16, EEP_mem_counter); 
+	string_counter++;
 	sendString ("    ");
 	while(1)
 		{string_char = Read_write_mem('O',(EEP_mem_counter++),0);
 		if(string_char == '\0') break;
 		char_counter += 1; 
-		if((char_counter >= 90) &&  (string_char == ' ')){sendString("\r\n\t"); char_counter = 0;}
+		if((char_counter >= 90) &&  (string_char == ' ')){sendString("\r\n\t");  char_counter = 0;}
 		else sendChar(string_char);		
 		Timer_T0_sub(T0_delay_5ms);
 		}char_counter = 0;
