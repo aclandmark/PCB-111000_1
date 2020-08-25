@@ -94,7 +94,7 @@ return 1;}
 	unsigned char string_counter(int next_address){                //Scroll through text section of flash counting the '\0' chars
 		char next_char, previous = 0;								//until '\0' '\0' is detected to indicate the end of the last string
 		unsigned char counter = 0;
-
+		
 		while(1){          
 			next_char = Char_from_flash(next_address);             //result provided by assembly subroutine
 			if(next_char == 0){counter += 1; 
@@ -109,6 +109,7 @@ return 1;}
 		void print_string_num(int text_num, int next_address){      //scroll through text section of flash counting '\0' chars
 			int null_counter = 1;									 //until the start of the required string
 			
+			line_length = 0;
 			while(1){
 				if(null_counter == text_num)break;
 				next_char = Char_from_flash(next_address);
