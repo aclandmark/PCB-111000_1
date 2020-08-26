@@ -1,0 +1,40 @@
+
+
+Example file:
+
+Note:
+Only two quotation symbols are allowed in the text file.
+
+Everything ahead of the first quotation symbol is ignored.
+Every thing ater the second is ignored except decimal and hex numbers.
+
+*******************************************************
+
+"Instructions for preparing a text file containing strings and numbers that can  be saved to the EEPROM using 'UNO_programmer' and read using the project 'Text_reader'.  
+This project contains the subroutines that will be required by user applications.
+
+Only two quotation symbols are allowed in the text file.
+
+Everything ahead of the first quotation symbol is ignored. Every thing ater the second is ignored except decimal and hex numbers.
+
+Compose the text strings and save them as a .txt file. The return key is used to terminate each string.
+Use Arduino to download 'UNO_programmer' to a UNO board. Connect the target device and open a terminal program.
+At the s...s...s...... user prompt press s, e, w, 0 and send the text file when requested.
+It may have to be sent several times depending on its size.
+At the 'AK' prompt press any key and the file will be echoed to the PC along with the address of each string.
+Type the address below the second quotation symbol and then add any other numbers that are to be saved."
+
+$355
+$0006 
+$00AF     
+$0101     
+$0139     
+$01BA     
+$0222     
+$0292   
+$02EC    
+$355
+
+
+
+ 
