@@ -52,7 +52,7 @@ char Read_store(int, int*);
 void Write_store(int, int*, char);
 
 
-int RBL = 399;	
+int RBL = 399;//399;	
 unsigned char string_counter = 1;
 
 
@@ -519,7 +519,7 @@ while(EEP_mem_counter < EEP_pointer)
 		if((char_counter >= 90) &&  (string_char == ' ')){sendString("\r\n\t");  char_counter = 0;}
 		else sendChar(string_char);		
 		Timer_T0_sub(T0_delay_5ms);
-		}char_counter = 0;
+		}newline();char_counter = 0;
 	}newline();
 }
 
