@@ -24,16 +24,18 @@ It may have to be sent several times depending on its size.
 At the 'AK' prompt press any key and the file will be echoed to the PC along with the address of each string.
 Type the address below the second quotation symbol and then add any other numbers that are to be saved."
 
-$355
 $0006 
-$00AF     
-$0101     
-$0139     
-$01BA     
-$0222     
-$0292   
-$02EC    
-$355
+$00B0     
+$0102     
+$013B     
+$01BD     
+$0225     
+$0295   
+$02F0    
+$032C
+$039A
+
+
 
 
 
