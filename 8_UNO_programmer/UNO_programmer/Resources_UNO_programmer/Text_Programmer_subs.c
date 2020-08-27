@@ -8,7 +8,7 @@ text_started =0; endoftext = 3; counter = 0;
 Rx_askii_char_old = '0';
 
 sendString
-("\r\nReduce baud rate to 19.2kB and press 'r'.\r\n");          //Sending text requires baud rate reduction
+("\r\nReduce baud rate to 19.2kB and press 'r'.\r\n");          			//Sending text requires baud rate reduction
 Timer_T0_sub(T0_delay_10ms);
 UBRR0L = 51;
 while (1){if (waitforkeypress() != 'r'); else break;}
@@ -33,7 +33,7 @@ inc_r_pointer;																//restore the value of "r_pointer" to that of "w_p
 if (write_address == 0){
 sendChar('*');
 write_page_SUB(address_in_flash);
-write_address = PageSZ;}														//Restore address_in_flash
+write_address = PageSZ;}													//Restore address_in_flash
 if(!(endoftext)) break;}													//Break when two '\0' chars have been appended to text stored in the array
 address_in_flash -= write_address;
 write_page_SUB(address_in_flash);
@@ -58,13 +58,13 @@ unsigned char Rx_askii_char;
 
 Rx_askii_char = receiveChar();
 if((Rx_askii_char) == '\0')return;											//Ignore polling from Boot loader
-if((Rx_askii_char != '*') && (!(text_started)))return;						//Ignore header text occuring before a line of * characters
+if((Rx_askii_char != '*') && (!(text_started)))return;					//Ignore header text occuring before a line of * characters
 if((Rx_askii_char == '*')&&(!(text_started)))								//The number of * characters is not critical only one is required
 { text_started = 1;return;}
 if((Rx_askii_char == '*')&&(text_started == 1))return;						//Ignore carriage returns occurring before the first text string
 else {if (text_started == 1)text_started = 2;}
 if((text_started == 2) && ((Rx_askii_char == '\r')
- || (Rx_askii_char == '\n')))return; else text_started = 3;					//Enter main area of text file containing strings to be written to flash
+ || (Rx_askii_char == '\n')))return; else text_started = 3;				//Enter main area of text file containing strings to be written to flash
 
 if ((Rx_askii_char == '\r') || (Rx_askii_char == '\n')){					//Check for '\r' and or '\n' and convert to a single '\0' character
 if (Rx_askii_char_old == '\0') return;
