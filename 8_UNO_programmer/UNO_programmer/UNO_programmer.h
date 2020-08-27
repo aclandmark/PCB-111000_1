@@ -5,8 +5,6 @@
 #include <avr/wdt.h>
 #include <avr/eeprom.h>
 
-//const char *Device = "168";
-
 #include "Resources_UNO_programmer\\UNO_Programmer.h"
 #include "Resources_UNO_programmer\Device_characteristics.c"
 #include "Resources_UNO_programmer\UNO_Programmer_HW_subs.c"
