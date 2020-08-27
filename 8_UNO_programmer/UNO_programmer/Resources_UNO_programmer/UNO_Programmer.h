@@ -44,27 +44,27 @@ unsigned char Fuse_Ex, Fuse_H, Fuse_L, Lock;
 int text_start;												//First 5 addresses reserved to define string/data EEPROM partitions		
 unsigned char pcb_type = 0;									//1 for UNO and 2 for PCB_A
 	
-unsigned int  cmd_counter;									//Counts commands as they are downloaded from the PC
-unsigned int prog_counter;									//Counts commands burned to flash
-unsigned int  read_ops=0;									//Total number of commands read from flash
+unsigned int  cmd_counter;											//Counts commands as they are downloaded from the PC
+unsigned int prog_counter;											//Counts commands burned to flash
+unsigned int  read_ops=0;										//Total number of commands read from flash
 volatile int counter;										//Counts characters in a record as they are downloded from the PC
 volatile int char_count;									//The number of askii character in a single record
 volatile unsigned char Count_down;							//Counts commands as record is programmed
 volatile int   tempInt1, tempInt2;							//Used to assemble commands and addresses as the are downloaded
-int  store[200];	//200										//Used to store commands and address ready for the programmer
+int store[64];												//Used to store commands and address ready for the programmer
 volatile unsigned char w_pointer,r_pointer;					//Read/write pointers to "store" to which hex file is saved
 unsigned int Hex_cmd;										//Command read from flash during verification
 
 unsigned char cmd_pin, resp_pin, clock_pin, reset_pin;		//Used to define the programming pins
 
-unsigned int Hex_address;									//Address read from the hex file
-unsigned int HW_address;									//Hard ware address (usually tracks Hex_address)
+unsigned int Hex_address;											//Address read from the hex file
+unsigned int HW_address;												//Hard ware address (usually tracks Hex_address)
 unsigned int page_address;									//Address of first location on a page of flash 
-volatile unsigned int write_address;						//Address on page_buffer to which next command will be written
+volatile unsigned int write_address;									//Address on page_buffer to which next command will be written
 
 signed char short_record;									//Record  containing less that eight 16 bit commands
 unsigned char page_offset;									//Address of first location on page buffer to be used
-unsigned char space_on_page;								//Keeps a track of the space remaining on a page buffer
+unsigned char space_on_page;									//Keeps a track of the space remaining on a page buffer
 unsigned char Flash_flag;									//Indicates that the page buffer contains commands
 
 signed char record_length;									//Num commands one one line of hex file (i.e. on one record)
@@ -146,12 +146,12 @@ counter = 1;
 
 #define inc_w_pointer \
 w_pointer++;\
-w_pointer = w_pointer & 0x1F;
+w_pointer = w_pointer & 0x3F;
 
 
 #define inc_r_pointer \
 r_pointer++;\
-r_pointer = r_pointer & 0b00011111;
+r_pointer = r_pointer & 0b00111111;
 
 
 
@@ -232,7 +232,7 @@ while(1){if((Atmel_config(Prog_enable_h, 0)==0x53) && (Atmel_config(signature_bi
 	sendString("\r\nAtmega ");\
 	Detect_device_type();\
 	set_up_target_parameters();\
-	EE_top = EE_size-0x4;\
+	EE_top = EE_size-0x5;\
 	Suffix = '?';\
 	\
 	if(Atmel_config(signature_bit_3_h, signature_bit_3_l)  == Target_type_M)Suffix = ' ';\
