@@ -21,21 +21,22 @@ sendString(" detected.\r\nPress -p- to program flash, \
 -e- for EEPROM, -r- to run target or -x- to escape.");
 
 while(1){
-  op_code = waitforkeypress();
-  switch (op_code){
+op_code = waitforkeypress();
+switch (op_code){
 
-     case 'r': Exit_programming_mode; break;                      //Wait for UNO reset
-     case 'R': Verify_Flash_Text(); SW_reset; break;
-     case 'e': Prog_EEPROM(); SW_reset; break;
+case 'r': Exit_programming_mode; break;                      //Wait for UNO reset
+case 'R': Verify_Flash_Text();  SW_reset; break;
+case 'e': Prog_EEPROM(); SW_reset; break;
 
-    case 'd':                                                     //Delete contents of the EEPROM
-      sendString("\r\nReset EEPROM! D or AOK to escape.\r\n");    //but leave cal data.
-      if(waitforkeypress() == 'D'){
-      sendString("10 sec wait");
-      for (int m = 0; m < EE_top; m++)  
-      {Read_write_mem('I', m, 0xFF);}                             //Write 0xFF to all EEPROM loactions bar the top 4
-      sendString(" Done\r\n");}
-      SW_reset;break;
+case 'd':                                                       //Delete contents of the EEPROM
+sendString("\r\nReset EEPROM! D or AOK to escape");             //but leave cal data.
+newline();
+if(waitforkeypress() == 'D'){
+sendString("10 sec wait");
+for (int m = 0; m <= EE_top; m++)  
+{Read_write_mem('I', m, 0xFF);}                                 //Write 0xFF to all EEPROM loactions bar the top 3
+sendString(" Done\r\n");}
+SW_reset;break;
 
 case 'x': SW_reset; break;
 default: break;} 
@@ -48,16 +49,17 @@ Verify_Flash_Hex();
 
 sendString("\r\nText_file? y or n\r\n");
 if (waitforkeypress() == 'y')
-  {op_code = 't';                                                 //Required by UART ISR
-  Program_Flash_Text();}
+{op_code = 't';                                                 //Required by UART ISR
+Program_Flash_Text();}
+
 
 sendString (Version);
 newline();
 
 Read_write_mem('I', EE_size - 4, \
-(Atmel_config(signature_bit_2_h, signature_bit_2_l)));            //Define target type on target device
+(Atmel_config(signature_bit_2_h, signature_bit_2_l)));          //Define target type on target device
 
-Exit_programming_mode;
+Exit_programming_mode;                                                  //Wait for UNO reset
 return 1;}
 
 
