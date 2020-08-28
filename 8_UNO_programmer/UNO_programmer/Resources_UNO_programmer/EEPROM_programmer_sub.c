@@ -337,6 +337,7 @@ else 																	//-"- char encountered to terminate text input
 			}
 		Read_write_mem('I', (EE_top-1), '\0'); 							//Terminate the EEPROM in '\0'
 		*ptr_EEP_pointer = EE_top; 
+		sendString("\r\nEEPROM is full!");
 		return 1;														//Return setting the "DL_status" to 1
 		}
 	*ptr_DL_flag = 2; 													//If overflow is not a problem set "DL_flag" to 2
@@ -514,10 +515,10 @@ int EEP_mem_counter = 0;
 
 EEP_mem_counter = text_start;
 while(EEP_mem_counter < EEP_pointer)
-	{newline();
+	{sendString("\r\n$");
 	sendHex (16, EEP_mem_counter); 
 	string_counter++;
-	sendString ("    ");
+	sendChar ('\t');
 	while(1)
 		{string_char = Read_write_mem('O',(EEP_mem_counter++),0);
 		if(string_char == '\0') break;
@@ -534,7 +535,7 @@ while(EEP_mem_counter < EEP_pointer)
 
 /********************************************************************************************************************************************/
 void Upload_data(int address_first_data_item, int data_counter)
-{char output_counter=0;
+{int output_counter=0;
 int data_item = 0 ;
 
 
