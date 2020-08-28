@@ -20,7 +20,7 @@ void binUnwantedChars (void);
 void sendChar(char);
 void sendString_with_pause(const char*);
 void sendString(const char*);
-
+void NumericString_to_PC_with_pause(char*);
 
 
 
@@ -160,3 +160,11 @@ int i = 0;
 while(i < 200){
 if(s[i] == '\0') break;
 sendChar(s[i++]);} }
+
+
+/*********************************************************************/
+void NumericString_to_PC_with_pause(char* s){					
+int n=0;
+while (s[n] != '\0')n++;								//scroll to end of string counting the number of characters
+for(int m = n; m; m--)sendChar(*(s + m-1));}			//print last character first
+
