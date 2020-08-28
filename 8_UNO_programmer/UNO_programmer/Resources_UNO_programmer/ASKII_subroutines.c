@@ -15,14 +15,14 @@ int askiX4_to_hex_V2 (char*);
 /**********************************************************************************************/
 void sendHex(char radix, unsigned int Hex){ char print_out_string[6];
 my_utoa(radix, Hex, print_out_string, 'Z'); 
-sendString_with_pause(print_out_string);sendString(" ");}							//include leading zeros
+NumericString_to_PC_with_pause(print_out_string);sendString(" ");}							//include leading zeros
 
 
 
 /**********************************************************************************************/
 void sendCharasASKI(char radix, unsigned char CHR){ char print_out_string[4];
 my_chartoa(radix, CHR, print_out_string); 
-sendString_with_pause(print_out_string);sendString(" ");}
+NumericString_to_PC_with_pause(print_out_string);sendString(" ");}
 
 
 
@@ -31,43 +31,39 @@ void sendsignedHex (int Hex){
 char print_out_string[6];
 char sign_char = '+';
 if (Hex & 0x8000) {Hex = ~Hex + 1; sign_char = '-';}
-my_utoa(10, Hex, print_out_string, 'N'); 											//Exclude leading zeros
+my_utoa(10, Hex, print_out_string, 'N'); 												//Exclude leading zeros
 if (sign_char == '-')
-{sendChar('-'); sendString_with_pause(print_out_string);sendString("  ");}
-else {sendChar(' '); sendString_with_pause(print_out_string);sendString("  ");}}
+{sendChar('-'); NumericString_to_PC_with_pause(print_out_string);sendString("  ");}
+else {sendChar(' '); NumericString_to_PC_with_pause(print_out_string);sendString("  ");}}
 
 
 
 /**********************************************************************************************/
-void my_utoa(char radix, unsigned int n, char s[], char mode){						//unsigned to askii
-unsigned char i,sl,j,c;
-i=0; sl=0;
-do{sl++;
+void my_utoa(char radix, unsigned int n, char s[], char mode){							//unsigned to askii
+unsigned char i;																		//Generates string in reverse order
+i=0;
+do{
 s[i] = n % radix;
 if (s[i] < 10) s[i]+= '0';
 else s[i] += '7';
 i++;
 }while((n/=radix)>0);
-if ((i < 4) && (mode == 'Z')){while(i < 4) {s[i++] = '0';sl++;}}	
-s[i] = '\0';
-for(i=0, j=sl-1; i<j; i++,j--){
-c=s[i];  s[i] = s[j];  s[j] = c;}}
+if ((i < 4) && (mode == 'Z')){while(i < 4) {s[i++] = '0';}}	
+s[i] = '\0';}
 
 
 
 /**********************************************************************************************/
 void my_chartoa(char radix, unsigned char n, char s[]){								//char to askii
-unsigned char i,sl,j,c;
-i=0; sl=0;
-do{sl++;
+unsigned char i;																		//Generates string in reverse order
+i=0; 		
+do{
 s[i] = n % radix;
 if (s[i] < 10) s[i]+= '0';
 else s[i] += '7';
 i++;
 }while((n/=radix)>0);
-s[i] = '\0';
-for(i=0, j=sl-1; i<j; i++,j--){
-c=s[i];  s[i] = s[j];  s[j] = c;}}
+s[i] = '\0';}
 
 
 
