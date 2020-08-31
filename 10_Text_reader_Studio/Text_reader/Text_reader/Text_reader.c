@@ -24,9 +24,9 @@ int index=0;														//Address in EEPROM of the first string pointer
 setup_HW;
 User_prompt;
 
-sendString("\r\nProgram running on Atmega ");
+sendString("\r\nProgram running on ");
+sendString (Device_family[family_ptr]);
 sendString (Device_type[device_ptr]);
-
 
 
 if(User_response == 'r')
