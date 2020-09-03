@@ -195,7 +195,7 @@ Read_write_mem('I', 0x2, data_counter);									//Save number of data items (eac
 waitforkeypress();
 Upload_text(EEP_pointer); 
 
-Read_write_mem('I', 0x5, string_counter);
+Read_write_mem('I', 0x5, --string_counter);
 sendHex(10, string_counter);
 
  
