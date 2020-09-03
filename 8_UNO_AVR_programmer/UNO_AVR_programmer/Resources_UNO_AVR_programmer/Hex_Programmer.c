@@ -222,4 +222,5 @@ sendHex(10,read_ops); sendString(" out\r\n");
 
 Verify_config_bytes;
 newline();
+Last_Hex_Page = (phys_address & PAmask)*2;								//LAST PAGE used by Hex
 }
