@@ -8,6 +8,8 @@ Only two quotation symbols are allowed in the text file.
 Everything ahead of the first quotation symbol is ignored.
 Every thing ater the second is ignored except decimal and hex numbers.
 
+All strings must be terminated in a cairage return including the last one.
+
 *******************************************************
 
 "Instructions for preparing a text file containing strings and numbers that can  be saved to the EEPROM using 'UNO_programmer' and read using the project 'Text_reader'.  
