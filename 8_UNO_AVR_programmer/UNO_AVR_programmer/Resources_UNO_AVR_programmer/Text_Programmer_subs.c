@@ -35,8 +35,9 @@ sendChar('*');
 write_page_SUB(address_in_flash);
 write_address = PageSZ;}													//Restore address_in_flash
 if(!(endoftext)) break;}													//Break when two '\0' chars have been appended to text stored in the array
-address_in_flash -= write_address;
-write_page_SUB(address_in_flash);
+write_page_SUB(address_in_flash - write_address);
+address_in_flash += 1;	
+
 sendChar('*');
 cli();  
 UCSR0B &= (~(1<<RXCIE0));
@@ -118,6 +119,12 @@ else {line_length = 0;newline();newline();
 
 phys_address -= 1;}
 if (op_code == 't')
-{sendString("\r\nLast address available for hex ");sendHex(16,address_in_flash-1);
-newline();}newline();}
+{Last_Text_Page = (address_in_flash & PAmask)*2;
+newline();
+Unused_pages = (Last_Text_Page - Last_Hex_Page - PageSZ*2)/2/PageSZ;
+
+if (Last_Text_Page > Last_Hex_Page) 
+{sendString("\r\nUnused pages: "); sendHex(10,Unused_pages);
+if (Unused_pages){sendString("  Bytes: ");
+sendHex(10,(Unused_pages*PageSZ*2));}newline();newline();}}}
   
