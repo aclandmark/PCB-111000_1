@@ -68,12 +68,12 @@ wdt_enable(WDTO_60MS); while(1);}
 sendString("\r\nReading strings from EEPROM.");
 
 sendString("\r\nTotal numbers of strings is  ");
-Num_to_PC(10, (Num_strings-1));
+Num_to_PC(10, (Num_strings));
 sendString("\r\nEnter string number or zero to exit\r\n");			//Request string
 
 
 while((text_num = Num_from_KBD())){									//User enters string number
-if (text_num >= Num_strings)
+if (text_num > Num_strings)
 {sendString("\r\nNo string!\r\n");continue;}
 
 next_address = 
@@ -104,7 +104,7 @@ return 1;}
 		
 		while(1){          
 			next_char = Char_from_flash(next_address);             //result provided by assembly subroutine
-			if(next_char == 0){counter += 1; 
+			if(next_char == 0){counter += 1; char_counter += 1;
 				if (!(previous)) return counter-1;}
 			else char_counter += 1;
 			previous = next_char;
