@@ -31,15 +31,6 @@ At user prompt press 'r' to read flash and 'R' to read EEPROM.
 #define UCSZ01 UCSZ1
 #define TCR2AUB TCR2UB
 
-#define T1_delay_1sec 5,0xE17D
-
-#define wd_timer_off \
-wdr();\
-MCUCSR &= (~(1 << WDRF));\
-WDTCSR |= (1<<WDCE) | (1<<WDE);\
-WDTCSR = 0x00;
-
-void Timer_T1_sub(char, unsigned int);
 
 
 #include "Text_reader.h"
@@ -56,14 +47,8 @@ int main (void){
 	int  text_num;														//The number of the string to be printed out
 	int index=0;														//Address in EEPROM of the first string pointer
 
-	//setup_HW;
-	wd_timer_off;
-	
-	USART_init(0,25);
-	
-	//User_prompt;
-
-while(1){sendChar('B');Timer_T1_sub(T1_delay_1sec);}
+	setup_HW;
+	User_prompt;
 
 	sendString("\r\nProgram running on ");
 	sendString (Device_family[family_ptr]);
@@ -198,14 +183,3 @@ while(1){sendChar('B');Timer_T1_sub(T1_delay_1sec);}
 
 				return Flash_readout;}
 
-
-
-
-void Timer_T1_sub(char Counter_speed, unsigned int Start_point){
-	TCNT1H = (Start_point >> 8);
-	TCNT1L = Start_point & 0x00FF;
-	TIFR1 = 0xFF;
-	TCCR1B = Counter_speed;
-	while(!(TIFR1 & (1<<TOV1)));
-	TIFR1 |= (1<<TOV1);
-TCCR1B = 0;}
