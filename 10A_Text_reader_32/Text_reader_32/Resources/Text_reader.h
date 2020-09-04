@@ -29,17 +29,13 @@ int sig_byte_2, sig_byte_3;
 
 /**********************************************************************************/
 #define setup_HW \
-\
-\
+setup_watchdog;\
+ADMUX |= (1 << REFS0);\
 USART_init(0,25);\
 Initialise_IO;\
 set_device_type_and_memory_size;\
 cal_device;
 
-
-
-//ADMUX |= (1 << REFS0);
-//setup_watchdog;
 
 /**********************************************************************************/
 #define wdr()  __asm__ __volatile__("wdr")
