@@ -19,36 +19,34 @@ int Num_from_KBD(void);
 
 /*********************************************************************************************/
 void USART_init (unsigned char UBRROH_N, unsigned char UBRR0L_N ){
-Timer_T1_sub(T1_delay_1sec);
-//UCSR0B = 0;
-//UCSR0C &= (~(1 << URSEL));
-UBRRH = 0;  
-UBRRL = 51;  
-//UCSR0A |= (1 << U2X0);
-UCSRB = (1 << RXEN) | (1<< TXEN);
-UCSRC =  (1 << UCSZ0)| (1 << UCSZ1) | (1 << URSEL);} 
+UCSR0B = 0;
+UBRR0H = UBRROH_N;  
+UBRR0L = UBRR0L_N;  
+UCSR0A = (1 << U2X0);
+UCSR0B = (1 << RXEN0) | (1<< TXEN0);
+UCSR0C =  (1 << UCSZ00)| (1 << UCSZ01) | (1 << URSEL);} 
 
 
 
 
 /*********************************************************************************************/
 char waitforkeypress(void){
-while (!(UCSRA & (1 << RXC)));
-return UDR;}
+while (!(UCSR0A & (1 << RXC0)));
+return UDR0;}
 
 
 
 
 /*********************************************************************************************/
 char receiveChar(void)
-{return UDR;}
+{return UDR0;}
 
 
 
 
 /*********************************************************************************************/
 char isCharavailable (int m){int n = 0;		
-while (!(UCSRA & (1 << RXC))){n++;
+while (!(UCSR0A & (1 << RXC0))){n++;
 if (n>4000) {m--;n = 0;}if (m == 0)return 0;}
 return 1;}
 
@@ -69,8 +67,8 @@ return keypress;}
 
 /*********************************************************************************************/
 void sendChar(char data){
-while (!(UCSRA & (1 << UDRE)));
-UDR = 'C';}
+while (!(UCSR0A & (1 << UDRE0)));
+UDR0 = data;}
 
 
 
