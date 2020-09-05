@@ -153,7 +153,7 @@ switch(sig_byte_2){\
 		switch (sig_byte_3)\
 			{case 0x05: \
 			case 0x0A: device_ptr = 0; family_ptr = 0; break;\
-			case 0x07: device_ptr = 5; family_ptr = 1; break;}\
+			case 0x07: device_ptr = 6; family_ptr = 1; break;}\
 		break;\
 		\
 	case 0x93: FlashSZ = 0x1000; EE_size = 0x200;\
@@ -172,7 +172,7 @@ switch(sig_byte_2){\
 		switch (sig_byte_3)\
 			{case 0x14:\
 			case 0x0F: device_ptr = 3; family_ptr = 0; break;\
-			case 0x02: device_ptr = 6; family_ptr = 0; break;}\
+			case 0x02: device_ptr = 5; family_ptr = 0; break;}\
 		break;\
 	\
 	case 0x96: FlashSZ = 0x8000; EE_size = 0x800;\
