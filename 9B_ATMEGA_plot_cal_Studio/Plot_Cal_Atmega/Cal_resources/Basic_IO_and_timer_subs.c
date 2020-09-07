@@ -1,4 +1,6 @@
 
+
+void USART_init_32 (unsigned char, unsigned char);
 void USART_init (unsigned char, unsigned char);
 char waitforkeypress(void);
 char receiveChar(void);
@@ -20,6 +22,18 @@ void nop_delay(int);
 void Timer_T0_10mS_delay_x_m(int);
 void Timer_T0_sub(char, unsigned char);
 void Timer_T1_sub(char, unsigned int);
+
+
+
+
+/*****************************************************************************/
+void USART_init_32 (unsigned char UBRROH_N, unsigned char UBRR0L_N ){
+	UCSR0B = 0;
+	UBRR0H = UBRROH_N;
+	UBRR0L = UBRR0L_N;
+	UCSR0A = (1 << U2X0);
+	UCSR0B = (1 << RXEN0) | (1<< TXEN0);
+	UCSR0C = (1 << UCSZ00)| (1 << UCSZ01) | (1 << URSEL);}
 
 
 
