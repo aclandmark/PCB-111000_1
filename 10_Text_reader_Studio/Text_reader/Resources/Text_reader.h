@@ -31,10 +31,15 @@ int sig_byte_2, sig_byte_3;
 #define setup_HW \
 setup_watchdog;\
 ADMUX |= (1 << REFS0);\
-USART_init(0,25);\
 Initialise_IO;\
 set_device_type_and_memory_size;\
-cal_device;
+cal_device;\
+\
+switch(sig_byte_2){\
+	case 0x95: if(sig_byte_3 != 2)USART_init(0,25);\
+	else USART_init_32(0,25); break;\
+default: USART_init(0,25); break;}
+
 
 
 /**********************************************************************************/
@@ -115,7 +120,7 @@ switch(sig_byte_2){\
 		switch (sig_byte_3)\
 			{case 0x05: \
 			case 0x0A: device_ptr = 0; family_ptr = 0; break;\
-			case 0x07: device_ptr = 5; family_ptr = 1; break;}\
+			case 0x07: device_ptr = 6; family_ptr = 1; break;}\
 		break;\
 		\
 	case 0x93: FlashSZ = 0x1000; EE_size = 0x200;\
@@ -134,7 +139,7 @@ switch(sig_byte_2){\
 		switch (sig_byte_3)\
 			{case 0x14:\
 			case 0x0F: device_ptr = 3; family_ptr = 0; break;\
-			case 0x02: device_ptr = 6; family_ptr = 0; break;}\
+			case 0x02: device_ptr = 5; family_ptr = 0; break;}\
 		break;\
 	\
 	case 0x96: FlashSZ = 0x8000; EE_size = 0x800;\
