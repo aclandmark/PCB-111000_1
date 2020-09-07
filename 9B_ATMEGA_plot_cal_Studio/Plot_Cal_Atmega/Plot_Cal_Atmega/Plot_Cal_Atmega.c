@@ -7,7 +7,7 @@ int main (void)
 
 {char User_response;
 	
-setup_HW_basic;
+setup_HW;
 
 OSCCAL_WV = OSCCAL;
 User_prompt;
