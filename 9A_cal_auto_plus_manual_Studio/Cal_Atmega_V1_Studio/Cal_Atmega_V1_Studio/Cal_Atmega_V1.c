@@ -43,13 +43,13 @@ int main (void)
 		save_cal_values(OSCCAL_WV);
 		printout_cal_values();}
 
-	else Manual_cal();
+	else Manual_cal();															//Omit for 4K device
 
-	sendString("\r\nTest");
+	/*sendString("\r\nTest");
 	sendString("\r\nValues saved to EEPROM  ");
 	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 1))); sendChar('\t');
 	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 2))); sendString("\tUser value\r\n\t\t\t");
-	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 3))); sendString("\t\tDefault value\r\n");
+	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 3))); sendString("\t\tDefault value\r\n");*/
 
 	sendString("\r\nAll done: AK to repeat.\r\n");
 
