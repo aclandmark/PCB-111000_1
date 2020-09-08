@@ -38,18 +38,12 @@ int main (void)
 	sendString("\r\nNew OSCCAL value ");
 	Num_to_PC(10,OSCCAL_WV);
 
-	sendString("\r\nPress 'x' to finish or AOK for manual cal\r\n");
-	if (waitforkeypress() == 'x'){
-		save_cal_values(OSCCAL_WV);
-		printout_cal_values();}
+	sendString("\r\nPress 'x' to finish or AOK for manual cal\r\n");				//Omit for 4K device
+	if (waitforkeypress() == 'x')													//Omit for 4K device
+		{printout_cal_values();}
+	
 
 	else Manual_cal();															//Omit for 4K device
-
-	/*sendString("\r\nTest");
-	sendString("\r\nValues saved to EEPROM  ");
-	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 1))); sendChar('\t');
-	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 2))); sendString("\tUser value\r\n\t\t\t");
-	Num_to_PC(10,eeprom_read_byte((uint8_t*)(EEP_MAX - 3))); sendString("\t\tDefault value\r\n");*/
 
 	sendString("\r\nAll done: AK to repeat.\r\n");
 
