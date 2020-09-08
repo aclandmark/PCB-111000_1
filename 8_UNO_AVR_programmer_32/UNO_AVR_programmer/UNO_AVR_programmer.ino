@@ -1,6 +1,6 @@
 
 #include "UNO_AVR_programmer.h"
-#define Version "UNO_programmer_V1.2\r\n" 
+#define Version "UNO_programmer_V1.5\r\n" 
 
 int main (void){ 
 
