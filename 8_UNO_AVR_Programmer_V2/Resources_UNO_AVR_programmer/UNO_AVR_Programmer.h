@@ -275,6 +275,7 @@ if((User_response == 'R') || (User_response == 'r'))break;} sendString("\r\n");
 \
 switch(sig_byte_2){\
 case 0x95: if(sig_byte_3 == 0x2); else Atmel_config(write_extended_fuse_bits_h,Fuse_Ex );break;\
+case 0x91: if(sig_byte_3 == 0x9); else Atmel_config(write_extended_fuse_bits_h,Fuse_Ex );break;\
 default: Atmel_config(write_extended_fuse_bits_h,Fuse_Ex );break;}\
 \
 Atmel_config(write_fuse_bits_H_h,Fuse_H );\
@@ -294,6 +295,7 @@ high, low and lock\t");\
 \
 switch(sig_byte_2){\
 case 0x95: if(sig_byte_3 == 0x2); else sendHex(16, Atmel_config(read_extended_fuse_bits_h, 0)); break;\
+case 0x91: if(sig_byte_3 == 0x9); else Atmel_config(write_extended_fuse_bits_h,Fuse_Ex );break;\
 default: sendHex(16, Atmel_config(read_extended_fuse_bits_h, 0));break;}\
 \
 sendHex(16, Atmel_config(read_fuse_bits_H_h,0));\
