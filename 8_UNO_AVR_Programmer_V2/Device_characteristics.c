@@ -140,7 +140,8 @@ switch(sig_byte_2)
 
 case 0x91:
   switch (sig_byte_3)
-  {case 0x09: sendString(ATtiny);sendString("26L");break;
+  {case 0x09: sendString(ATtiny);sendString("26L");
+  Twd_EEPROM = 10; break;
   default: sendString(Unrecognised_device);sendString("2KB");
   newline();SW_reset;break;}
   
