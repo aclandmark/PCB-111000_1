@@ -58,10 +58,10 @@ switch(sig_byte_2)
 	Lock = 0xFF;
 	break;
 	
-	case 0x95: 																//32KB devices
+	case 0x95: 																              //32KB devices
 	switch (sig_byte_3)
 	{case 0x02: sendString(Atmega);sendString("32A"); 
-	Twd_EEPROM = 10; break;													//EEPROM requires 10mS for write
+	Twd_EEPROM = 10; break;													        //EEPROM requires 10mS for write
 	case 0x14: sendString(Atmega);sendString("328");break;
 	case 0x0F: sendString(Atmega);sendString("328P");break;
 	default: sendString(Unrecognised_device);sendString("32KB");
@@ -105,6 +105,7 @@ switch(sig_byte_2)
 	{case 0x0A: sendString(Atmega);sendString("88");break;
 	case 0x0F: sendString(Atmega);sendString("88P");break;
 	case 0x0C: sendString(ATtiny);sendString("84");break;
+	case 0x0D: sendString(ATtiny);sendString("861A");break;
 	default: sendString(Unrecognised_device);sendString("8KB");
 	newline();SW_reset;break;}
 	 
@@ -125,6 +126,7 @@ switch(sig_byte_2)
 	{case 0x05: sendString(Atmega);sendString("48");break;
 	case 0x0A: sendString(Atmega);sendString("48P");break;
 	case 0x07:	sendString(ATtiny);sendString("44A");break;
+	case 0x08:  sendString(ATtiny);sendString("461A");break;
 	default: sendString(Unrecognised_device);sendString("4KB");
 	newline();SW_reset;break;}
 	
@@ -142,6 +144,7 @@ case 0x91:
   switch (sig_byte_3)
   {case 0x09: sendString(ATtiny);sendString("26L");
   Twd_EEPROM = 10; break;
+  case 0x0C: sendString(ATtiny);sendString("261A");break;  
   default: sendString(Unrecognised_device);sendString("2KB");
   newline();SW_reset;break;}
   
@@ -154,7 +157,6 @@ case 0x91:
   Fuse_L = 0xE4;
   Lock = 0xFF;
   break;
-
   
 	
 	default: sendString("\r\nUnknown, please enter device data."); 
