@@ -18,7 +18,10 @@ Note ATtiny 84A family devices are essentially the same as ATtiny 84 devices and
 The same appears to be true for the ATtiny 268 and 268A devices.
 Members of the Atmega 328 and 328P families appear to be completely interchangeable but do have different configuration bytes.
 
-Version 2.0 is the same as version 1.5 but the following additional features:
+VERSION 2
+
+
+Version 2.0 is the same as version 1.5 but with the following additional features:
 It can detect and program the ATtiny 84 and 268 devices.
 
 If at the user prompt "Press -p- to program flash, -e- for EEPROM, -r- to run target or -x- to escape."
