@@ -1,6 +1,40 @@
 
+/*
+Enables UNO to program the following Atmega devices
+
+40 pin Atmega 644 device with 64k of flash
+28 pin Atmega 328 family with 4k to 32k of flash
+20 pin ATtiny 84 family with 2K to 8K of flash
+14 pin ATtiny 268 family with 2K to 8K of flash
+All these devices appear to be of a similar vintage and the default configuration bytes should work for them all
+as follows:
+8Mhz internal clock; WDT under program control; EEPROM preserved at chip erase; Reset pin; reset to address zero.
+No effort has been made to set the Brown out detector (BOD) or boot space.  BOD is of course essential for battery powered devices.
+
+Two other devices are included: the Atmega32 and ATtiny 26.  
+These appear to be of a previous vintage and the default configuration bytes will not work as described above.
+
+Note ATtiny 84A family devices are essentially the same as ATtiny 84 devices and have the same signature bytes
+The same appears to be true for the ATtiny 268 and 268A devices.
+Members of the Atmega 328 and 328P families appear to be completely interchangeable but do have different configuration bytes.
+
+Version 2.0 is the same as version 1.5 but the following additional features:
+It can detect and program the ATtiny 84 and 268 devices.
+
+If at the user prompt "Press -p- to program flash, -e- for EEPROM, -r- to run target or -x- to escape."
+-t- is pressed the programmer puts a 65.536 mS square wave on its PB5 (SCK) pin.  This is already conected to the 
+target which can use it to calibrate its internal RC clock in place of a watch crystal. 
+
+
+*/
+
+
+
+
+
+
 #include "UNO_AVR_programmer.h"
-#define Version "UNO_programmer_V1.5\r\n" 
+#define Version "UNO_programmer_V2.0\r\n" 
 
 int main (void){ 
 
