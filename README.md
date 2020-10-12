@@ -11,4 +11,6 @@ This contains the display and an Atmega 328 which hosts the mini-OS, and is know
 The UNO board provides the USB bridge and the user device, an Atmega 328 device used to host user projects.
 
 
-TEST CHANGE
+An additional project is introduced in this repository.  Part 1 of code is suppplied that will enable the UNO to be used to program
+Atmega 328 devices, Atmega644, Attiny44 and ATtint 461.  Included will be projects to calibrate all devices and read strings from flash.
+These strings are programmed to flash by uploading a text file using the UNO programmer.
