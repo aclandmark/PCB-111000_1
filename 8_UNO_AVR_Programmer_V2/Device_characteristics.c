@@ -145,6 +145,7 @@ case 0x91:
   {case 0x09: sendString(ATtiny);sendString("26L");
   Twd_EEPROM = 10; break;
   case 0x0C: sendString(ATtiny);sendString("261A");break;  
+  case 0x0B: sendString(ATtiny);sendString("24A");break; 
   default: sendString(Unrecognised_device);sendString("2KB");
   newline();SW_reset;break;}
   
