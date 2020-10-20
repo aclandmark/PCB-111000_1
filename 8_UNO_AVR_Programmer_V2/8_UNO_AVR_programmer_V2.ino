@@ -129,6 +129,8 @@ void set_cal_clock(void){
 sendString("\r\n\r\nSquare wave with 65.536mS period on PB5\r\n");
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));
 initialise_IO;
+Set_LED_ports;
+LEDs_off;
 DDRB |= 1 << DDB5;
 PORTB &= (~(1 << PORTB5));                                       //Output low
 TCNT0 = 0;
