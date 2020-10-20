@@ -309,6 +309,8 @@ sendHex(16, Atmel_config(read_lock_bits_h, 0));
 #define Exit_programming_mode \
 UCSR0B &= (~((1 << RXEN0) | (1<< TXEN0)));\
 initialise_IO;\
+Set_LED_ports;\
+LEDs_off;\
 Reset_H;\
 while(1);
 
