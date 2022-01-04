@@ -10,3 +10,5 @@ To simplify pcb assembly, a new and simplified version, PCB-11000_1 is to be dev
 This contains the display and an Atmega 328 which hosts the mini-OS, and is known as the OS device.
 The UNO board provides the USB bridge and the user device, an Atmega 328 device used to host user projects.
 
+Details of this project have been posted to AVR_freaks as PCB_111000_UNO parts 1,2 and 3.
+
