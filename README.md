@@ -13,6 +13,8 @@ The UNO board provides the USB bridge and the user device, an Atmega 328 device 
 Details of this project have been posted to AVR_freaks as PCB_111000_UNO parts 1,2 and 3.
 
 Links to relevent AVRfreaks projects:
+
+
 https://github.com/MicrochipTech/avrfreaks-projects/blob/9e6bc971411a2d69374012572b3b6144f2f3f7f2/projects/pcb111000uno-part-1-pcb-1110001-unobootloaderforhextextv6/README.md
 
 https://github.com/MicrochipTech/avrfreaks-projects/blob/9e6bc971411a2d69374012572b3b6144f2f3f7f2/projects/pcb111000uno-part-2-assembly-and-programming-uno-and-pcba/README.md
