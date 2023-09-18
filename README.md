@@ -1,4 +1,11 @@
 # PCB-111000_1
+
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-//-/-//-/-//-/-/-/-/-/-
+
+
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-//-/-//-/-//-/-/-/-/-/-
+
+
 This is a plug in version of PCB-111000 for use with the Arduino Uno pcb.
 
 Project PCB-111000 (published in October 2018) was a pcb designed to introduce beginners to programming Atmega devices in C.
